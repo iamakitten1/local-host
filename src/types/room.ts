@@ -12,10 +12,17 @@ export type Bed = {
   quantity: number;
 };
 
+export type BedConfiguration = {
+  name: string;
+  guestCapacity: number;
+  beds: Bed[];
+};
+
 export type Room = {
   id: string;
   propertyId: string;
   name: string;
   capacity: number;
-  beds: Bed[];
+  bedConfigurations: BedConfiguration[];
+  extraBeds: Bed[];
 };

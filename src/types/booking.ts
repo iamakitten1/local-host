@@ -8,7 +8,7 @@ export type Booking = {
   id: string;
   propertyId: string;
   roomId: string;
-  guestId: string;
+  guestName: string;
   guestCount: number;
   checkInDate: string;
   estimatedArrivalTime: string | null;
