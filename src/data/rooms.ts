@@ -8,11 +8,13 @@ export const rooms: Room[] = [
     capacity: 2,
     bedConfigurations: [
       {
+        id: "blue-double",
         name: "Double setup",
         guestCapacity: 2,
         beds: [{ type: "king", quantity: 1 }],
       },
       {
+        id: "blue-twin",
         name: "Twin setup",
         guestCapacity: 2,
         beds: [{ type: "single", quantity: 2 }],
@@ -28,16 +30,19 @@ export const rooms: Room[] = [
     capacity: 3,
     bedConfigurations: [
       {
+        id: "orange-single",
         name: "Single guest",
         guestCapacity: 1,
         beds: [{ type: "king", quantity: 1 }],
       },
       {
+        id: "orange-double",
         name: "Two guests",
         guestCapacity: 2,
         beds: [{ type: "king", quantity: 1 }],
       },
       {
+        id: "orange-triple",
         name: "Three guests",
         guestCapacity: 3,
         beds: [
@@ -56,16 +61,19 @@ export const rooms: Room[] = [
     capacity: 4,
     bedConfigurations: [
       {
+        id: "red-single",
         name: "Single guest",
         guestCapacity: 1,
         beds: [{ type: "king", quantity: 1 }],
       },
       {
+        id: "red-double",
         name: "Two guests",
         guestCapacity: 2,
         beds: [{ type: "king", quantity: 1 }],
       },
       {
+        id: "red-triple",
         name: "Three guests",
         guestCapacity: 3,
         beds: [
@@ -74,6 +82,7 @@ export const rooms: Room[] = [
         ],
       },
       {
+        id: "red-quad",
         name: "Four guests",
         guestCapacity: 4,
         beds: [

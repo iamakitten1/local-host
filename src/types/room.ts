@@ -13,6 +13,7 @@ export type Bed = {
 };
 
 export type BedConfiguration = {
+  id: string;
   name: string;
   guestCapacity: number;
   beds: Bed[];

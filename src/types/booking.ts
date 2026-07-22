@@ -14,4 +14,5 @@ export type Booking = {
   estimatedArrivalTime: string | null;
   checkOutDate: string;
   status: BookingStatus;
+  bedConfigurationId: string;
 };
