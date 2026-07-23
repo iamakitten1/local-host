@@ -13,6 +13,8 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "15:30",
     checkOutDate: "2026-07-21",
     status: "checked-out",
+    bedConfigurationId: "blue-double",
+     
   },
 
   {
@@ -25,6 +27,7 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "14:00",
     checkOutDate: "2026-07-25",
     status: "confirmed",
+    bedConfigurationId: "blue-double",
   },
 
   {
@@ -37,6 +40,7 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: null,
     checkOutDate: "2026-07-29",
     status: "confirmed",
+    bedConfigurationId: "blue-double",
   },
 
   // ROOM ORANGE — capacity: 3
@@ -51,6 +55,7 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "17:00",
     checkOutDate: "2026-07-22",
     status: "checked-in",
+    bedConfigurationId: "orange-double",
   },
 
   {
@@ -63,6 +68,7 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "18:30",
     checkOutDate: "2026-07-27",
     status: "confirmed",
+    bedConfigurationId: "orange-triple",
   },
 
   {
@@ -75,6 +81,7 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "13:00",
     checkOutDate: "2026-07-30",
     status: "confirmed",
+    bedConfigurationId: "orange-double",
   },
 
   // ROOM RED — capacity: 4
@@ -89,6 +96,7 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "16:00",
     checkOutDate: "2026-07-22",
     status: "checked-in",
+    bedConfigurationId: "red-quad",
   },
 
   {
@@ -101,6 +109,7 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: null,
     checkOutDate: "2026-07-26",
     status: "confirmed",
+    bedConfigurationId: "red-triple",
   },
 
   {
@@ -113,5 +122,6 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "19:00",
     checkOutDate: "2026-07-30",
     status: "confirmed",
+    bedConfigurationId: "red-double",
   },
 ];
