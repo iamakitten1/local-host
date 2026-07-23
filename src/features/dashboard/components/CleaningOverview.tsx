@@ -65,7 +65,11 @@ const CleaningOverview = ({ tasks }: CleaningOverviewProps) => {
                       : "bg-green-100 text-green-700"
                 }`}
               >
-                {task.status}
+                {task.status === "pending"
+                  ? "Pending"
+                  : task.status === "in-progress"
+                    ? "In Progress"
+                    : "Completed"}
               </span>
             </div>
           );

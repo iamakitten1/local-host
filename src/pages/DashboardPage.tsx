@@ -6,7 +6,6 @@ import ArrivalsList from "../features/dashboard/components/ArrivalsList";
 import CleaningOverview from "../features/dashboard/components/CleaningOverview";
 import DeparturesList from "../features/dashboard/components/DeparturesList";
 
-
 const DashboardPage = () => {
   const today = "2026-07-22";
 
@@ -41,8 +40,11 @@ const DashboardPage = () => {
         <SummaryCard title="Pending Cleaning" value={pendingCleaning.length} />
       </div>
 
-      <ArrivalsList bookings={todaysArrivals} />
-      <DeparturesList bookings={todaysDepartures} />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <ArrivalsList bookings={todaysArrivals} />
+        <DeparturesList bookings={todaysDepartures} />
+      </div>
+
       <CleaningOverview tasks={pendingCleaning} />
     </div>
   );
