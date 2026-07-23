@@ -56,9 +56,17 @@ const CleaningOverview = ({ tasks }: CleaningOverviewProps) => {
                   : "Unassigned"}
               </p>
 
-              <p className="mt-1 text-sm text-gray-500">
-                Status: {task.status}
-              </p>
+              <span
+                className={`mt-3 inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                  task.status === "pending"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : task.status === "in-progress"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-green-100 text-green-700"
+                }`}
+              >
+                {task.status}
+              </span>
             </div>
           );
         })}

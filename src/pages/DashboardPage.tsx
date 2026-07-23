@@ -4,6 +4,8 @@ import { bookings } from "../data/bookings";
 import { cleaningTasks } from "../data/cleaningTasks";
 import ArrivalsList from "../features/dashboard/components/ArrivalsList";
 import CleaningOverview from "../features/dashboard/components/CleaningOverview";
+import DeparturesList from "../features/dashboard/components/DeparturesList";
+
 
 const DashboardPage = () => {
   const today = "2026-07-22";
@@ -40,6 +42,7 @@ const DashboardPage = () => {
       </div>
 
       <ArrivalsList bookings={todaysArrivals} />
+      <DeparturesList bookings={todaysDepartures} />
       <CleaningOverview tasks={pendingCleaning} />
     </div>
   );
