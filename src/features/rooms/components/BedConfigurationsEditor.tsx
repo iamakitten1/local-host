@@ -3,30 +3,49 @@ import BedEditor from "./BedEditor";
 
 type BedConfigurationsEditorProps = {
   configurations: BedConfiguration[];
+
   onAddConfiguration: () => void;
-  onConfigurationChange: (
+
+  onConfigurationNameChange: (configurationId: string, name: string) => void;
+
+  onGuestCapacityChange: (
     configurationId: string,
-    field: "name" | "guestCapacity",
-    value: string,
+    guestCapacity: number,
   ) => void;
+
   onAddBed: (configurationId: string) => void;
-  onBedChange: (
+
+  onBedTypeChange: (
     configurationId: string,
     bedIndex: number,
-    field: "type" | "quantity",
-    value: string,
+    type: BedType,
   ) => void;
+
+  onBedQuantityChange: (
+    configurationId: string,
+    bedIndex: number,
+    quantity: number,
+  ) => void;
+
+  onDeleteBed: (configurationId: string, bedIndex: number) => void;
+
+  onDeleteConfiguration: (configurationId: string) => void;
 };
 
 const BedConfigurationsEditor = ({
   configurations,
   onAddConfiguration,
-  onConfigurationChange,
+  onConfigurationNameChange,
+  onGuestCapacityChange,
   onAddBed,
-  onBedChange,
+  onBedTypeChange,
+  onBedQuantityChange,
+  onDeleteBed,
+  onDeleteConfiguration,
 }: BedConfigurationsEditorProps) => {
   return (
     <div className="border-t border-gray-200 pt-4">
+      {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <h3 className="text-sm font-semibold text-gray-900">
           Bed configurations
@@ -41,6 +60,7 @@ const BedConfigurationsEditor = ({
         </button>
       </div>
 
+      {/* Configuration list */}
       <div className="mt-3 space-y-3">
         {configurations.map((configuration) => (
           <div
@@ -48,6 +68,20 @@ const BedConfigurationsEditor = ({
             className="rounded-lg border border-gray-200 bg-gray-50 p-3"
           >
             <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                  Configuration
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => onDeleteConfiguration(configuration.id)}
+                  className="cursor-pointer text-sm font-medium text-red-600 hover:text-red-700"
+                >
+                  Remove
+                </button>
+              </div>
+              {/* Configuration name */}
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-600">
                   Configuration name
@@ -57,9 +91,8 @@ const BedConfigurationsEditor = ({
                   type="text"
                   value={configuration.name}
                   onChange={(event) =>
-                    onConfigurationChange(
+                    onConfigurationNameChange(
                       configuration.id,
-                      "name",
                       event.target.value,
                     )
                   }
@@ -67,6 +100,7 @@ const BedConfigurationsEditor = ({
                 />
               </div>
 
+              {/* Guest capacity */}
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-600">
                   Guest capacity
@@ -77,16 +111,16 @@ const BedConfigurationsEditor = ({
                   min="1"
                   value={configuration.guestCapacity}
                   onChange={(event) =>
-                    onConfigurationChange(
+                    onGuestCapacityChange(
                       configuration.id,
-                      "guestCapacity",
-                      event.target.value,
+                      Number(event.target.value),
                     )
                   }
                   className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-500"
                 />
               </div>
 
+              {/* Beds */}
               <div className="border-t border-gray-200 pt-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-700">
@@ -102,27 +136,23 @@ const BedConfigurationsEditor = ({
                   </button>
                 </div>
 
+                {/* Bed list */}
                 <div className="mt-3 space-y-2">
                   {configuration.beds.map((bed, bedIndex) => (
                     <BedEditor
                       key={bedIndex}
                       bed={bed}
-                      onTypeChange={(type: BedType) =>
-                        onBedChange(
-                          configuration.id,
-                          bedIndex,
-                          "type",
-                          type,
-                        )
+                      onTypeChange={(type) =>
+                        onBedTypeChange(configuration.id, bedIndex, type)
                       }
                       onQuantityChange={(quantity) =>
-                        onBedChange(
+                        onBedQuantityChange(
                           configuration.id,
                           bedIndex,
-                          "quantity",
-                          String(quantity),
+                          quantity,
                         )
                       }
+                      onDelete={() => onDeleteBed(configuration.id, bedIndex)}
                     />
                   ))}
                 </div>

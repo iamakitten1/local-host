@@ -12,7 +12,7 @@ const EditRoomModal = ({ room, onClose, onSave }: EditRoomModalProps) => {
   const [capacity, setCapacity] = useState(String(room.capacity));
   const [error, setError] = useState("");
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (roomName.trim() === "") {
@@ -45,9 +45,7 @@ const EditRoomModal = ({ room, onClose, onSave }: EditRoomModalProps) => {
       <div className="relative z-10 w-full max-w-lg rounded-2xl bg-white shadow-xl">
         {/* Modal header */}
         <div className="flex items-center justify-between border-b border-gray-200 p-5">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Edit Room
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900">Edit Room</h2>
 
           <button
             type="button"
@@ -102,9 +100,7 @@ const EditRoomModal = ({ room, onClose, onSave }: EditRoomModalProps) => {
 
             {/* Validation error */}
             {error && (
-              <p className="text-sm font-medium text-red-600">
-                {error}
-              </p>
+              <p className="text-sm font-medium text-red-600">{error}</p>
             )}
           </div>
 

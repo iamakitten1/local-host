@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type { BedConfiguration } from "../../../types/room";
 import BedConfigurationsEditor from "./BedConfigurationsEditor";
+import useBedConfigurations from "../hooks/useBedConfigurations";
 
 type AddRoomModalProps = {
   onClose: () => void;
+
   onAddRoom: (
     name: string,
     capacity: number,
@@ -12,97 +14,27 @@ type AddRoomModalProps = {
 };
 
 const AddRoomModal = ({ onClose, onAddRoom }: AddRoomModalProps) => {
-  // Basic room fields
+  // Basic Room fields
   const [roomName, setRoomName] = useState("");
   const [capacity, setCapacity] = useState("");
 
-  // Validation message
+  // Validation
   const [error, setError] = useState("");
 
-  // Room-ის შესაძლო bed configurations
-  const [bedConfigurations, setBedConfigurations] = useState<
-    BedConfiguration[]
-  >([]);
+  // Bed configurations-ის state და logic მოდის custom hook-იდან
+  const {
+    bedConfigurations,
+    handleAddConfiguration,
+    handleConfigurationNameChange,
+    handleGuestCapacityChange,
+    handleAddBed,
+    handleBedTypeChange,
+    handleBedQuantityChange,
+    handleDeleteBed,
+    handleDeleteConfiguration,
+  } = useBedConfigurations();
 
-  // ახალი configuration-ის დამატება
-  const handleAddConfiguration = () => {
-    const newConfiguration: BedConfiguration = {
-      id: `config-${Date.now()}`,
-      name: "New configuration",
-      guestCapacity: 1,
-      beds: [],
-    };
-
-    setBedConfigurations((currentConfigurations) => [
-      ...currentConfigurations,
-      newConfiguration,
-    ]);
-  };
-
-  // კონკრეტული configuration-ის name ან guestCapacity-ის შეცვლა
-  const handleConfigurationChange = (
-    configurationId: string,
-    field: "name" | "guestCapacity",
-    value: string,
-  ) => {
-    setBedConfigurations((currentConfigurations) =>
-      currentConfigurations.map((configuration) =>
-        configuration.id === configurationId
-          ? {
-              ...configuration,
-              [field]: field === "guestCapacity" ? Number(value) : value,
-            }
-          : configuration,
-      ),
-    );
-  };
-
-  const handleAddBed = (configurationId: string) => {
-    setBedConfigurations((currentConfigurations) =>
-      currentConfigurations.map((configuration) =>
-        configuration.id === configurationId
-          ? {
-              ...configuration,
-              beds: [
-                ...configuration.beds,
-                {
-                  type: "single",
-                  quantity: 1,
-                },
-              ],
-            }
-          : configuration,
-      ),
-    );
-  };
-
-  const handleBedChange = (
-    configurationId: string,
-    bedIndex: number,
-    field: "type" | "quantity",
-    value: string,
-  ) => {
-    setBedConfigurations((currentConfigurations) =>
-      currentConfigurations.map((configuration) =>
-        configuration.id === configurationId
-          ? {
-              ...configuration,
-              beds: configuration.beds.map((bed, index) =>
-                index === bedIndex
-                  ? {
-                      ...bed,
-                      [field]: field === "quantity" ? Number(value) : value,
-                    }
-                  : bed,
-              ),
-            }
-          : configuration,
-      ),
-    );
-  };
-
-  // მთელი Add Room form-ის submit
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (roomName.trim() === "") {
@@ -117,8 +49,7 @@ const AddRoomModal = ({ onClose, onAddRoom }: AddRoomModalProps) => {
 
     setError("");
 
-    // ჯერ ისევ მხოლოდ name და capacity გადაგვაქვს parent-ში.
-    // Bed configurations-ს ცოტა ქვემოთ მივაბამთ.
+    // Room-ის მონაცემებს parent RoomsPage-ს ვუგზავნით
     onAddRoom(roomName.trim(), Number(capacity), bedConfigurations);
 
     onClose();
@@ -136,7 +67,7 @@ const AddRoomModal = ({ onClose, onAddRoom }: AddRoomModalProps) => {
 
       {/* Modal window */}
       <div className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-xl">
-        {/* Modal header */}
+        {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 p-5">
           <h2 className="text-xl font-semibold text-gray-900">Add Room</h2>
 
@@ -200,9 +131,13 @@ const AddRoomModal = ({ onClose, onAddRoom }: AddRoomModalProps) => {
             <BedConfigurationsEditor
               configurations={bedConfigurations}
               onAddConfiguration={handleAddConfiguration}
-              onConfigurationChange={handleConfigurationChange}
+              onConfigurationNameChange={handleConfigurationNameChange}
+              onGuestCapacityChange={handleGuestCapacityChange}
               onAddBed={handleAddBed}
-              onBedChange={handleBedChange}
+              onBedTypeChange={handleBedTypeChange}
+              onBedQuantityChange={handleBedQuantityChange}
+              onDeleteBed={handleDeleteBed}
+              onDeleteConfiguration={handleDeleteConfiguration}
             />
           </div>
 
