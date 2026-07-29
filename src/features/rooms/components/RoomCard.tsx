@@ -23,22 +23,24 @@ const RoomCard = ({ room, onDelete, onEdit }: RoomCardProps) => {
       <div className="p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">{room.name}</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              {room.name}
+            </h2>
 
             <p className="mt-1 text-sm text-gray-500">
-              Capacity: {room.capacity}{" "}
+              Recommended capacity: {room.capacity}{" "}
               {room.capacity === 1 ? "guest" : "guests"}
             </p>
           </div>
 
           <div className="flex gap-2">
-          <button
-  type="button"
-  onClick={() => onEdit(room)}
-  className="cursor-pointer rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
->
-  Edit
-</button>
+            <button
+              type="button"
+              onClick={() => onEdit(room)}
+              className="cursor-pointer rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Edit
+            </button>
 
             <button
               type="button"
@@ -52,42 +54,21 @@ const RoomCard = ({ room, onDelete, onEdit }: RoomCardProps) => {
 
         <div className="mt-5">
           <h3 className="text-sm font-semibold text-gray-700">
-            Bed configurations
+            Available beds
           </h3>
 
           <div className="mt-2 space-y-2">
-            {room.bedConfigurations.map((configuration) => (
+            {room.availableBeds.map((bed) => (
               <div
-                key={configuration.id}
+                key={bed.type}
                 className="rounded-lg bg-gray-50 px-3 py-2"
               >
-                <p className="text-sm font-medium text-gray-800">
-                  {configuration.name}
-                </p>
-
-                <p className="text-sm text-gray-500">
-                  {configuration.beds
-                    .map((bed) => `${bed.quantity} ${bed.type}`)
-                    .join(" + ")}
+                <p className="text-sm text-gray-600">
+                  {bed.quantity} {bed.type}
                 </p>
               </div>
             ))}
           </div>
-          {room.extraBeds.length > 0 && (
-            <div className="mt-5">
-              <h3 className="text-sm font-semibold text-gray-700">
-                Extra beds
-              </h3>
-
-              <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
-                {room.extraBeds.map((bed) => (
-                  <p key={bed.type} className="text-sm text-gray-500">
-                    {bed.quantity} {bed.type}
-                  </p>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </article>

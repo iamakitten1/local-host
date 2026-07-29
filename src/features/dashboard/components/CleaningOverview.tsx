@@ -14,16 +14,15 @@ const CleaningOverview = ({ tasks }: CleaningOverviewProps) => {
 
       <div className="space-y-3">
         {tasks.map((task) => {
+          // Cleaning task-ის შესაბამის ოთახს ვპოულობთ
           const room = rooms.find((room) => room.id === task.roomId);
 
+          // Cleaning task-ის შესაბამის booking-ს ვპოულობთ
           const booking = bookings.find(
             (booking) => booking.id === task.bookingId,
           );
 
-          const bedConfiguration = room?.bedConfigurations.find(
-            (config) => config.id === booking?.bedConfigurationId,
-          );
-
+          // ვპოულობთ ვის აქვს cleaning task მინიჭებული
           const assignedStaff = staff.find(
             (person) => person.id === task.assignedStaffId,
           );
@@ -33,22 +32,28 @@ const CleaningOverview = ({ tasks }: CleaningOverviewProps) => {
               key={task.id}
               className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
             >
+              {/* Room */}
               <p className="font-semibold text-gray-900">
                 {room?.name ?? "Unknown room"}
               </p>
 
+              {/* Guest count */}
               <p className="mt-1 text-sm text-gray-500">
-                Prepare for: {booking?.guestCount ?? "Unknown"} guests
+                Prepare for: {booking?.guestCount ?? "Unknown"}{" "}
+                {booking?.guestCount === 1 ? "guest" : "guests"}
               </p>
+
+              {/* Selected beds */}
               <p className="mt-1 text-sm text-gray-500">
                 Bed setup:{" "}
-                {bedConfiguration
-                  ? bedConfiguration.beds
+                {booking && booking.selectedBeds.length > 0
+                  ? booking.selectedBeds
                       .map((bed) => `${bed.quantity} ${bed.type}`)
                       .join(" + ")
                   : "Not selected"}
               </p>
 
+              {/* Staff */}
               <p className="mt-1 text-sm text-gray-500">
                 Staff:{" "}
                 {assignedStaff
@@ -56,6 +61,7 @@ const CleaningOverview = ({ tasks }: CleaningOverviewProps) => {
                   : "Unassigned"}
               </p>
 
+              {/* Status */}
               <span
                 className={`mt-3 inline-block rounded-full px-3 py-1 text-xs font-semibold ${
                   task.status === "pending"

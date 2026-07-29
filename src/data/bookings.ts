@@ -1,7 +1,7 @@
 import type { Booking } from "../types/booking";
 
 export const bookings: Booking[] = [
-  // ROOM BLUE — capacity: 2
+  // ROOM BLUE — recommended capacity: 2
 
   {
     id: "booking-1",
@@ -13,8 +13,9 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "15:30",
     checkOutDate: "2026-07-21",
     status: "checked-out",
-    bedConfigurationId: "blue-double",
-     
+    selectedBeds: [
+      { type: "king", quantity: 1 },
+    ],
   },
 
   {
@@ -27,7 +28,9 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "14:00",
     checkOutDate: "2026-07-25",
     status: "confirmed",
-    bedConfigurationId: "blue-double",
+    selectedBeds: [
+      { type: "king", quantity: 1 },
+    ],
   },
 
   {
@@ -40,10 +43,12 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: null,
     checkOutDate: "2026-07-29",
     status: "confirmed",
-    bedConfigurationId: "blue-double",
+    selectedBeds: [
+      { type: "single", quantity: 2 },
+    ],
   },
 
-  // ROOM ORANGE — capacity: 3
+  // ROOM ORANGE — recommended capacity: 3
 
   {
     id: "booking-4",
@@ -55,7 +60,9 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "17:00",
     checkOutDate: "2026-07-22",
     status: "checked-in",
-    bedConfigurationId: "orange-double",
+    selectedBeds: [
+      { type: "king", quantity: 1 },
+    ],
   },
 
   {
@@ -68,7 +75,10 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "18:30",
     checkOutDate: "2026-07-27",
     status: "confirmed",
-    bedConfigurationId: "orange-triple",
+    selectedBeds: [
+      { type: "king", quantity: 1 },
+      { type: "sofa", quantity: 1 },
+    ],
   },
 
   {
@@ -81,10 +91,12 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "13:00",
     checkOutDate: "2026-07-30",
     status: "confirmed",
-    bedConfigurationId: "orange-double",
+    selectedBeds: [
+      { type: "king", quantity: 1 },
+    ],
   },
 
-  // ROOM RED — capacity: 4
+  // ROOM RED — recommended capacity: 4
 
   {
     id: "booking-7",
@@ -96,7 +108,10 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "16:00",
     checkOutDate: "2026-07-22",
     status: "checked-in",
-    bedConfigurationId: "red-quad",
+    selectedBeds: [
+      { type: "king", quantity: 1 },
+      { type: "sofa", quantity: 2 },
+    ],
   },
 
   {
@@ -109,7 +124,10 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: null,
     checkOutDate: "2026-07-26",
     status: "confirmed",
-    bedConfigurationId: "red-triple",
+    selectedBeds: [
+      { type: "king", quantity: 1 },
+      { type: "sofa", quantity: 1 },
+    ],
   },
 
   {
@@ -122,6 +140,8 @@ export const bookings: Booking[] = [
     estimatedArrivalTime: "19:00",
     checkOutDate: "2026-07-30",
     status: "confirmed",
-    bedConfigurationId: "red-double",
+    selectedBeds: [
+      { type: "king", quantity: 1 },
+    ],
   },
 ];

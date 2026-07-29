@@ -12,18 +12,14 @@ export type Bed = {
   quantity: number;
 };
 
-export type BedConfiguration = {
-  id: string;
-  name: string;
-  guestCapacity: number;
-  beds: Bed[];
-};
-
 export type Room = {
   id: string;
   propertyId: string;
   name: string;
+
+  // რეკომენდებული capacityა, hard limit არა
   capacity: number;
-  bedConfigurations: BedConfiguration[];
-  extraBeds: Bed[];
+
+  // ყველა საწოლი/ვარიანტი, რომელიც ამ ოთახში შეიძლება გამოიყენო
+  availableBeds: Bed[];
 };

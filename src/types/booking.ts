@@ -1,3 +1,5 @@
+import type { Bed } from "./room";
+
 export type BookingStatus =
   | "confirmed"
   | "checked-in"
@@ -14,5 +16,7 @@ export type Booking = {
   estimatedArrivalTime: string | null;
   checkOutDate: string;
   status: BookingStatus;
-  bedConfigurationId: string;
+
+  // კონკრეტულად ამ booking-ზე რა საწოლები უნდა მომზადდეს
+  selectedBeds: Bed[];
 };
