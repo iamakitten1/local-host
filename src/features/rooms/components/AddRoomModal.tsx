@@ -1,9 +1,14 @@
 import { useState } from "react";
 import type { BedConfiguration } from "../../../types/room";
+import BedConfigurationsEditor from "./BedConfigurationsEditor";
 
 type AddRoomModalProps = {
   onClose: () => void;
-  onAddRoom: (name: string, capacity: number) => void;
+  onAddRoom: (
+    name: string,
+    capacity: number,
+    bedConfigurations: BedConfiguration[],
+  ) => void;
 };
 
 const AddRoomModal = ({ onClose, onAddRoom }: AddRoomModalProps) => {
@@ -15,8 +20,9 @@ const AddRoomModal = ({ onClose, onAddRoom }: AddRoomModalProps) => {
   const [error, setError] = useState("");
 
   // Room-ის შესაძლო bed configurations
-  const [bedConfigurations, setBedConfigurations] =
-    useState<BedConfiguration[]>([]);
+  const [bedConfigurations, setBedConfigurations] = useState<
+    BedConfiguration[]
+  >([]);
 
   // ახალი configuration-ის დამატება
   const handleAddConfiguration = () => {
@@ -44,8 +50,51 @@ const AddRoomModal = ({ onClose, onAddRoom }: AddRoomModalProps) => {
         configuration.id === configurationId
           ? {
               ...configuration,
-              [field]:
-                field === "guestCapacity" ? Number(value) : value,
+              [field]: field === "guestCapacity" ? Number(value) : value,
+            }
+          : configuration,
+      ),
+    );
+  };
+
+  const handleAddBed = (configurationId: string) => {
+    setBedConfigurations((currentConfigurations) =>
+      currentConfigurations.map((configuration) =>
+        configuration.id === configurationId
+          ? {
+              ...configuration,
+              beds: [
+                ...configuration.beds,
+                {
+                  type: "single",
+                  quantity: 1,
+                },
+              ],
+            }
+          : configuration,
+      ),
+    );
+  };
+
+  const handleBedChange = (
+    configurationId: string,
+    bedIndex: number,
+    field: "type" | "quantity",
+    value: string,
+  ) => {
+    setBedConfigurations((currentConfigurations) =>
+      currentConfigurations.map((configuration) =>
+        configuration.id === configurationId
+          ? {
+              ...configuration,
+              beds: configuration.beds.map((bed, index) =>
+                index === bedIndex
+                  ? {
+                      ...bed,
+                      [field]: field === "quantity" ? Number(value) : value,
+                    }
+                  : bed,
+              ),
             }
           : configuration,
       ),
@@ -70,7 +119,7 @@ const AddRoomModal = ({ onClose, onAddRoom }: AddRoomModalProps) => {
 
     // ჯერ ისევ მხოლოდ name და capacity გადაგვაქვს parent-ში.
     // Bed configurations-ს ცოტა ქვემოთ მივაბამთ.
-    onAddRoom(roomName.trim(), Number(capacity));
+    onAddRoom(roomName.trim(), Number(capacity), bedConfigurations);
 
     onClose();
   };
@@ -89,9 +138,7 @@ const AddRoomModal = ({ onClose, onAddRoom }: AddRoomModalProps) => {
       <div className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-xl">
         {/* Modal header */}
         <div className="flex items-center justify-between border-b border-gray-200 p-5">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Add Room
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900">Add Room</h2>
 
           <button
             type="button"
@@ -146,86 +193,17 @@ const AddRoomModal = ({ onClose, onAddRoom }: AddRoomModalProps) => {
 
             {/* Validation error */}
             {error && (
-              <p className="text-sm font-medium text-red-600">
-                {error}
-              </p>
+              <p className="text-sm font-medium text-red-600">{error}</p>
             )}
 
             {/* Bed configurations */}
-            <div className="border-t border-gray-200 pt-4">
-              {/* Section header */}
-              <div className="flex items-center justify-between gap-4">
-                <h3 className="text-sm font-semibold text-gray-900">
-                  Bed configurations
-                </h3>
-
-                <button
-                  type="button"
-                  onClick={handleAddConfiguration}
-                  className="cursor-pointer text-sm font-semibold text-gray-700 hover:text-gray-900"
-                >
-                  + Add configuration
-                </button>
-              </div>
-
-              {/* Configuration list */}
-              <div className="mt-3 space-y-3">
-                {bedConfigurations.map((configuration) => (
-                  <div
-                    key={configuration.id}
-                    className="rounded-lg border border-gray-200 bg-gray-50 p-3"
-                  >
-                    <div className="space-y-3">
-                      {/* Configuration name */}
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-600">
-                          Configuration name
-                        </label>
-
-                        <input
-                          type="text"
-                          value={configuration.name}
-                          onChange={(event) =>
-                            handleConfigurationChange(
-                              configuration.id,
-                              "name",
-                              event.target.value,
-                            )
-                          }
-                          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-500"
-                        />
-                      </div>
-
-                      {/* Guest capacity */}
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-600">
-                          Guest capacity
-                        </label>
-
-                        <input
-                          type="number"
-                          min="1"
-                          value={configuration.guestCapacity}
-                          onChange={(event) =>
-                            handleConfigurationChange(
-                              configuration.id,
-                              "guestCapacity",
-                              event.target.value,
-                            )
-                          }
-                          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-500"
-                        />
-                      </div>
-
-                      {/* ჯერ beds-ის რაოდენობას მხოლოდ ვაჩვენებთ */}
-                      <p className="text-sm text-gray-500">
-                        Beds: {configuration.beds.length}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <BedConfigurationsEditor
+              configurations={bedConfigurations}
+              onAddConfiguration={handleAddConfiguration}
+              onConfigurationChange={handleConfigurationChange}
+              onAddBed={handleAddBed}
+              onBedChange={handleBedChange}
+            />
           </div>
 
           {/* Footer */}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { rooms } from "../data/rooms";
 import RoomCard from "../features/rooms/components/RoomCard";
 import AddRoomModal from "../features/rooms/components/AddRoomModal";
-import type { Room } from "../types/room";
+import type { BedConfiguration, Room } from "../types/room";
 import EditRoomModal from "../features/rooms/components/EditRoomModal";
 
 const RoomsPage = () => {
@@ -13,13 +13,17 @@ const RoomsPage = () => {
   const [roomList, setRoomList] = useState(rooms);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
 
-  const handleAddRoom = (name: string, capacity: number) => {
+  const handleAddRoom = (
+    name: string,
+    capacity: number,
+    bedConfigurations: BedConfiguration[],
+  ) => {
     const newRoom = {
       id: `room-${Date.now()}`,
       propertyId: "property-1",
       name,
       capacity,
-      bedConfigurations: [],
+      bedConfigurations,
       extraBeds: [],
     };
 
@@ -31,7 +35,7 @@ const RoomsPage = () => {
       currentRooms.filter((room) => room.id !== roomId),
     );
   };
-  
+
   const handleEditRoom = (room: Room) => {
     setEditingRoom(room);
   };
