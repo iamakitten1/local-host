@@ -2,7 +2,7 @@ import { useState } from "react";
 import { rooms } from "../data/rooms";
 import RoomCard from "../features/rooms/components/RoomCard";
 import AddRoomModal from "../features/rooms/components/AddRoomModal";
-import type { BedConfiguration, Room } from "../types/room";
+import type { Bed, Room } from "../types/room";
 import EditRoomModal from "../features/rooms/components/EditRoomModal";
 
 const RoomsPage = () => {
@@ -11,23 +11,27 @@ const RoomsPage = () => {
 
   // ამჟამად რომელი rooms ჩანს UI-ში
   const [roomList, setRoomList] = useState(rooms);
+
+  // რომელი Room არის ახლა Edit რეჟიმში
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
 
   const handleAddRoom = (
     name: string,
     capacity: number,
-    bedConfigurations: BedConfiguration[],
+    availableBeds: Bed[],
   ) => {
-    const newRoom = {
+    const newRoom: Room = {
       id: `room-${Date.now()}`,
       propertyId: "property-1",
       name,
       capacity,
-      bedConfigurations,
-      extraBeds: [],
+      availableBeds,
     };
 
-    setRoomList([...roomList, newRoom]);
+    setRoomList((currentRooms) => [
+      ...currentRooms,
+      newRoom,
+    ]);
   };
 
   const handleDeleteRoom = (roomId: string) => {
@@ -40,10 +44,20 @@ const RoomsPage = () => {
     setEditingRoom(room);
   };
 
-  const handleSaveRoom = (roomId: string, name: string, capacity: number) => {
+  const handleSaveRoom = (
+    roomId: string,
+    name: string,
+    capacity: number,
+  ) => {
     setRoomList((currentRooms) =>
       currentRooms.map((room) =>
-        room.id === roomId ? { ...room, name, capacity } : room,
+        room.id === roomId
+          ? {
+              ...room,
+              name,
+              capacity,
+            }
+          : room,
       ),
     );
   };
@@ -57,7 +71,7 @@ const RoomsPage = () => {
           </h1>
 
           <p className="mt-1 text-sm text-gray-500">
-            Manage your rooms and bed configurations
+            Manage your rooms and available beds
           </p>
         </div>
 
@@ -80,12 +94,14 @@ const RoomsPage = () => {
           />
         ))}
       </div>
+
       {isAddRoomOpen && (
         <AddRoomModal
           onClose={() => setIsAddRoomOpen(false)}
           onAddRoom={handleAddRoom}
         />
       )}
+
       {editingRoom && (
         <EditRoomModal
           room={editingRoom}
