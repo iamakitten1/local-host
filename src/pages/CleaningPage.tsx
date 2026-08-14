@@ -1,63 +1,152 @@
 import { useState } from "react";
 import { cleaningTasks } from "../data/cleaningTasks";
-import type {
-  CleaningStatus,
-  CleaningTask,
-} from "../types/cleaning";
 import CleaningTaskCard from "../features/cleaning/components/CleaningTaskCard";
+import type { CleaningStatus, CleaningTask } from "../types/cleaning";
+import AddCleaningTaskModal from "../features/cleaning/components/AddCleaningTaskModal";
+import EditCleaningTaskModal from "../features/cleaning/components/EditCleaningTaskModal";
+
+type CleaningFilter = "today" | "upcoming" | "completed";
 
 const CleaningPage = () => {
-  const [taskList, setTaskList] =
-    useState<CleaningTask[]>(cleaningTasks);
+  const [taskList, setTaskList] = useState<CleaningTask[]>(cleaningTasks);
 
-  const handleStatusChange = (
-    taskId: string,
-    status: CleaningStatus,
-  ) => {
+  const [filter, setFilter] = useState<CleaningFilter>("today");
+
+  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
+
+  const [editingTask, setEditingTask] = useState<CleaningTask | null>(null);
+
+  const today = "2026-07-22";
+
+  const handleStatusChange = (taskId: string, status: CleaningStatus) => {
     setTaskList((currentTasks) =>
       currentTasks.map((task) =>
-        task.id === taskId
-          ? { ...task, status }
-          : task,
+        task.id === taskId ? { ...task, status } : task,
       ),
     );
   };
 
-  const handleStaffChange = (
-    taskId: string,
-    staffId: string | null,
-  ) => {
+  const handleStaffChange = (taskId: string, staffId: string | null) => {
     setTaskList((currentTasks) =>
       currentTasks.map((task) =>
-        task.id === taskId
-          ? { ...task, assignedStaffId: staffId }
-          : task,
+        task.id === taskId ? { ...task, assignedStaffId: staffId } : task,
       ),
     );
   };
+
+  const handleAddTask = (task: CleaningTask) => {
+    setTaskList((currentTasks) => [...currentTasks, task]);
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    setTaskList((currentTasks) =>
+      currentTasks.filter((task) => task.id !== taskId),
+    );
+  };
+
+  const handleSaveTask = (updatedTask: CleaningTask) => {
+    setTaskList((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === updatedTask.id ? updatedTask : task,
+      ),
+    );
+  };
+
+  const filteredTasks = taskList.filter((task) => {
+    if (filter === "completed") {
+      return task.status === "completed";
+    }
+
+    if (filter === "today") {
+      return task.scheduledDate === today && task.status !== "completed";
+    }
+
+    return task.scheduledDate > today && task.status !== "completed";
+  });
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Cleaning
-        </h1>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Cleaning</h1>
 
-        <p className="mt-1 text-sm text-gray-500">
-          Manage room cleaning tasks
-        </p>
+          <p className="mt-1 text-sm text-gray-500">
+            Manage room cleaning tasks
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsAddTaskOpen(true)}
+          className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+        >
+          + Add Task
+        </button>
+      </div>
+
+      <div className="mb-6 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setFilter("today")}
+          className={`rounded-lg px-4 py-2 text-sm font-medium ${
+            filter === "today"
+              ? "bg-gray-900 text-white"
+              : "bg-white text-gray-600"
+          }`}
+        >
+          Today
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setFilter("upcoming")}
+          className={`rounded-lg px-4 py-2 text-sm font-medium ${
+            filter === "upcoming"
+              ? "bg-gray-900 text-white"
+              : "bg-white text-gray-600"
+          }`}
+        >
+          Upcoming
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setFilter("completed")}
+          className={`rounded-lg px-4 py-2 text-sm font-medium ${
+            filter === "completed"
+              ? "bg-gray-900 text-white"
+              : "bg-white text-gray-600"
+          }`}
+        >
+          Completed
+        </button>
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        {taskList.map((task) => (
+        {filteredTasks.map((task) => (
           <CleaningTaskCard
             key={task.id}
             task={task}
             onStatusChange={handleStatusChange}
             onStaffChange={handleStaffChange}
+            onDelete={handleDeleteTask}
+            onEdit={setEditingTask}
           />
         ))}
       </div>
+      {isAddTaskOpen && (
+        <AddCleaningTaskModal
+          onClose={() => setIsAddTaskOpen(false)}
+          onAddTask={handleAddTask}
+        />
+      )}
+      {editingTask && (
+        <EditCleaningTaskModal
+          task={editingTask}
+          onClose={() => setEditingTask(null)}
+          onSave={handleSaveTask}
+        />
+      )}
     </div>
   );
 };

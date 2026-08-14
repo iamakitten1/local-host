@@ -2,37 +2,30 @@ import { rooms } from "../../../data/rooms";
 import { bookings } from "../../../data/bookings";
 import { staff } from "../../../data/staff";
 import CleaningStatusBadge from "./CleaningStatusBadge";
-import type {
-  CleaningStatus,
-  CleaningTask,
-} from "../../../types/cleaning";
+import type { CleaningStatus, CleaningTask } from "../../../types/cleaning";
 
 type CleaningTaskCardProps = {
   task: CleaningTask;
 
-  onStatusChange: (
-    taskId: string,
-    status: CleaningStatus,
-  ) => void;
+  onStatusChange: (taskId: string, status: CleaningStatus) => void;
 
-  onStaffChange: (
-    taskId: string,
-    staffId: string | null,
-  ) => void;
+  onStaffChange: (taskId: string, staffId: string | null) => void;
+
+  onDelete: (taskId: string) => void;
+
+  onEdit: (task: CleaningTask) => void;
 };
 
 const CleaningTaskCard = ({
   task,
   onStatusChange,
   onStaffChange,
+  onDelete,
+  onEdit,
 }: CleaningTaskCardProps) => {
-  const room = rooms.find(
-    (room) => room.id === task.roomId,
-  );
+  const room = rooms.find((room) => room.id === task.roomId);
 
-  const booking = bookings.find(
-    (booking) => booking.id === task.bookingId,
-  );
+  const booking = bookings.find((booking) => booking.id === task.bookingId);
 
   return (
     <article className="min-w-0 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
@@ -43,9 +36,7 @@ const CleaningTaskCard = ({
             {room?.name ?? "Unknown room"}
           </h2>
 
-          <p className="mt-1 text-sm text-gray-500">
-            {task.scheduledDate}
-          </p>
+          <p className="mt-1 text-sm text-gray-500">{task.scheduledDate}</p>
         </div>
 
         <CleaningStatusBadge status={task.status} />
@@ -59,9 +50,7 @@ const CleaningTaskCard = ({
               Prepare for{" "}
               <span className="font-medium text-gray-900">
                 {booking.guestCount}{" "}
-                {booking.guestCount === 1
-                  ? "guest"
-                  : "guests"}
+                {booking.guestCount === 1 ? "guest" : "guests"}
               </span>
             </p>
 
@@ -70,19 +59,14 @@ const CleaningTaskCard = ({
               <span className="font-medium text-gray-900">
                 {booking.selectedBeds.length > 0
                   ? booking.selectedBeds
-                      .map(
-                        (bed) =>
-                          `${bed.quantity} ${bed.type}`,
-                      )
+                      .map((bed) => `${bed.quantity} ${bed.type}`)
                       .join(" + ")
                   : "Not selected"}
               </span>
             </p>
           </>
         ) : (
-          <p className="text-gray-500">
-            No booking linked
-          </p>
+          <p className="text-gray-500">No booking linked</p>
         )}
       </div>
 
@@ -97,26 +81,17 @@ const CleaningTaskCard = ({
           <select
             value={task.assignedStaffId ?? ""}
             onChange={(event) =>
-              onStaffChange(
-                task.id,
-                event.target.value || null,
-              )
+              onStaffChange(task.id, event.target.value || null)
             }
             className="h-10 w-full min-w-0 rounded-md border border-gray-300 bg-white px-3 text-sm outline-none focus:border-gray-500"
           >
             <option value="">Unassigned</option>
 
             {staff
-              .filter(
-                (member) => member.role === "staff",
-              )
+              .filter((member) => member.role === "staff")
               .map((member) => (
-                <option
-                  key={member.id}
-                  value={member.id}
-                >
-                  {member.firstName}{" "}
-                  {member.lastName}
+                <option key={member.id} value={member.id}>
+                  {member.firstName} {member.lastName}
                 </option>
               ))}
           </select>
@@ -131,26 +106,39 @@ const CleaningTaskCard = ({
           <select
             value={task.status}
             onChange={(event) =>
-              onStatusChange(
-                task.id,
-                event.target.value as CleaningStatus,
-              )
+              onStatusChange(task.id, event.target.value as CleaningStatus)
             }
             className="h-10 w-full min-w-0 rounded-md border border-gray-300 bg-white px-3 text-sm outline-none focus:border-gray-500"
           >
-            <option value="pending">
-              Pending
-            </option>
+            <option value="pending">Pending</option>
 
-            <option value="in-progress">
-              In progress
-            </option>
+            <option value="in-progress">In progress</option>
 
-            <option value="completed">
-              Completed
-            </option>
+            <option value="completed">Completed</option>
           </select>
         </div>
+      </div>
+      <div className="mt-4 flex justify-end gap-2 border-t border-gray-200 pt-4">
+        <button
+          type="button"
+          onClick={() => onEdit(task)}
+          className="cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+        >
+          Edit
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const shouldDelete = window.confirm("Delete this cleaning task?");
+
+            if (shouldDelete) {
+              onDelete(task.id);
+            }
+          }}
+          className="cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+        >
+          Delete
+        </button>
       </div>
     </article>
   );
