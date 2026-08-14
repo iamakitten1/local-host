@@ -10,7 +10,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="hidden min-h-screen w-64 border-r border-gray-200 bg-white lg:block">
+    <aside className="hidden min-h-screen w-64 shrink-0 border-r border-gray-200 bg-white xl:block">
       <div className="p-6">
         <h1 className="text-2xl font-bold">LocalHost</h1>
       </div>
