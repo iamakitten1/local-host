@@ -8,6 +8,7 @@ export const staff: Staff[] = [
     lastName: "Kostanashvili",
     email: "maia@example.com",
     role: "owner",
+    isActive: true,
   },
   {
     id: "staff-2",
@@ -16,6 +17,7 @@ export const staff: Staff[] = [
     lastName: "QarTlelishvili",
     email: "davide@example.com",
     role: "staff",
+    isActive: true,
   },
   {
     id: "staff-3",
@@ -24,6 +26,7 @@ export const staff: Staff[] = [
     lastName: "Quispe",
     email: "angela@example.com",
     role: "staff",
+    isActive: true,
   },
   {
     id: "staff-4",
@@ -32,5 +35,6 @@ export const staff: Staff[] = [
     lastName: "Makharashvili",
     email: "iza@example.com",
     role: "staff",
+    isActive: true,
   },
 ];
