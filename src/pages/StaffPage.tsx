@@ -2,7 +2,7 @@ import { useState } from "react";
 import { staff } from "../data/staff";
 import StaffCard from "../features/staff/components/StaffCard";
 import type { Staff } from "../types/staff";
-import AddStaffModal from "../features/staff/components/AddStaffModal";
+import StaffFormModal from "../features/staff/components/StaffFormModal";
 import { workTasks } from "../data/workTasks";
 import ScheduleTaskCard from "../features/staff/components/ScheduleTaskCard";
 
@@ -12,9 +12,22 @@ const StaffPage = () => {
   const [activeTab, setActiveTab] = useState<StaffTab>("team");
   const [staffList, setStaffList] = useState<Staff[]>(staff);
   const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
+  const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
 
-  const handleAddStaff = (member: Staff) => {
-    setStaffList((currentStaff) => [...currentStaff, member]);
+  const handleSaveStaff = (member: Staff) => {
+    setStaffList((currentStaff) => {
+      const staffExists = currentStaff.some(
+        (currentMember) => currentMember.id === member.id,
+      );
+
+      if (staffExists) {
+        return currentStaff.map((currentMember) =>
+          currentMember.id === member.id ? member : currentMember,
+        );
+      }
+
+      return [...currentStaff, member];
+    });
   };
 
   const tasksByDate = workTasks.reduce<Record<string, typeof workTasks>>(
@@ -98,7 +111,11 @@ const StaffPage = () => {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {staffList.map((member) => (
-              <StaffCard key={member.id} member={member} />
+              <StaffCard
+                key={member.id}
+                member={member}
+                onEdit={setSelectedStaff}
+              />
             ))}
           </div>
         </div>
@@ -145,9 +162,17 @@ const StaffPage = () => {
       )}
 
       {isAddStaffOpen && (
-        <AddStaffModal
+        <StaffFormModal
           onClose={() => setIsAddStaffOpen(false)}
-          onAddStaff={handleAddStaff}
+          onSubmit={handleSaveStaff}
+        />
+      )}
+
+      {selectedStaff && (
+        <StaffFormModal
+          member={selectedStaff}
+          onClose={() => setSelectedStaff(null)}
+          onSubmit={handleSaveStaff}
         />
       )}
     </div>

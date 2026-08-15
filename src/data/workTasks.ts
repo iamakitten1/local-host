@@ -12,6 +12,9 @@ export const workTasks: WorkTask[] = [
     assignedStaffIds: ["staff-3"],
     roomId: "room-blue",
     status: "pending",
+    priority: "normal",
+    createdByStaffId: "staff-1",
+    createdAt: "2026-08-16T09:00:00",
   },
   {
     id: "task-2",
@@ -24,6 +27,9 @@ export const workTasks: WorkTask[] = [
     assignedStaffIds: ["staff-4"],
     area: "garden",
     status: "pending",
+    priority: "important",
+    createdByStaffId: "staff-1",
+    createdAt: "2026-08-16T09:10:00",
   },
   {
     id: "task-3",
@@ -36,6 +42,9 @@ export const workTasks: WorkTask[] = [
     assignedStaffIds: ["staff-2"],
     area: "garden",
     status: "pending",
+    priority: "normal",
+    createdByStaffId: "staff-1",
+    createdAt: "2026-08-16T09:15:00",
   },
   {
     id: "task-4",
@@ -48,6 +57,9 @@ export const workTasks: WorkTask[] = [
     assignedStaffIds: ["staff-3", "staff-4"],
     area: "garden",
     status: "pending",
+    priority: "normal",
+    createdByStaffId: "staff-1",
+    createdAt: "2026-08-16T09:20:00",
   },
   {
     id: "task-5",
@@ -60,5 +72,8 @@ export const workTasks: WorkTask[] = [
     assignedStaffIds: ["staff-3"],
     area: "common-areas",
     status: "pending",
+    priority: "normal",
+    createdByStaffId: "staff-1",
+    createdAt: "2026-08-16T09:30:00",
   },
 ];

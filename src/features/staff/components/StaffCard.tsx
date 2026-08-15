@@ -2,9 +2,10 @@ import type { Staff } from "../../../types/staff";
 
 type StaffCardProps = {
   member: Staff;
+  onEdit: (member: Staff) => void;
 };
 
-const StaffCard = ({ member }: StaffCardProps) => {
+const StaffCard = ({ member, onEdit }: StaffCardProps) => {
   return (
     <article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -24,21 +25,28 @@ const StaffCard = ({ member }: StaffCardProps) => {
           )}
         </div>
 
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex items-center gap-2">
+          <span
+            className={`h-2.5 w-2.5 rounded-full ${
+              member.isActive ? "bg-green-500" : "bg-gray-300"
+            }`}
+            aria-label={member.isActive ? "Active" : "Inactive"}
+          />
+
           <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold capitalize text-gray-700">
             {member.role}
           </span>
-
-          <span
-            className={`text-xs font-medium ${
-              member.isActive
-                ? "text-green-600"
-                : "text-gray-400"
-            }`}
-          >
-            {member.isActive ? "Active" : "Inactive"}
-          </span>
         </div>
+      </div>
+
+      <div className="mt-4 border-t border-gray-100 pt-4">
+        <button
+          type="button"
+          onClick={() => onEdit(member)}
+          className="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900"
+        >
+          Edit
+        </button>
       </div>
     </article>
   );

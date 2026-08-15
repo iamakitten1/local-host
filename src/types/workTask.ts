@@ -13,6 +13,11 @@ export type WorkTaskStatus =
   | "completed"
   | "cancelled";
 
+export type WorkTaskPriority =
+  | "normal"
+  | "important"
+  | "urgent";
+
 export type WorkTask = {
   id: string;
   propertyId: string;
@@ -33,4 +38,11 @@ export type WorkTask = {
   area?: string;
 
   status: WorkTaskStatus;
+  priority: WorkTaskPriority;
+
+  createdByStaffId: string;
+  createdAt: string;
+
+  completedAt?: string;
+  completedByStaffId?: string;
 };

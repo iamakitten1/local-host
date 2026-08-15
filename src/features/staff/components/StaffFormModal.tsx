@@ -2,25 +2,24 @@ import { useState } from "react";
 import Modal from "../../../components/ui/Modal";
 import type { Staff, StaffRole } from "../../../types/staff";
 
-type AddStaffModalProps = {
+type StaffFormModalProps = {
+  member?: Staff;
   onClose: () => void;
-  onAddStaff: (member: Staff) => void;
+  onSubmit: (member: Staff) => void;
 };
 
-const AddStaffModal = ({
-  onClose,
-  onAddStaff,
-}: AddStaffModalProps) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [role, setRole] = useState<StaffRole>("staff");
+const StaffFormModal = ({ member, onClose, onSubmit }: StaffFormModalProps) => {
+  const isEditing = Boolean(member);
+
+  const [firstName, setFirstName] = useState(member?.firstName ?? "");
+  const [lastName, setLastName] = useState(member?.lastName ?? "");
+  const [email, setEmail] = useState(member?.email ?? "");
+  const [phone, setPhone] = useState(member?.phone ?? "");
+  const [role, setRole] = useState<StaffRole>(member?.role ?? "staff");
+  const [isActive, setIsActive] = useState(member?.isActive ?? true);
   const [error, setError] = useState("");
 
-  const handleSubmit = (
-    event: React.SubmitEvent<HTMLFormElement>,
-  ) => {
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!firstName.trim() || !lastName.trim() || !email.trim()) {
@@ -28,29 +27,28 @@ const AddStaffModal = ({
       return;
     }
 
-    const newStaffMember: Staff = {
-      id: `staff-${Date.now()}`,
-      propertyId: "property-1",
+    const staffMember: Staff = {
+      id: member?.id ?? `staff-${Date.now()}`,
+      propertyId: member?.propertyId ?? "property-1",
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       email: email.trim(),
       phone: phone.trim() || undefined,
       role,
-      isActive: true,
+      isActive: role === "owner" ? true : isActive,
     };
 
-    onAddStaff(newStaffMember);
+    onSubmit(staffMember);
     onClose();
   };
 
   return (
-    <Modal title="Add Staff Member" onClose={onClose}>
+    <Modal
+      title={isEditing ? "Edit Staff Member" : "Add Staff Member"}
+      onClose={onClose}
+    >
       <form onSubmit={handleSubmit} className="space-y-4 p-5">
-        {error && (
-          <p className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">
@@ -111,9 +109,7 @@ const AddStaffModal = ({
 
           <select
             value={role}
-            onChange={(event) =>
-              setRole(event.target.value as StaffRole)
-            }
+            onChange={(event) => setRole(event.target.value as StaffRole)}
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
           >
             <option value="staff">Staff</option>
@@ -121,6 +117,23 @@ const AddStaffModal = ({
             <option value="owner">Owner</option>
           </select>
         </div>
+
+        {isEditing && role !== "owner" && (
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              Status
+            </label>
+
+            <select
+              value={isActive ? "active" : "inactive"}
+              onChange={(event) => setIsActive(event.target.value === "active")}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2"
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        )}
 
         <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
           <button
@@ -135,7 +148,7 @@ const AddStaffModal = ({
             type="submit"
             className="cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white"
           >
-            Add Staff
+            {isEditing ? "Save Changes" : "Add Staff"}
           </button>
         </div>
       </form>
@@ -143,4 +156,4 @@ const AddStaffModal = ({
   );
 };
 
-export default AddStaffModal;
+export default StaffFormModal;
