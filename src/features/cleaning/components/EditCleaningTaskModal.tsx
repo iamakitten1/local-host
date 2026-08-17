@@ -4,14 +4,14 @@ import { rooms } from "../../../data/rooms";
 import { bookings } from "../../../data/bookings";
 import { staff } from "../../../data/staff";
 import type {
-  CleaningStatus,
-  CleaningTask,
-} from "../../../types/cleaning";
+  WorkTask,
+  WorkTaskStatus,
+} from "../../../types/workTask";
 
 type EditCleaningTaskModalProps = {
-  task: CleaningTask;
+  task: WorkTask;
   onClose: () => void;
-  onSave: (task: CleaningTask) => void;
+  onSave: (task: WorkTask) => void;
 };
 
 const EditCleaningTaskModal = ({
@@ -19,11 +19,17 @@ const EditCleaningTaskModal = ({
   onClose,
   onSave,
 }: EditCleaningTaskModalProps) => {
-  const [roomId, setRoomId] = useState(task.roomId);
+  const [roomId, setRoomId] = useState(task.roomId ?? "");
   const [bookingId, setBookingId] = useState(task.bookingId ?? "");
-  const [staffId, setStaffId] = useState(task.assignedStaffId ?? "");
-  const [scheduledDate, setScheduledDate] = useState(task.scheduledDate);
-  const [status, setStatus] = useState<CleaningStatus>(task.status);
+  const [staffId, setStaffId] = useState(
+    task.assignedStaffIds[0] ?? "",
+  );
+  const [scheduledDate, setScheduledDate] = useState(task.date);
+  const [status, setStatus] =
+    useState<WorkTaskStatus>(task.status);
+  const [instructions, setInstructions] = useState(
+    task.instructions ?? "",
+  );
   const [error, setError] = useState("");
 
   const handleSubmit = (
@@ -36,12 +42,24 @@ const EditCleaningTaskModal = ({
       return;
     }
 
-    const updatedTask: CleaningTask = {
+    const room = rooms.find((room) => room.id === roomId);
+
+    const updatedTask: WorkTask = {
       ...task,
+
+      title: room
+        ? `Clean ${room.name}`
+        : "Clean room",
+
       roomId,
-      bookingId: bookingId || null,
-      assignedStaffId: staffId || null,
-      scheduledDate,
+      bookingId: bookingId || undefined,
+
+      assignedStaffIds: staffId ? [staffId] : [],
+
+      date: scheduledDate,
+
+      instructions: instructions.trim() || undefined,
+
       status,
     };
 
@@ -65,11 +83,18 @@ const EditCleaningTaskModal = ({
 
           <select
             value={roomId}
-            onChange={(event) => setRoomId(event.target.value)}
+            onChange={(event) =>
+              setRoomId(event.target.value)
+            }
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
           >
+            <option value="">Select room</option>
+
             {rooms.map((room) => (
-              <option key={room.id} value={room.id}>
+              <option
+                key={room.id}
+                value={room.id}
+              >
                 {room.name}
               </option>
             ))}
@@ -83,13 +108,20 @@ const EditCleaningTaskModal = ({
 
           <select
             value={bookingId}
-            onChange={(event) => setBookingId(event.target.value)}
+            onChange={(event) =>
+              setBookingId(event.target.value)
+            }
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
           >
-            <option value="">No linked booking</option>
+            <option value="">
+              No linked booking
+            </option>
 
             {bookings.map((booking) => (
-              <option key={booking.id} value={booking.id}>
+              <option
+                key={booking.id}
+                value={booking.id}
+              >
                 {booking.guestName}
               </option>
             ))}
@@ -103,16 +135,26 @@ const EditCleaningTaskModal = ({
 
           <select
             value={staffId}
-            onChange={(event) => setStaffId(event.target.value)}
+            onChange={(event) =>
+              setStaffId(event.target.value)
+            }
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
           >
             <option value="">Unassigned</option>
 
             {staff
-              .filter((member) => member.role === "staff")
+              .filter(
+                (member) =>
+                  member.role === "staff" &&
+                  member.isActive,
+              )
               .map((member) => (
-                <option key={member.id} value={member.id}>
-                  {member.firstName} {member.lastName}
+                <option
+                  key={member.id}
+                  value={member.id}
+                >
+                  {member.firstName}{" "}
+                  {member.lastName}
                 </option>
               ))}
           </select>
@@ -126,8 +168,26 @@ const EditCleaningTaskModal = ({
           <input
             type="date"
             value={scheduledDate}
-            onChange={(event) => setScheduledDate(event.target.value)}
+            onChange={(event) =>
+              setScheduledDate(event.target.value)
+            }
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            Instructions
+          </label>
+
+          <textarea
+            value={instructions}
+            onChange={(event) =>
+              setInstructions(event.target.value)
+            }
+            rows={3}
+            placeholder="Optional cleaning instructions..."
+            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2"
           />
         </div>
 
@@ -139,13 +199,27 @@ const EditCleaningTaskModal = ({
           <select
             value={status}
             onChange={(event) =>
-              setStatus(event.target.value as CleaningStatus)
+              setStatus(
+                event.target.value as WorkTaskStatus,
+              )
             }
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
           >
-            <option value="pending">Pending</option>
-            <option value="in-progress">In progress</option>
-            <option value="completed">Completed</option>
+            <option value="pending">
+              Pending
+            </option>
+
+            <option value="in-progress">
+              In progress
+            </option>
+
+            <option value="completed">
+              Completed
+            </option>
+
+            <option value="cancelled">
+              Cancelled
+            </option>
           </select>
         </div>
 

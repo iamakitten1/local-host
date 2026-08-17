@@ -4,13 +4,13 @@ import { rooms } from "../../../data/rooms";
 import { bookings } from "../../../data/bookings";
 import { staff } from "../../../data/staff";
 import type {
-  CleaningStatus,
-  CleaningTask,
-} from "../../../types/cleaning";
+  WorkTask,
+  WorkTaskStatus,
+} from "../../../types/workTask";
 
 type AddCleaningTaskModalProps = {
   onClose: () => void;
-  onAddTask: (task: CleaningTask) => void;
+  onAddTask: (task: WorkTask) => void;
 };
 
 const AddCleaningTaskModal = ({
@@ -22,7 +22,8 @@ const AddCleaningTaskModal = ({
   const [staffId, setStaffId] = useState("");
   const [scheduledDate, setScheduledDate] = useState("");
   const [status, setStatus] =
-    useState<CleaningStatus>("pending");
+    useState<WorkTaskStatus>("pending");
+  const [instructions, setInstructions] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = (
@@ -35,14 +36,32 @@ const AddCleaningTaskModal = ({
       return;
     }
 
-    const newTask: CleaningTask = {
-      id: `cleaning-${Date.now()}`,
+    const room = rooms.find((room) => room.id === roomId);
+
+    const newTask: WorkTask = {
+      id: `task-${Date.now()}`,
       propertyId: "property-1",
+
+      type: "room-cleaning",
+
+      title: room
+        ? `Clean ${room.name}`
+        : "Clean room",
+
+      instructions: instructions.trim() || undefined,
+
+      date: scheduledDate,
+
+      assignedStaffIds: staffId ? [staffId] : [],
+
       roomId,
-      bookingId: bookingId || null,
-      assignedStaffId: staffId || null,
-      scheduledDate,
+      bookingId: bookingId || undefined,
+
       status,
+      priority: "normal",
+
+      createdByStaffId: "staff-1",
+      createdAt: new Date().toISOString(),
     };
 
     onAddTask(newTask);
@@ -126,7 +145,9 @@ const AddCleaningTaskModal = ({
 
             {staff
               .filter(
-                (member) => member.role === "staff",
+                (member) =>
+                  member.role === "staff" &&
+                  member.isActive,
               )
               .map((member) => (
                 <option
@@ -157,6 +178,22 @@ const AddCleaningTaskModal = ({
 
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            Instructions
+          </label>
+
+          <textarea
+            value={instructions}
+            onChange={(event) =>
+              setInstructions(event.target.value)
+            }
+            rows={3}
+            placeholder="Optional cleaning instructions..."
+            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700">
             Status
           </label>
 
@@ -164,7 +201,7 @@ const AddCleaningTaskModal = ({
             value={status}
             onChange={(event) =>
               setStatus(
-                event.target.value as CleaningStatus,
+                event.target.value as WorkTaskStatus,
               )
             }
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
@@ -187,14 +224,14 @@ const AddCleaningTaskModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm"
+            className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white"
+            className="cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white"
           >
             Save Task
           </button>

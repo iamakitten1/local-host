@@ -33,6 +33,7 @@ export type WorkTask = {
   assignedStaffIds: string[];
 
   roomId?: string;
+  bookingId?: string;
   eventId?: string;
 
   area?: string;

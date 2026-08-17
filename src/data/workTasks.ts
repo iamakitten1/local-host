@@ -6,11 +6,14 @@ export const workTasks: WorkTask[] = [
     propertyId: "property-1",
     type: "room-cleaning",
     title: "Clean Room Blue",
-    instructions: "Prepare 2 single beds and check towels.",
+    instructions: "Check towels and leave extra water.",
     date: "2026-08-22",
     startTime: "11:00",
     assignedStaffIds: ["staff-3"],
+  
     roomId: "room-blue",
+    bookingId: "booking-3",
+  
     status: "pending",
     priority: "normal",
     createdByStaffId: "staff-1",
