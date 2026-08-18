@@ -1,6 +1,7 @@
 import { useState } from "react";
-import Modal from "../../../components/ui/Modal";
-import type { Staff, StaffRole } from "../../../types/staff";
+import type { Staff, StaffRole } from "../../../../types/staff";
+import Modal from "../../../../components/ui/Modal";
+
 
 type StaffFormModalProps = {
   member?: Staff;

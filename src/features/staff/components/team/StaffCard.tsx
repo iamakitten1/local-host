@@ -1,4 +1,5 @@
-import type { Staff } from "../../../types/staff";
+import type { Staff } from "../../../../types/staff";
+
 
 type StaffCardProps = {
   member: Staff;
