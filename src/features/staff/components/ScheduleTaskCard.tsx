@@ -1,12 +1,20 @@
-import { staff } from "../../../data/staff";
+import type { Staff } from "../../../types/staff";
 import type { WorkTask } from "../../../types/workTask";
 
 type ScheduleTaskCardProps = {
   task: WorkTask;
+  staffList: Staff[];
+  onEdit: (task: WorkTask) => void;
+  onDelete: (taskId: string) => void;
 };
 
-const ScheduleTaskCard = ({ task }: ScheduleTaskCardProps) => {
-  const assignedStaff = staff.filter((member) =>
+const ScheduleTaskCard = ({
+  task,
+  staffList,
+  onEdit,
+  onDelete,
+}: ScheduleTaskCardProps) => {
+  const assignedStaff = staffList.filter((member) =>
     task.assignedStaffIds.includes(member.id),
   );
 
@@ -61,6 +69,24 @@ const ScheduleTaskCard = ({ task }: ScheduleTaskCardProps) => {
                 .join(", ")
             : "Unassigned"}
         </p>
+      </div>
+
+      <div className="mt-4 flex justify-end gap-2 border-t border-gray-200 pt-4">
+        <button
+          type="button"
+          onClick={() => onEdit(task)}
+          className="cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+        >
+          Edit
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onDelete(task.id)}
+          className="cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+        >
+          Delete
+        </button>
       </div>
     </article>
   );

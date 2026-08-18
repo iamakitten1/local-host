@@ -1,27 +1,27 @@
 import { useState } from "react";
 import Modal from "../../../../components/ui/Modal";
-import { staff } from "../../../../data/staff";
-
 import type {
   WorkTask,
   WorkTaskPriority,
   WorkTaskStatus,
   WorkTaskType,
 } from "../../../../types/workTask";
-
 import TaskBasics from "./TaskBasics";
 import TaskDetails from "./TaskDetails";
 import TaskAssignees from "./TaskAssignees";
 import TaskStatus from "./TaskStatus";
+import type { Staff } from "../../../../types/staff";
 
 type WorkTaskFormModalProps = {
   task?: WorkTask;
+  staffList: Staff[];
   onClose: () => void;
   onSubmit: (task: WorkTask) => void;
 };
 
 const WorkTaskFormModal = ({
   task,
+  staffList,
   onClose,
   onSubmit,
 }: WorkTaskFormModalProps) => {
@@ -77,6 +77,7 @@ const WorkTaskFormModal = ({
       assignedStaffIds,
 
       roomId: task?.roomId,
+      bookingId: task?.bookingId,
       eventId: task?.eventId,
 
       area: area.trim() || undefined,
@@ -126,7 +127,7 @@ const WorkTaskFormModal = ({
         />
 
         <TaskAssignees
-          staffList={staff}
+          staffList={staffList}
           assignedStaffIds={assignedStaffIds}
           onChange={setAssignedStaffIds}
         />
