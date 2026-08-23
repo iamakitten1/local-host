@@ -1,8 +1,6 @@
 export type WorkTaskType =
   | "room-cleaning"
   | "property-cleaning"
-  | "event-setup"
-  | "event-work"
   | "event-cleaning"
   | "maintenance"
   | "other";
@@ -29,8 +27,6 @@ export type WorkTask = {
 
   date: string;
   startTime?: string;
-
-  assignedStaffIds: string[];
 
   roomId?: string;
   bookingId?: string;

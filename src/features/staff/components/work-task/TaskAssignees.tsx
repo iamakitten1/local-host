@@ -1,30 +1,63 @@
 import type { Staff } from "../../../../types/staff";
+import type { WorkTaskType } from "../../../../types/workTask";
 
 type TaskAssigneesProps = {
   staffList: Staff[];
-  assignedStaffIds: string[];
+  taskType: WorkTaskType;
+  selectedStaffIds: string[];
   onChange: (staffIds: string[]) => void;
 };
 
 const TaskAssignees = ({
   staffList,
-  assignedStaffIds,
+  taskType,
+  selectedStaffIds,
   onChange,
 }: TaskAssigneesProps) => {
   const handleToggle = (staffId: string) => {
-    const isAssigned = assignedStaffIds.includes(staffId);
+    const isSelected =
+      selectedStaffIds.includes(staffId);
 
-    if (isAssigned) {
+    if (isSelected) {
       onChange(
-        assignedStaffIds.filter((id) => id !== staffId),
+        selectedStaffIds.filter(
+          (id) => id !== staffId,
+        ),
       );
+
       return;
     }
 
-    onChange([...assignedStaffIds, staffId]);
+    onChange([
+      ...selectedStaffIds,
+      staffId,
+    ]);
   };
 
-  const activeStaff = staffList.filter((member) => member.isActive);
+  const isCleaningTask =
+    taskType === "room-cleaning" ||
+    taskType === "property-cleaning" ||
+    taskType === "event-cleaning";
+
+  const eligibleStaff = staffList.filter(
+    (member) => {
+      if (!member.isActive) {
+        return false;
+      }
+
+      if (member.role === "owner") {
+        return false;
+      }
+
+      if (isCleaningTask) {
+        return member.workTypes.includes(
+          "cleaning",
+        );
+      }
+
+      return true;
+    },
+  );
 
   return (
     <div>
@@ -33,8 +66,11 @@ const TaskAssignees = ({
       </p>
 
       <div className="space-y-2 rounded-lg border border-gray-200 p-3">
-        {activeStaff.map((member) => {
-          const isAssigned = assignedStaffIds.includes(member.id);
+        {eligibleStaff.map((member) => {
+          const isSelected =
+            selectedStaffIds.includes(
+              member.id,
+            );
 
           return (
             <label
@@ -43,13 +79,16 @@ const TaskAssignees = ({
             >
               <input
                 type="checkbox"
-                checked={isAssigned}
-                onChange={() => handleToggle(member.id)}
+                checked={isSelected}
+                onChange={() =>
+                  handleToggle(member.id)
+                }
                 className="h-4 w-4"
               />
 
               <span className="text-sm text-gray-800">
-                {member.firstName} {member.lastName}
+                {member.firstName}{" "}
+                {member.lastName}
               </span>
 
               <span className="ml-auto text-xs capitalize text-gray-500">
@@ -59,15 +98,16 @@ const TaskAssignees = ({
           );
         })}
 
-        {activeStaff.length === 0 && (
+        {eligibleStaff.length === 0 && (
           <p className="text-sm text-gray-500">
-            No active staff available.
+            No eligible staff available.
           </p>
         )}
       </div>
 
       <p className="mt-1 text-xs text-gray-500">
-        Leave everyone unchecked to keep the task unassigned.
+        Leave everyone unchecked to keep
+        the task unassigned.
       </p>
     </div>
   );

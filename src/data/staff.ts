@@ -2,12 +2,23 @@ import type { Staff } from "../types/staff";
 
 export const staff: Staff[] = [
   {
+    id: "staff-owner",
+    propertyId: "property-1",
+    firstName: "Owner",
+    lastName: "Account",
+    email: "owner@example.com",
+    role: "owner",
+    workTypes: [],
+    isActive: true,
+  },
+  {
     id: "staff-1",
     propertyId: "property-1",
     firstName: "Maia",
     lastName: "Kostanashvili",
     email: "maia@example.com",
-    role: "owner",
+    role: "operations",
+    workTypes: ["cleaning"],
     isActive: true,
   },
   {
@@ -17,6 +28,7 @@ export const staff: Staff[] = [
     lastName: "QarTlelishvili",
     email: "davide@example.com",
     role: "staff",
+    workTypes: ["event"],
     isActive: true,
   },
   {
@@ -26,6 +38,7 @@ export const staff: Staff[] = [
     lastName: "Quispe",
     email: "angela@example.com",
     role: "staff",
+    workTypes: ["cleaning"],
     isActive: true,
   },
   {
@@ -35,6 +48,7 @@ export const staff: Staff[] = [
     lastName: "Makharashvili",
     email: "iza@example.com",
     role: "staff",
+    workTypes: ["cleaning", "event"],
     isActive: true,
   },
 ];

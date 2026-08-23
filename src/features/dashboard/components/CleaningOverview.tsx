@@ -1,13 +1,66 @@
 import type { WorkTask } from "../../../types/workTask";
+import type { Assignment } from "../../../types/assignment";
+
 import { rooms } from "../../../data/rooms";
-import { bookings } from "../../../data/bookings";
 import { staff } from "../../../data/staff";
 
 type CleaningOverviewProps = {
   tasks: WorkTask[];
+  assignments: Assignment[];
 };
 
-const CleaningOverview = ({ tasks }: CleaningOverviewProps) => {
+const getAssignmentLabel = (
+  assignment?: Assignment,
+) => {
+  if (!assignment) {
+    return "Unassigned";
+  }
+
+  switch (assignment.status) {
+    case "pending":
+      return "Pending confirmation";
+
+    case "confirmed":
+      return "Confirmed";
+
+    case "declined":
+      return "Declined";
+
+    case "cancellation-requested":
+      return "Cancellation requested";
+
+    case "cancelled":
+      return "Cancelled";
+  }
+};
+
+const getAssignmentClasses = (
+  assignment?: Assignment,
+) => {
+  if (!assignment) {
+    return "bg-gray-100 text-gray-600";
+  }
+
+  switch (assignment.status) {
+    case "confirmed":
+      return "bg-green-100 text-green-700";
+
+    case "declined":
+    case "cancelled":
+      return "bg-red-100 text-red-700";
+
+    case "cancellation-requested":
+      return "bg-orange-100 text-orange-700";
+
+    case "pending":
+      return "bg-amber-100 text-amber-700";
+  }
+};
+
+const CleaningOverview = ({
+  tasks,
+  assignments,
+}: CleaningOverviewProps) => {
   return (
     <section className="mt-8">
       <h2 className="mb-4 text-xl font-semibold text-gray-900">
@@ -20,52 +73,58 @@ const CleaningOverview = ({ tasks }: CleaningOverviewProps) => {
             (room) => room.id === task.roomId,
           );
 
-          const booking = bookings.find(
-            (booking) => booking.id === task.bookingId,
-          );
+          const assignment =
+            assignments.find(
+              (assignment) =>
+                assignment.sourceType === "work-task" &&
+                assignment.sourceId === task.id,
+            );
 
-          const assignedStaff = staff.filter((person) =>
-            task.assignedStaffIds.includes(person.id),
-          );
+          const assignedStaff =
+            assignment
+              ? staff.find(
+                  (person) =>
+                    person.id === assignment.staffId,
+                )
+              : undefined;
 
           return (
             <div
               key={task.id}
               className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
             >
-              <p className="font-semibold text-gray-900">
-                {room?.name ?? "Unknown room"}
-              </p>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="font-semibold text-gray-900">
+                    {room?.name ?? task.title}
+                  </p>
 
-              <p className="mt-1 text-sm text-gray-500">
-                Prepare for: {booking?.guestCount ?? "Unknown"}{" "}
-                {booking?.guestCount === 1
-                  ? "guest"
-                  : "guests"}
-              </p>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {task.date}
 
-              <p className="mt-1 text-sm text-gray-500">
-                Bed setup:{" "}
-                {booking && booking.selectedBeds.length > 0
-                  ? booking.selectedBeds
-                      .map(
-                        (bed) =>
-                          `${bed.quantity} ${bed.type}`,
-                      )
-                      .join(" + ")
-                  : "Not selected"}
-              </p>
+                    {task.startTime &&
+                      ` • ${task.startTime}`}
+                  </p>
+                </div>
 
-              <p className="mt-1 text-sm text-gray-500">
-                Staff:{" "}
-                {assignedStaff.length > 0
-                  ? assignedStaff
-                      .map(
-                        (person) =>
-                          `${person.firstName} ${person.lastName}`,
-                      )
-                      .join(", ")
-                  : "Unassigned"}
+                <span
+                  className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getAssignmentClasses(
+                    assignment,
+                  )}`}
+                >
+                  {getAssignmentLabel(
+                    assignment,
+                  )}
+                </span>
+              </div>
+
+              <p className="mt-3 text-sm text-gray-600">
+                Cleaner:{" "}
+                <span className="font-medium text-gray-900">
+                  {assignedStaff
+                    ? `${assignedStaff.firstName} ${assignedStaff.lastName}`
+                    : "Unassigned"}
+                </span>
               </p>
 
               <span

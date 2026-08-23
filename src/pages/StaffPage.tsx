@@ -2,13 +2,16 @@ import { useState } from "react";
 
 import { staff } from "../data/staff";
 import { workTasks } from "../data/workTasks";
+import { assignments } from "../data/assignments";
 import { staffAvailability } from "../data/staffAvailability";
 
 import type {
   Staff,
   StaffAvailability,
 } from "../types/staff";
+
 import type { WorkTask } from "../types/workTask";
+import type { Assignment } from "../types/assignment";
 
 import StaffFormModal from "../features/staff/components/team/StaffFormModal";
 import TeamTab from "../features/staff/components/team/TeamTab";
@@ -44,6 +47,17 @@ const StaffPage = () => {
     useState<WorkTask[]>(workTasks);
 
   const [
+    assignmentList,
+    setAssignmentList,
+  ] = useState<Assignment[]>(
+    assignments.filter(
+      (assignment) =>
+        assignment.sourceType ===
+        "work-task",
+    ),
+  );
+
+  const [
     isAddTaskOpen,
     setIsAddTaskOpen,
   ] = useState(false);
@@ -51,7 +65,9 @@ const StaffPage = () => {
   const [
     selectedTask,
     setSelectedTask,
-  ] = useState<WorkTask | null>(null);
+  ] = useState<WorkTask | null>(
+    null,
+  );
 
   const [
     availabilityList,
@@ -92,6 +108,7 @@ const StaffPage = () => {
 
   const handleSaveTask = (
     task: WorkTask,
+    selectedStaffIds: string[],
   ) => {
     setTaskList(
       (currentTasks) => {
@@ -118,6 +135,80 @@ const StaffPage = () => {
         ];
       },
     );
+
+    setAssignmentList(
+      (currentAssignments) => {
+        const taskAssignments =
+          currentAssignments.filter(
+            (assignment) =>
+              assignment.sourceType ===
+                "work-task" &&
+              assignment.sourceId ===
+                task.id,
+          );
+
+        const otherAssignments =
+          currentAssignments.filter(
+            (assignment) =>
+              !(
+                assignment.sourceType ===
+                  "work-task" &&
+                assignment.sourceId ===
+                  task.id
+              ),
+          );
+
+        const nextTaskAssignments =
+          selectedStaffIds.map(
+            (staffId) => {
+              const existingAssignment =
+                taskAssignments.find(
+                  (assignment) =>
+                    assignment.staffId ===
+                    staffId,
+                );
+
+              if (
+                existingAssignment
+              ) {
+                return existingAssignment;
+              }
+
+              const newAssignment: Assignment =
+                {
+                  id: `assignment-${Date.now()}-${staffId}`,
+
+                  propertyId:
+                    task.propertyId,
+
+                  sourceType:
+                    "work-task",
+
+                  sourceId:
+                    task.id,
+
+                  staffId,
+
+                  status:
+                    "pending",
+
+                  assignedByStaffId:
+                    task.createdByStaffId,
+
+                  assignedAt:
+                    new Date().toISOString(),
+                };
+
+              return newAssignment;
+            },
+          );
+
+        return [
+          ...otherAssignments,
+          ...nextTaskAssignments,
+        ];
+      },
+    );
   };
 
   const handleDeleteTask = (
@@ -137,6 +228,19 @@ const StaffPage = () => {
         currentTasks.filter(
           (task) =>
             task.id !== taskId,
+        ),
+    );
+
+    setAssignmentList(
+      (currentAssignments) =>
+        currentAssignments.filter(
+          (assignment) =>
+            !(
+              assignment.sourceType ===
+                "work-task" &&
+              assignment.sourceId ===
+                taskId
+            ),
         ),
     );
   };
@@ -171,6 +275,24 @@ const StaffPage = () => {
     );
   };
 
+  const selectedTaskStaffIds =
+    selectedTask
+      ? assignmentList
+          .filter(
+            (assignment) =>
+              assignment.sourceType ===
+                "work-task" &&
+              assignment.sourceId ===
+                selectedTask.id &&
+              assignment.status !==
+                "cancelled",
+          )
+          .map(
+            (assignment) =>
+              assignment.staffId,
+          )
+      : [];
+
   return (
     <div>
       <div className="mb-6">
@@ -179,7 +301,8 @@ const StaffPage = () => {
         </h1>
 
         <p className="mt-1 text-sm text-gray-500">
-          Manage team members, schedules, and working hours
+          Manage team members,
+          schedules, and working hours
         </p>
       </div>
 
@@ -204,6 +327,9 @@ const StaffPage = () => {
         "schedule" && (
         <ScheduleTab
           taskList={taskList}
+          assignmentList={
+            assignmentList
+          }
           staffList={staffList}
           availabilityList={
             availabilityList
@@ -233,8 +359,7 @@ const StaffPage = () => {
         />
       )}
 
-      {activeTab ===
-        "hours" && (
+      {activeTab === "hours" && (
         <p className="text-sm text-gray-500">
           Working hours and payroll
           summary will go here.
@@ -244,13 +369,9 @@ const StaffPage = () => {
       {isAddStaffOpen && (
         <StaffFormModal
           onClose={() =>
-            setIsAddStaffOpen(
-              false,
-            )
+            setIsAddStaffOpen(false)
           }
-          onSubmit={
-            handleSaveStaff
-          }
+          onSubmit={handleSaveStaff}
         />
       )}
 
@@ -260,9 +381,7 @@ const StaffPage = () => {
           onClose={() =>
             setSelectedStaff(null)
           }
-          onSubmit={
-            handleSaveStaff
-          }
+          onSubmit={handleSaveStaff}
         />
       )}
 
@@ -270,13 +389,9 @@ const StaffPage = () => {
         <WorkTaskFormModal
           staffList={staffList}
           onClose={() =>
-            setIsAddTaskOpen(
-              false,
-            )
+            setIsAddTaskOpen(false)
           }
-          onSubmit={
-            handleSaveTask
-          }
+          onSubmit={handleSaveTask}
         />
       )}
 
@@ -284,12 +399,13 @@ const StaffPage = () => {
         <WorkTaskFormModal
           task={selectedTask}
           staffList={staffList}
+          initialStaffIds={
+            selectedTaskStaffIds
+          }
           onClose={() =>
             setSelectedTask(null)
           }
-          onSubmit={
-            handleSaveTask
-          }
+          onSubmit={handleSaveTask}
         />
       )}
     </div>

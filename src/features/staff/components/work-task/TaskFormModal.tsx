@@ -1,110 +1,187 @@
 import { useState } from "react";
+
 import Modal from "../../../../components/ui/Modal";
+
 import type {
   WorkTask,
   WorkTaskPriority,
   WorkTaskStatus,
   WorkTaskType,
 } from "../../../../types/workTask";
+
+import type { Staff } from "../../../../types/staff";
+
 import TaskBasics from "./TaskBasics";
 import TaskDetails from "./TaskDetails";
 import TaskAssignees from "./TaskAssignees";
 import TaskStatus from "./TaskStatus";
-import type { Staff } from "../../../../types/staff";
 
 type WorkTaskFormModalProps = {
   task?: WorkTask;
+
   staffList: Staff[];
+
+  initialStaffIds?: string[];
+
   onClose: () => void;
-  onSubmit: (task: WorkTask) => void;
+
+  onSubmit: (
+    task: WorkTask,
+    selectedStaffIds: string[],
+  ) => void;
 };
 
 const WorkTaskFormModal = ({
   task,
   staffList,
+  initialStaffIds = [],
   onClose,
   onSubmit,
 }: WorkTaskFormModalProps) => {
   const isEditing = Boolean(task);
 
-  const [type, setType] = useState<WorkTaskType>(task?.type ?? "other");
+  const [type, setType] =
+    useState<WorkTaskType>(
+      task?.type ?? "other",
+    );
 
-  const [title, setTitle] = useState(task?.title ?? "");
+  const [title, setTitle] =
+    useState(task?.title ?? "");
 
-  const [date, setDate] = useState(task?.date ?? "");
+  const [date, setDate] =
+    useState(task?.date ?? "");
 
-  const [startTime, setStartTime] = useState(task?.startTime ?? "");
+  const [startTime, setStartTime] =
+    useState(task?.startTime ?? "");
 
-  const [priority, setPriority] = useState<WorkTaskPriority>(
-    task?.priority ?? "normal",
+  const [priority, setPriority] =
+    useState<WorkTaskPriority>(
+      task?.priority ?? "normal",
+    );
+
+  const [area, setArea] =
+    useState(task?.area ?? "");
+
+  const [
+    instructions,
+    setInstructions,
+  ] = useState(
+    task?.instructions ?? "",
   );
 
-  const [area, setArea] = useState(task?.area ?? "");
+  const [status, setStatus] =
+    useState<WorkTaskStatus>(
+      task?.status ?? "pending",
+    );
 
-  const [instructions, setInstructions] = useState(task?.instructions ?? "");
-
-  const [status, setStatus] = useState<WorkTaskStatus>(
-    task?.status ?? "pending",
+  const [
+    selectedStaffIds,
+    setSelectedStaffIds,
+  ] = useState<string[]>(
+    initialStaffIds,
   );
 
-  const [assignedStaffIds, setAssignedStaffIds] = useState<string[]>(
-    task?.assignedStaffIds ?? [],
-  );
+  const [error, setError] =
+    useState("");
 
-  const [error, setError] = useState("");
-
-  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = (
+    event: React.SubmitEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
 
     if (!title.trim() || !date) {
-      setError("Please add a title and date.");
+      setError(
+        "Please add a title and date.",
+      );
+
       return;
     }
 
-    const isCompleted = status === "completed";
+    const isCompleted =
+      status === "completed";
 
     const savedTask: WorkTask = {
-      id: task?.id ?? `task-${Date.now()}`,
-      propertyId: task?.propertyId ?? "property-1",
+      id:
+        task?.id ??
+        `task-${Date.now()}`,
+
+      propertyId:
+        task?.propertyId ??
+        "property-1",
 
       type,
+
       title: title.trim(),
-      instructions: instructions.trim() || undefined,
+
+      instructions:
+        instructions.trim() ||
+        undefined,
 
       date,
-      startTime: startTime || undefined,
 
-      assignedStaffIds,
+      startTime:
+        startTime || undefined,
 
       roomId: task?.roomId,
       bookingId: task?.bookingId,
       eventId: task?.eventId,
 
-      area: area.trim() || undefined,
+      area:
+        area.trim() || undefined,
 
       status,
       priority,
 
-      createdByStaffId: task?.createdByStaffId ?? "staff-1",
-      createdAt: task?.createdAt ?? new Date().toISOString(),
+      createdByStaffId:
+        task?.createdByStaffId ??
+        "staff-1",
+
+      createdAt:
+        task?.createdAt ??
+        new Date().toISOString(),
 
       completedAt: isCompleted
-        ? (task?.completedAt ?? new Date().toISOString())
+        ? (
+            task?.completedAt ??
+            new Date().toISOString()
+          )
         : undefined,
 
-      completedByStaffId: isCompleted
-        ? (task?.completedByStaffId ?? "staff-1")
-        : undefined,
+      completedByStaffId:
+        isCompleted
+          ? (
+              task?.completedByStaffId ??
+              "staff-1"
+            )
+          : undefined,
     };
 
-    onSubmit(savedTask);
+    onSubmit(
+      savedTask,
+      selectedStaffIds,
+    );
+
     onClose();
   };
 
   return (
-    <Modal title={isEditing ? "Edit Task" : "Add Task"} onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-4 p-5">
-        {error && <p className="text-sm text-red-600">{error}</p>}
+    <Modal
+      title={
+        isEditing
+          ? "Edit Task"
+          : "Add Task"
+      }
+      onClose={onClose}
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4 p-5"
+      >
+        {error && (
+          <p className="text-sm text-red-600">
+            {error}
+          </p>
+        )}
 
         <TaskBasics
           type={type}
@@ -115,24 +192,40 @@ const WorkTaskFormModal = ({
           onTypeChange={setType}
           onTitleChange={setTitle}
           onDateChange={setDate}
-          onStartTimeChange={setStartTime}
-          onPriorityChange={setPriority}
+          onStartTimeChange={
+            setStartTime
+          }
+          onPriorityChange={
+            setPriority
+          }
         />
 
         <TaskDetails
           area={area}
           instructions={instructions}
           onAreaChange={setArea}
-          onInstructionsChange={setInstructions}
+          onInstructionsChange={
+            setInstructions
+          }
         />
 
         <TaskAssignees
           staffList={staffList}
-          assignedStaffIds={assignedStaffIds}
-          onChange={setAssignedStaffIds}
+          taskType={type}
+          selectedStaffIds={
+            selectedStaffIds
+          }
+          onChange={
+            setSelectedStaffIds
+          }
         />
 
-        {isEditing && <TaskStatus status={status} onChange={setStatus} />}
+        {isEditing && (
+          <TaskStatus
+            status={status}
+            onChange={setStatus}
+          />
+        )}
 
         <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
           <button
@@ -147,7 +240,9 @@ const WorkTaskFormModal = ({
             type="submit"
             className="cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700"
           >
-            {isEditing ? "Save Changes" : "Add Task"}
+            {isEditing
+              ? "Save Changes"
+              : "Add Task"}
           </button>
         </div>
       </form>

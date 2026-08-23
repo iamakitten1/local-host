@@ -1,27 +1,54 @@
 import SummaryCard from "../features/dashboard/components/SummaryCard";
-import { rooms } from "../data/rooms";
-import { bookings } from "../data/bookings";
-import { workTasks } from "../data/workTasks";
 import ArrivalsList from "../features/dashboard/components/ArrivalsList";
 import CleaningOverview from "../features/dashboard/components/CleaningOverview";
 import DeparturesList from "../features/dashboard/components/DeparturesList";
 
+import { rooms } from "../data/rooms";
+import { bookings } from "../data/bookings";
+import { workTasks } from "../data/workTasks";
+import { assignments } from "../data/assignments";
+
+const getTodayDateKey = () => {
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = String(
+    today.getMonth() + 1,
+  ).padStart(2, "0");
+
+  const day = String(
+    today.getDate(),
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 const DashboardPage = () => {
-  const today = "2026-07-22";
+  const today = getTodayDateKey();
 
   const todaysArrivals = bookings.filter(
-    (booking) => booking.checkInDate === today,
+    (booking) =>
+      booking.checkInDate === today,
   );
 
   const todaysDepartures = bookings.filter(
-    (booking) => booking.checkOutDate === today,
+    (booking) =>
+      booking.checkOutDate === today,
   );
 
-  const pendingCleaning = workTasks.filter(
-    (task) =>
-      task.type === "room-cleaning" &&
-      task.status === "pending",
-  );
+  const pendingCleaning =
+    workTasks.filter(
+      (task) =>
+        task.type === "room-cleaning" &&
+        task.status === "pending",
+    );
+
+  const cleaningAssignments =
+    assignments.filter(
+      (assignment) =>
+        assignment.sourceType ===
+        "work-task",
+    );
 
   return (
     <div>
@@ -58,11 +85,19 @@ const DashboardPage = () => {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <ArrivalsList bookings={todaysArrivals} />
-        <DeparturesList bookings={todaysDepartures} />
+        <ArrivalsList
+          bookings={todaysArrivals}
+        />
+
+        <DeparturesList
+          bookings={todaysDepartures}
+        />
       </div>
 
-      <CleaningOverview tasks={pendingCleaning} />
+      <CleaningOverview
+        tasks={pendingCleaning}
+        assignments={cleaningAssignments}
+      />
     </div>
   );
 };

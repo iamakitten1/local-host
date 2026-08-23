@@ -1,15 +1,20 @@
 import type { WorkTask } from "../../../../types/workTask";
-import ScheduleTaskCard from "./ScheduleTaskCard";
-import AvailabilityPanel from "./AvailabilityPanel";
+import type { Assignment } from "../../../../types/assignment";
+
 import type {
   Staff,
   StaffAvailability,
 } from "../../../../types/staff";
 
+import ScheduleTaskCard from "./ScheduleTaskCard";
+import AvailabilityPanel from "./AvailabilityPanel";
+
 type ScheduleTabProps = {
   taskList: WorkTask[];
+  assignmentList: Assignment[];
   staffList: Staff[];
   availabilityList: StaffAvailability[];
+
   onAddTask: () => void;
   onEditTask: (task: WorkTask) => void;
   onDeleteTask: (taskId: string) => void;
@@ -17,24 +22,24 @@ type ScheduleTabProps = {
 
 const ScheduleTab = ({
   taskList,
+  assignmentList,
   staffList,
   availabilityList,
   onAddTask,
   onEditTask,
   onDeleteTask,
 }: ScheduleTabProps) => {
-  const tasksByDate = taskList.reduce<Record<string, WorkTask[]>>(
-    (groups, task) => {
-      if (!groups[task.date]) {
-        groups[task.date] = [];
-      }
+  const tasksByDate = taskList.reduce<
+    Record<string, WorkTask[]>
+  >((groups, task) => {
+    if (!groups[task.date]) {
+      groups[task.date] = [];
+    }
 
-      groups[task.date].push(task);
+    groups[task.date].push(task);
 
-      return groups;
-    },
-    {},
-  );
+    return groups;
+  }, {});
 
   return (
     <div>
@@ -64,31 +69,55 @@ const ScheduleTab = ({
       />
 
       <div className="space-y-8">
-        {Object.entries(tasksByDate).map(([date, tasks]) => (
-          <section key={date}>
-            <h3 className="mb-3 text-sm font-semibold text-gray-700">
-              {date}
-            </h3>
+        {Object.entries(tasksByDate).map(
+          ([date, tasks]) => (
+            <section key={date}>
+              <h3 className="mb-3 text-sm font-semibold text-gray-700">
+                {date}
+              </h3>
 
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              {[...tasks]
-                .sort((a, b) =>
-                  (a.startTime ?? "").localeCompare(
-                    b.startTime ?? "",
-                  ),
-                )
-                .map((task) => (
-                  <ScheduleTaskCard
-                    key={task.id}
-                    task={task}
-                    staffList={staffList}
-                    onEdit={onEditTask}
-                    onDelete={onDeleteTask}
-                  />
-                ))}
-            </div>
-          </section>
-        ))}
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                {[...tasks]
+                  .sort((a, b) =>
+                    (
+                      a.startTime ?? ""
+                    ).localeCompare(
+                      b.startTime ?? "",
+                    ),
+                  )
+                  .map((task) => {
+                    const taskAssignments =
+                      assignmentList.filter(
+                        (assignment) =>
+                          assignment.sourceType ===
+                            "work-task" &&
+                          assignment.sourceId ===
+                            task.id,
+                      );
+
+                    return (
+                      <ScheduleTaskCard
+                        key={task.id}
+                        task={task}
+                        assignments={
+                          taskAssignments
+                        }
+                        staffList={
+                          staffList
+                        }
+                        onEdit={
+                          onEditTask
+                        }
+                        onDelete={
+                          onDeleteTask
+                        }
+                      />
+                    );
+                  })}
+              </div>
+            </section>
+          ),
+        )}
       </div>
     </div>
   );

@@ -1,35 +1,60 @@
 import { useState } from "react";
+
 import Modal from "../../../components/ui/Modal";
 import { rooms } from "../../../data/rooms";
 import { bookings } from "../../../data/bookings";
 import { staff } from "../../../data/staff";
+
 import type {
   WorkTask,
   WorkTaskStatus,
 } from "../../../types/workTask";
 
+import type { Assignment } from "../../../types/assignment";
+
 type EditCleaningTaskModalProps = {
   task: WorkTask;
+  assignment?: Assignment;
+
   onClose: () => void;
-  onSave: (task: WorkTask) => void;
+
+  onSave: (
+    task: WorkTask,
+    assignedStaffId: string | null,
+  ) => void;
 };
 
 const EditCleaningTaskModal = ({
   task,
+  assignment,
   onClose,
   onSave,
 }: EditCleaningTaskModalProps) => {
-  const [roomId, setRoomId] = useState(task.roomId ?? "");
-  const [bookingId, setBookingId] = useState(task.bookingId ?? "");
-  const [staffId, setStaffId] = useState(
-    task.assignedStaffIds[0] ?? "",
+  const [roomId, setRoomId] = useState(
+    task.roomId ?? "",
   );
-  const [scheduledDate, setScheduledDate] = useState(task.date);
+
+  const [bookingId, setBookingId] = useState(
+    task.bookingId ?? "",
+  );
+
+  const [staffId, setStaffId] = useState(
+    assignment?.staffId ?? "",
+  );
+
+  const [scheduledDate, setScheduledDate] =
+    useState(task.date);
+
+  const [startTime, setStartTime] = useState(
+    task.startTime ?? "",
+  );
+
   const [status, setStatus] =
     useState<WorkTaskStatus>(task.status);
-  const [instructions, setInstructions] = useState(
-    task.instructions ?? "",
-  );
+
+  const [instructions, setInstructions] =
+    useState(task.instructions ?? "");
+
   const [error, setError] = useState("");
 
   const handleSubmit = (
@@ -38,11 +63,16 @@ const EditCleaningTaskModal = ({
     event.preventDefault();
 
     if (!roomId || !scheduledDate) {
-      setError("Room and scheduled date are required.");
+      setError(
+        "Room and scheduled date are required.",
+      );
+
       return;
     }
 
-    const room = rooms.find((room) => room.id === roomId);
+    const room = rooms.find(
+      (room) => room.id === roomId,
+    );
 
     const updatedTask: WorkTask = {
       ...task,
@@ -52,24 +82,38 @@ const EditCleaningTaskModal = ({
         : "Clean room",
 
       roomId,
-      bookingId: bookingId || undefined,
 
-      assignedStaffIds: staffId ? [staffId] : [],
+      bookingId:
+        bookingId || undefined,
 
       date: scheduledDate,
 
-      instructions: instructions.trim() || undefined,
+      startTime:
+        startTime || undefined,
+
+      instructions:
+        instructions.trim() || undefined,
 
       status,
     };
 
-    onSave(updatedTask);
+    onSave(
+      updatedTask,
+      staffId || null,
+    );
+
     onClose();
   };
 
   return (
-    <Modal title="Edit Cleaning Task" onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-4 p-5">
+    <Modal
+      title="Edit Cleaning Task"
+      onClose={onClose}
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4 p-5"
+      >
         {error && (
           <p className="text-sm text-red-600">
             {error}
@@ -88,7 +132,9 @@ const EditCleaningTaskModal = ({
             }
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
           >
-            <option value="">Select room</option>
+            <option value="">
+              Select room
+            </option>
 
             {rooms.map((room) => (
               <option
@@ -130,7 +176,7 @@ const EditCleaningTaskModal = ({
 
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Staff
+            Cleaner
           </label>
 
           <select
@@ -140,13 +186,17 @@ const EditCleaningTaskModal = ({
             }
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
           >
-            <option value="">Unassigned</option>
+            <option value="">
+              Unassigned
+            </option>
 
             {staff
               .filter(
                 (member) =>
-                  member.role === "staff" &&
-                  member.isActive,
+                  member.isActive &&
+                  member.workTypes.includes(
+                    "cleaning",
+                  ),
               )
               .map((member) => (
                 <option
@@ -169,7 +219,24 @@ const EditCleaningTaskModal = ({
             type="date"
             value={scheduledDate}
             onChange={(event) =>
-              setScheduledDate(event.target.value)
+              setScheduledDate(
+                event.target.value,
+              )
+            }
+            className="w-full rounded-lg border border-gray-300 px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            Start time
+          </label>
+
+          <input
+            type="time"
+            value={startTime}
+            onChange={(event) =>
+              setStartTime(event.target.value)
             }
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
           />
@@ -183,7 +250,9 @@ const EditCleaningTaskModal = ({
           <textarea
             value={instructions}
             onChange={(event) =>
-              setInstructions(event.target.value)
+              setInstructions(
+                event.target.value,
+              )
             }
             rows={3}
             placeholder="Optional cleaning instructions..."
@@ -193,14 +262,15 @@ const EditCleaningTaskModal = ({
 
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Status
+            Task status
           </label>
 
           <select
             value={status}
             onChange={(event) =>
               setStatus(
-                event.target.value as WorkTaskStatus,
+                event.target
+                  .value as WorkTaskStatus,
               )
             }
             className="w-full rounded-lg border border-gray-300 px-3 py-2"
