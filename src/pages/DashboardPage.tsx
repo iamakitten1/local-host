@@ -12,6 +12,7 @@ const getTodayDateKey = () => {
   const today = new Date();
 
   const year = today.getFullYear();
+
   const month = String(
     today.getMonth() + 1,
   ).padStart(2, "0");
@@ -51,9 +52,9 @@ const DashboardPage = () => {
     );
 
   return (
-    <div>
+    <div className="min-w-0">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
+        <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
           Dashboard
         </h1>
 
@@ -62,7 +63,7 @@ const DashboardPage = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <SummaryCard
           title="Rooms"
           value={rooms.length}
@@ -84,7 +85,7 @@ const DashboardPage = () => {
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
         <ArrivalsList
           bookings={todaysArrivals}
         />

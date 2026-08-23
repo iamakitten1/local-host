@@ -62,8 +62,8 @@ const CleaningOverview = ({
   assignments,
 }: CleaningOverviewProps) => {
   return (
-    <section className="mt-8">
-      <h2 className="mb-4 text-xl font-semibold text-gray-900">
+    <section className="mt-8 min-w-0">
+      <h2 className="mb-4 text-lg font-semibold text-gray-900 sm:text-xl">
         Cleaning
       </h2>
 
@@ -91,11 +91,11 @@ const CleaningOverview = ({
           return (
             <div
               key={task.id}
-              className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+              className="min-w-0 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
             >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="font-semibold text-gray-900">
+              <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <p className="wrap-break-word font-semibold text-gray-900">
                     {room?.name ?? task.title}
                   </p>
 
@@ -108,7 +108,7 @@ const CleaningOverview = ({
                 </div>
 
                 <span
-                  className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getAssignmentClasses(
+                  className={`w-fit shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${getAssignmentClasses(
                     assignment,
                   )}`}
                 >
@@ -118,7 +118,7 @@ const CleaningOverview = ({
                 </span>
               </div>
 
-              <p className="mt-3 text-sm text-gray-600">
+              <p className="mt-3 wrap-break-word text-sm text-gray-600">
                 Cleaner:{" "}
                 <span className="font-medium text-gray-900">
                   {assignedStaff
