@@ -9,13 +9,34 @@ type BookingFormFieldsProps = {
   checkOutDate: string;
   arrivalTime: string;
   status: BookingStatus;
-  onStatusChange: (value: BookingStatus) => void;
-  onGuestNameChange: (value: string) => void;
-  onRoomChange: (value: string) => void;
-  onGuestCountChange: (value: string) => void;
-  onCheckInChange: (value: string) => void;
-  onCheckOutChange: (value: string) => void;
-  onArrivalTimeChange: (value: string) => void;
+
+  onStatusChange: (
+    value: BookingStatus,
+  ) => void;
+
+  onGuestNameChange: (
+    value: string,
+  ) => void;
+
+  onRoomChange: (
+    value: string,
+  ) => void;
+
+  onGuestCountChange: (
+    value: string,
+  ) => void;
+
+  onCheckInChange: (
+    value: string,
+  ) => void;
+
+  onCheckOutChange: (
+    value: string,
+  ) => void;
+
+  onArrivalTimeChange: (
+    value: string,
+  ) => void;
 };
 
 const BookingFormFields = ({
@@ -35,93 +56,191 @@ const BookingFormFields = ({
   onArrivalTimeChange,
 }: BookingFormFieldsProps) => {
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">
+    <div className="min-w-0 space-y-4">
+      {/* Guest name */}
+      <div className="min-w-0">
+        <label
+          htmlFor="booking-guest-name"
+          className="mb-1.5 block text-sm font-medium text-gray-700"
+        >
           Guest name
         </label>
 
         <input
+          id="booking-guest-name"
           type="text"
           value={guestName}
-          onChange={(event) => onGuestNameChange(event.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
+          onChange={(event) =>
+            onGuestNameChange(
+              event.target.value,
+            )
+          }
+          className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
         />
       </div>
 
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">
-          Room
-        </label>
+      {/* Room + Guest count */}
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="min-w-0">
+          <label
+            htmlFor="booking-room"
+            className="mb-1.5 block text-sm font-medium text-gray-700"
+          >
+            Room
+          </label>
 
-        <select
-          value={roomId}
-          onChange={(event) => onRoomChange(event.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
-        >
-          <option value="">Select room</option>
-
-          {rooms.map((room) => (
-            <option key={room.id} value={room.id}>
-              {room.name}
+          <select
+            id="booking-room"
+            value={roomId}
+            onChange={(event) =>
+              onRoomChange(
+                event.target.value,
+              )
+            }
+            className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+          >
+            <option value="">
+              Select room
             </option>
-          ))}
-        </select>
+
+            {rooms.map((room) => (
+              <option
+                key={room.id}
+                value={room.id}
+              >
+                {room.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="min-w-0">
+          <label
+            htmlFor="booking-guest-count"
+            className="mb-1.5 block text-sm font-medium text-gray-700"
+          >
+            Guest count
+          </label>
+
+          <input
+            id="booking-guest-count"
+            type="number"
+            min="1"
+            value={guestCount}
+            onChange={(event) =>
+              onGuestCountChange(
+                event.target.value,
+              )
+            }
+            className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+          />
+        </div>
       </div>
 
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">
-          Guest count
-        </label>
-
-        <input
-          type="number"
-          min="1"
-          value={guestCount}
-          onChange={(event) => onGuestCountChange(event.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
+      {/* Dates */}
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="min-w-0">
+          <label
+            htmlFor="booking-check-in"
+            className="mb-1.5 block text-sm font-medium text-gray-700"
+          >
             Check-in
           </label>
 
           <input
+            id="booking-check-in"
             type="date"
             value={checkInDate}
-            onChange={(event) => onCheckInChange(event.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
+            onChange={(event) =>
+              onCheckInChange(
+                event.target.value,
+              )
+            }
+            className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
           />
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
+        <div className="min-w-0">
+          <label
+            htmlFor="booking-check-out"
+            className="mb-1.5 block text-sm font-medium text-gray-700"
+          >
             Check-out
           </label>
 
           <input
+            id="booking-check-out"
             type="date"
             value={checkOutDate}
-            onChange={(event) => onCheckOutChange(event.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
+            onChange={(event) =>
+              onCheckOutChange(
+                event.target.value,
+              )
+            }
+            className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
           />
         </div>
       </div>
 
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">
-          Arrival time
-        </label>
+      {/* Arrival time + Status */}
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="min-w-0">
+          <label
+            htmlFor="booking-arrival-time"
+            className="mb-1.5 block text-sm font-medium text-gray-700"
+          >
+            Arrival time
+          </label>
 
-        <input
-          type="time"
-          value={arrivalTime}
-          onChange={(event) => onArrivalTimeChange(event.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
-        />
+          <input
+            id="booking-arrival-time"
+            type="time"
+            value={arrivalTime}
+            onChange={(event) =>
+              onArrivalTimeChange(
+                event.target.value,
+              )
+            }
+            className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+          />
+        </div>
+
+        <div className="min-w-0">
+          <label
+            htmlFor="booking-status"
+            className="mb-1.5 block text-sm font-medium text-gray-700"
+          >
+            Status
+          </label>
+
+          <select
+            id="booking-status"
+            value={status}
+            onChange={(event) =>
+              onStatusChange(
+                event.target
+                  .value as BookingStatus,
+              )
+            }
+            className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+          >
+            <option value="confirmed">
+              Confirmed
+            </option>
+
+            <option value="checked-in">
+              Checked in
+            </option>
+
+            <option value="checked-out">
+              Checked out
+            </option>
+
+            <option value="cancelled">
+              Cancelled
+            </option>
+          </select>
+        </div>
       </div>
     </div>
   );

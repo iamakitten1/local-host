@@ -1,19 +1,22 @@
 import { useState } from "react";
+
 import { rooms } from "../data/rooms";
+
 import RoomCard from "../features/rooms/components/RoomCard";
 import AddRoomModal from "../features/rooms/components/AddRoomModal";
-import type { Bed, Room } from "../types/room";
 import EditRoomModal from "../features/rooms/components/EditRoomModal";
 
+import type { Bed, Room } from "../types/room";
+
 const RoomsPage = () => {
-  // მართავს, Add Room modal ღიაა თუ არა
-  const [isAddRoomOpen, setIsAddRoomOpen] = useState(false);
+  const [isAddRoomOpen, setIsAddRoomOpen] =
+    useState(false);
 
-  // ამჟამად რომელი rooms ჩანს UI-ში
-  const [roomList, setRoomList] = useState(rooms);
+  const [roomList, setRoomList] =
+    useState(rooms);
 
-  // რომელი Room არის ახლა Edit რეჟიმში
-  const [editingRoom, setEditingRoom] = useState<Room | null>(null);
+  const [editingRoom, setEditingRoom] =
+    useState<Room | null>(null);
 
   const handleAddRoom = (
     name: string,
@@ -34,13 +37,19 @@ const RoomsPage = () => {
     ]);
   };
 
-  const handleDeleteRoom = (roomId: string) => {
+  const handleDeleteRoom = (
+    roomId: string,
+  ) => {
     setRoomList((currentRooms) =>
-      currentRooms.filter((room) => room.id !== roomId),
+      currentRooms.filter(
+        (room) => room.id !== roomId,
+      ),
     );
   };
 
-  const handleEditRoom = (room: Room) => {
+  const handleEditRoom = (
+    room: Room,
+  ) => {
     setEditingRoom(room);
   };
 
@@ -63,10 +72,10 @@ const RoomsPage = () => {
   };
 
   return (
-    <div>
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
+    <div className="min-w-0">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
             Rooms
           </h1>
 
@@ -77,14 +86,16 @@ const RoomsPage = () => {
 
         <button
           type="button"
-          onClick={() => setIsAddRoomOpen(true)}
-          className="cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700"
+          onClick={() =>
+            setIsAddRoomOpen(true)
+          }
+          className="w-full shrink-0 cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 sm:w-auto"
         >
           + Add Room
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         {roomList.map((room) => (
           <RoomCard
             key={room.id}
@@ -97,7 +108,9 @@ const RoomsPage = () => {
 
       {isAddRoomOpen && (
         <AddRoomModal
-          onClose={() => setIsAddRoomOpen(false)}
+          onClose={() =>
+            setIsAddRoomOpen(false)
+          }
           onAddRoom={handleAddRoom}
         />
       )}
@@ -105,7 +118,9 @@ const RoomsPage = () => {
       {editingRoom && (
         <EditRoomModal
           room={editingRoom}
-          onClose={() => setEditingRoom(null)}
+          onClose={() =>
+            setEditingRoom(null)
+          }
           onSave={handleSaveRoom}
         />
       )}
