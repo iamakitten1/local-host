@@ -18,7 +18,7 @@ const getAssignmentLabel = (
 ) => {
   switch (status) {
     case "pending":
-      return "Pending";
+      return "Awaiting reply";
 
     case "confirmed":
       return "Confirmed";
@@ -34,6 +34,116 @@ const getAssignmentLabel = (
   }
 };
 
+const getAssignmentStatusClasses = (
+  status: Assignment["status"],
+) => {
+  switch (status) {
+    case "confirmed":
+      return "text-green-700";
+
+    case "pending":
+      return "text-amber-700";
+
+    case "declined":
+    case "cancelled":
+      return "text-red-700";
+
+    case "cancellation-requested":
+      return "text-orange-700";
+  }
+};
+
+const getOperationalStatus = (
+  task: WorkTask,
+  assignments: Assignment[],
+) => {
+  if (task.status === "completed") {
+    return {
+      label: "Done",
+      classes: "bg-green-100 text-green-700",
+    };
+  }
+
+  if (task.status === "in-progress") {
+    return {
+      label: "In progress",
+      classes: "bg-blue-100 text-blue-700",
+    };
+  }
+
+  if (task.status === "cancelled") {
+    return {
+      label: "Cancelled",
+      classes: "bg-gray-200 text-gray-600",
+    };
+  }
+
+  const hasCancellationRequest =
+    assignments.some(
+      (assignment) =>
+        assignment.status ===
+        "cancellation-requested",
+    );
+
+  if (hasCancellationRequest) {
+    return {
+      label: "Needs review",
+      classes:
+        "bg-orange-100 text-orange-700",
+    };
+  }
+
+  const hasStaffingProblem =
+    assignments.some(
+      (assignment) =>
+        assignment.status ===
+          "declined" ||
+        assignment.status ===
+          "cancelled",
+    );
+
+  if (hasStaffingProblem) {
+    return {
+      label: "Staffing issue",
+      classes: "bg-red-100 text-red-700",
+    };
+  }
+
+  const hasPendingAssignment =
+    assignments.some(
+      (assignment) =>
+        assignment.status === "pending",
+    );
+
+  if (hasPendingAssignment) {
+    return {
+      label: "Awaiting confirmation",
+      classes:
+        "bg-amber-100 text-amber-700",
+    };
+  }
+
+  const hasConfirmedAssignment =
+    assignments.some(
+      (assignment) =>
+        assignment.status ===
+        "confirmed",
+    );
+
+  if (hasConfirmedAssignment) {
+    return {
+      label: "Ready",
+      classes:
+        "bg-green-100 text-green-700",
+    };
+  }
+
+  return {
+    label: "Unassigned",
+    classes: "bg-gray-100 text-gray-600",
+  };
+};
+
 const ScheduleTaskCard = ({
   task,
   assignments,
@@ -45,7 +155,8 @@ const ScheduleTaskCard = ({
     .map((assignment) => {
       const member = staffList.find(
         (member) =>
-          member.id === assignment.staffId,
+          member.id ===
+          assignment.staffId,
       );
 
       if (!member) {
@@ -73,22 +184,31 @@ const ScheduleTaskCard = ({
     ? getStaffColor(primaryStaff.id)
     : getStaffColor("");
 
+  const operationalStatus =
+    getOperationalStatus(
+      task,
+      assignments,
+    );
+
   return (
     <article
-      className={`overflow-hidden rounded-xl border ${primaryColor.border} ${primaryColor.background}`}
+      className={`min-w-0 overflow-hidden rounded-xl border ${primaryColor.border} ${primaryColor.background}`}
     >
-      <div className="flex min-h-28">
-        <div className="flex w-20 shrink-0 items-start justify-center border-r border-black/5 px-3 py-4">
+      <div className="flex min-w-0 flex-col sm:flex-row">
+        {/* Time */}
+        <div className="flex shrink-0 items-center border-b border-black/5 px-4 py-3 sm:w-20 sm:items-start sm:justify-center sm:border-r sm:border-b-0 sm:px-3 sm:py-4">
           <span className="text-sm font-semibold text-gray-700">
             {task.startTime ?? "—"}
           </span>
         </div>
 
+        {/* Main content */}
         <div className="min-w-0 flex-1 p-4">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <div className="flex shrink-0 -space-x-1">
+              <div className="flex min-w-0 items-start gap-2">
+                {/* Staff colors */}
+                <div className="mt-1 flex shrink-0 -space-x-1">
                   {assignedStaff.map(
                     ({ member }) => {
                       const color =
@@ -113,15 +233,18 @@ const ScheduleTaskCard = ({
                 </div>
 
                 <h3
-                  className={`truncate font-semibold ${primaryColor.text}`}
+                  className={`min-w-0 wrap-break-word font-semibold ${primaryColor.text}`}
                 >
                   {task.title}
                 </h3>
               </div>
 
+              {/* Area + priority */}
               <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
                 {task.area && (
-                  <span>{task.area}</span>
+                  <span>
+                    {task.area}
+                  </span>
                 )}
 
                 {task.priority !==
@@ -131,64 +254,72 @@ const ScheduleTaskCard = ({
                   </span>
                 )}
               </div>
-
-              <div className="mt-3 space-y-1">
-                {assignedStaff.length >
-                0 ? (
-                  assignedStaff.map(
-                    ({
-                      member,
-                      assignment,
-                    }) => (
-                      <div
-                        key={
-                          assignment.id
-                        }
-                        className="flex flex-wrap items-center gap-2 text-sm"
-                      >
-                        <span className="text-gray-700">
-                          {
-                            member.firstName
-                          }{" "}
-                          {
-                            member.lastName
-                          }
-                        </span>
-
-                        <span className="rounded-full bg-white/70 px-2 py-0.5 text-xs text-gray-600">
-                          {getAssignmentLabel(
-                            assignment.status,
-                          )}
-                        </span>
-                      </div>
-                    ),
-                  )
-                ) : (
-                  <p className="text-sm text-gray-500">
-                    Unassigned
-                  </p>
-                )}
-              </div>
-
-              {task.instructions && (
-                <p className="mt-2 line-clamp-2 text-sm text-gray-500">
-                  {task.instructions}
-                </p>
-              )}
             </div>
 
-            <span className="shrink-0 rounded-full bg-white/70 px-2.5 py-1 text-xs font-medium capitalize text-gray-600">
-              {task.status}
+            {/* One main status */}
+            <span
+              className={`w-fit shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${operationalStatus.classes}`}
+            >
+              {operationalStatus.label}
             </span>
           </div>
 
-          <div className="mt-3 flex justify-end gap-1">
+          {/* Assignees */}
+          <div className="mt-3 space-y-1.5">
+            {assignedStaff.length > 0 ? (
+              assignedStaff.map(
+                ({
+                  member,
+                  assignment,
+                }) => (
+                  <div
+                    key={assignment.id}
+                    className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm"
+                  >
+                    <span className="wrap-break-word font-medium text-gray-700">
+                      {
+                        member.firstName
+                      }{" "}
+                      {
+                        member.lastName
+                      }
+                    </span>
+
+                    <span
+                      className={`text-xs font-medium ${getAssignmentStatusClasses(
+                        assignment.status,
+                      )}`}
+                    >
+                      ·{" "}
+                      {getAssignmentLabel(
+                        assignment.status,
+                      )}
+                    </span>
+                  </div>
+                ),
+              )
+            ) : (
+              <p className="text-sm text-gray-500">
+                No staff assigned
+              </p>
+            )}
+          </div>
+
+          {/* Instructions */}
+          {task.instructions && (
+            <p className="mt-3 wrap-break-word line-clamp-2 text-sm text-gray-500">
+              {task.instructions}
+            </p>
+          )}
+
+          {/* Actions */}
+          <div className="mt-4 flex gap-2 border-t border-black/5 pt-3 sm:justify-end">
             <button
               type="button"
               onClick={() =>
                 onEdit(task)
               }
-              className="cursor-pointer rounded-md px-2.5 py-1.5 text-xs font-medium text-gray-600 hover:bg-white/70"
+              className="flex-1 cursor-pointer rounded-md px-3 py-2 text-xs font-medium text-gray-600 hover:bg-white/70 sm:flex-none"
             >
               Edit
             </button>
@@ -198,7 +329,7 @@ const ScheduleTaskCard = ({
               onClick={() =>
                 onDelete(task.id)
               }
-              className="cursor-pointer rounded-md px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+              className="flex-1 cursor-pointer rounded-md px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 sm:flex-none"
             >
               Delete
             </button>

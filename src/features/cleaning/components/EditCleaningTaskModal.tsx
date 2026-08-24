@@ -30,32 +30,39 @@ const EditCleaningTaskModal = ({
   onClose,
   onSave,
 }: EditCleaningTaskModalProps) => {
-  const [roomId, setRoomId] = useState(
-    task.roomId ?? "",
-  );
+  const [roomId, setRoomId] =
+    useState(task.roomId ?? "");
 
-  const [bookingId, setBookingId] = useState(
-    task.bookingId ?? "",
-  );
+  const [bookingId, setBookingId] =
+    useState(task.bookingId ?? "");
 
-  const [staffId, setStaffId] = useState(
-    assignment?.staffId ?? "",
-  );
+  const [staffId, setStaffId] =
+    useState(
+      assignment?.staffId ?? "",
+    );
 
-  const [scheduledDate, setScheduledDate] =
-    useState(task.date);
+  const [
+    scheduledDate,
+    setScheduledDate,
+  ] = useState(task.date);
 
-  const [startTime, setStartTime] = useState(
-    task.startTime ?? "",
-  );
+  const [startTime, setStartTime] =
+    useState(task.startTime ?? "");
 
   const [status, setStatus] =
-    useState<WorkTaskStatus>(task.status);
+    useState<WorkTaskStatus>(
+      task.status,
+    );
 
-  const [instructions, setInstructions] =
-    useState(task.instructions ?? "");
+  const [
+    instructions,
+    setInstructions,
+  ] = useState(
+    task.instructions ?? "",
+  );
 
-  const [error, setError] = useState("");
+  const [error, setError] =
+    useState("");
 
   const handleSubmit = (
     event: React.SubmitEvent<HTMLFormElement>,
@@ -66,9 +73,10 @@ const EditCleaningTaskModal = ({
       setError(
         "Room and scheduled date are required.",
       );
-
       return;
     }
+
+    setError("");
 
     const room = rooms.find(
       (room) => room.id === roomId,
@@ -92,7 +100,8 @@ const EditCleaningTaskModal = ({
         startTime || undefined,
 
       instructions:
-        instructions.trim() || undefined,
+        instructions.trim() ||
+        undefined,
 
       status,
     };
@@ -112,199 +121,249 @@ const EditCleaningTaskModal = ({
     >
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 p-5"
+        className="min-w-0"
       >
-        {error && (
-          <p className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
+        <div className="space-y-4 p-4 sm:p-5">
+          {error && (
+            <p className="text-sm font-medium text-red-600">
+              {error}
+            </p>
+          )}
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Room
-          </label>
-
-          <select
-            value={roomId}
-            onChange={(event) =>
-              setRoomId(event.target.value)
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          >
-            <option value="">
-              Select room
-            </option>
-
-            {rooms.map((room) => (
-              <option
-                key={room.id}
-                value={room.id}
+          {/* Room + Booking */}
+          <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="min-w-0">
+              <label
+                htmlFor="edit-cleaning-room"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
               >
-                {room.name}
-              </option>
-            ))}
-          </select>
-        </div>
+                Room
+              </label>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Linked booking
-          </label>
-
-          <select
-            value={bookingId}
-            onChange={(event) =>
-              setBookingId(event.target.value)
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          >
-            <option value="">
-              No linked booking
-            </option>
-
-            {bookings.map((booking) => (
-              <option
-                key={booking.id}
-                value={booking.id}
+              <select
+                id="edit-cleaning-room"
+                value={roomId}
+                onChange={(event) =>
+                  setRoomId(
+                    event.target.value,
+                  )
+                }
+                className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
               >
-                {booking.guestName}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Cleaner
-          </label>
-
-          <select
-            value={staffId}
-            onChange={(event) =>
-              setStaffId(event.target.value)
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          >
-            <option value="">
-              Unassigned
-            </option>
-
-            {staff
-              .filter(
-                (member) =>
-                  member.isActive &&
-                  member.workTypes.includes(
-                    "cleaning",
-                  ),
-              )
-              .map((member) => (
-                <option
-                  key={member.id}
-                  value={member.id}
-                >
-                  {member.firstName}{" "}
-                  {member.lastName}
+                <option value="">
+                  Select room
                 </option>
-              ))}
-          </select>
+
+                {rooms.map((room) => (
+                  <option
+                    key={room.id}
+                    value={room.id}
+                  >
+                    {room.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="min-w-0">
+              <label
+                htmlFor="edit-cleaning-booking"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Linked booking
+              </label>
+
+              <select
+                id="edit-cleaning-booking"
+                value={bookingId}
+                onChange={(event) =>
+                  setBookingId(
+                    event.target.value,
+                  )
+                }
+                className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+              >
+                <option value="">
+                  No linked booking
+                </option>
+
+                {bookings.map(
+                  (booking) => (
+                    <option
+                      key={booking.id}
+                      value={booking.id}
+                    >
+                      {booking.guestName}
+                    </option>
+                  ),
+                )}
+              </select>
+            </div>
+          </div>
+
+          {/* Cleaner */}
+          <div className="min-w-0">
+            <label
+              htmlFor="edit-cleaning-staff"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Cleaner
+            </label>
+
+            <select
+              id="edit-cleaning-staff"
+              value={staffId}
+              onChange={(event) =>
+                setStaffId(
+                  event.target.value,
+                )
+              }
+              className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+            >
+              <option value="">
+                Unassigned
+              </option>
+
+              {staff
+                .filter(
+                  (member) =>
+                    member.isActive &&
+                    member.workTypes.includes(
+                      "cleaning",
+                    ),
+                )
+                .map((member) => (
+                  <option
+                    key={member.id}
+                    value={member.id}
+                  >
+                    {member.firstName}{" "}
+                    {member.lastName}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          {/* Date + Time */}
+          <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="min-w-0">
+              <label
+                htmlFor="edit-cleaning-date"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Scheduled date
+              </label>
+
+              <input
+                id="edit-cleaning-date"
+                type="date"
+                value={scheduledDate}
+                onChange={(event) =>
+                  setScheduledDate(
+                    event.target.value,
+                  )
+                }
+                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+              />
+            </div>
+
+            <div className="min-w-0">
+              <label
+                htmlFor="edit-cleaning-time"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Start time
+              </label>
+
+              <input
+                id="edit-cleaning-time"
+                type="time"
+                value={startTime}
+                onChange={(event) =>
+                  setStartTime(
+                    event.target.value,
+                  )
+                }
+                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+              />
+            </div>
+          </div>
+
+          {/* Instructions */}
+          <div className="min-w-0">
+            <label
+              htmlFor="edit-cleaning-instructions"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Instructions
+            </label>
+
+            <textarea
+              id="edit-cleaning-instructions"
+              value={instructions}
+              onChange={(event) =>
+                setInstructions(
+                  event.target.value,
+                )
+              }
+              rows={3}
+              placeholder="Optional cleaning instructions..."
+              className="w-full min-w-0 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            />
+          </div>
+
+          {/* Task status */}
+          <div className="min-w-0">
+            <label
+              htmlFor="edit-cleaning-status"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Task status
+            </label>
+
+            <select
+              id="edit-cleaning-status"
+              value={status}
+              onChange={(event) =>
+                setStatus(
+                  event.target
+                    .value as WorkTaskStatus,
+                )
+              }
+              className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+            >
+              <option value="pending">
+                Pending
+              </option>
+
+              <option value="in-progress">
+                In progress
+              </option>
+
+              <option value="completed">
+                Completed
+              </option>
+
+              <option value="cancelled">
+                Cancelled
+              </option>
+            </select>
+          </div>
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Scheduled date
-          </label>
-
-          <input
-            type="date"
-            value={scheduledDate}
-            onChange={(event) =>
-              setScheduledDate(
-                event.target.value,
-              )
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Start time
-          </label>
-
-          <input
-            type="time"
-            value={startTime}
-            onChange={(event) =>
-              setStartTime(event.target.value)
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Instructions
-          </label>
-
-          <textarea
-            value={instructions}
-            onChange={(event) =>
-              setInstructions(
-                event.target.value,
-              )
-            }
-            rows={3}
-            placeholder="Optional cleaning instructions..."
-            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Task status
-          </label>
-
-          <select
-            value={status}
-            onChange={(event) =>
-              setStatus(
-                event.target
-                  .value as WorkTaskStatus,
-              )
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          >
-            <option value="pending">
-              Pending
-            </option>
-
-            <option value="in-progress">
-              In progress
-            </option>
-
-            <option value="completed">
-              Completed
-            </option>
-
-            <option value="cancelled">
-              Cancelled
-            </option>
-          </select>
-        </div>
-
-        <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
+        {/* Footer */}
+        <div className="flex flex-col-reverse gap-3 border-t border-gray-200 p-4 sm:flex-row sm:justify-end sm:p-5">
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm"
+            className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white"
+            className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
           >
             Save Changes
           </button>

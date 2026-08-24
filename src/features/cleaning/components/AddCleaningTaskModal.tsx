@@ -20,18 +20,27 @@ const AddCleaningTaskModal = ({
   onClose,
   onAddTask,
 }: AddCleaningTaskModalProps) => {
-  const [roomId, setRoomId] = useState("");
-  const [bookingId, setBookingId] = useState("");
-  const [staffId, setStaffId] = useState("");
-
-  const [scheduledDate, setScheduledDate] =
+  const [roomId, setRoomId] =
     useState("");
+
+  const [bookingId, setBookingId] =
+    useState("");
+
+  const [staffId, setStaffId] =
+    useState("");
+
+  const [
+    scheduledDate,
+    setScheduledDate,
+  ] = useState("");
 
   const [startTime, setStartTime] =
     useState("");
 
-  const [instructions, setInstructions] =
-    useState("");
+  const [
+    instructions,
+    setInstructions,
+  ] = useState("");
 
   const [error, setError] =
     useState("");
@@ -48,6 +57,8 @@ const AddCleaningTaskModal = ({
       return;
     }
 
+    setError("");
+
     const room = rooms.find(
       (room) => room.id === roomId,
     );
@@ -63,7 +74,8 @@ const AddCleaningTaskModal = ({
         : "Clean room",
 
       instructions:
-        instructions.trim() || undefined,
+        instructions.trim() ||
+        undefined,
 
       date: scheduledDate,
 
@@ -79,7 +91,8 @@ const AddCleaningTaskModal = ({
       priority: "normal",
 
       createdByStaffId: "staff-1",
-      createdAt: new Date().toISOString(),
+      createdAt:
+        new Date().toISOString(),
     };
 
     onAddTask(
@@ -97,176 +110,211 @@ const AddCleaningTaskModal = ({
     >
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 p-5"
+        className="min-w-0"
       >
-        {error && (
-          <p className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
+        <div className="space-y-4 p-4 sm:p-5">
+          {error && (
+            <p className="text-sm font-medium text-red-600">
+              {error}
+            </p>
+          )}
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Room
-          </label>
-
-          <select
-            value={roomId}
-            onChange={(event) =>
-              setRoomId(
-                event.target.value,
-              )
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          >
-            <option value="">
-              Select room
-            </option>
-
-            {rooms.map((room) => (
-              <option
-                key={room.id}
-                value={room.id}
+          {/* Room + Booking */}
+          <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="min-w-0">
+              <label
+                htmlFor="cleaning-room"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
               >
-                {room.name}
-              </option>
-            ))}
-          </select>
-        </div>
+                Room
+              </label>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Linked booking
-          </label>
-
-          <select
-            value={bookingId}
-            onChange={(event) =>
-              setBookingId(
-                event.target.value,
-              )
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          >
-            <option value="">
-              No linked booking
-            </option>
-
-            {bookings.map(
-              (booking) => (
-                <option
-                  key={booking.id}
-                  value={booking.id}
-                >
-                  {booking.guestName}
+              <select
+                id="cleaning-room"
+                value={roomId}
+                onChange={(event) =>
+                  setRoomId(
+                    event.target.value,
+                  )
+                }
+                className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+              >
+                <option value="">
+                  Select room
                 </option>
-              ),
-            )}
-          </select>
-        </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Cleaner
-          </label>
+                {rooms.map((room) => (
+                  <option
+                    key={room.id}
+                    value={room.id}
+                  >
+                    {room.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <select
-            value={staffId}
-            onChange={(event) =>
-              setStaffId(
-                event.target.value,
-              )
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          >
-            <option value="">
-              Unassigned
-            </option>
+            <div className="min-w-0">
+              <label
+                htmlFor="cleaning-booking"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Linked booking
+              </label>
 
-            {staff
-              .filter(
-                (member) =>
-                  member.isActive &&
-                  member.workTypes.includes(
-                    "cleaning",
+              <select
+                id="cleaning-booking"
+                value={bookingId}
+                onChange={(event) =>
+                  setBookingId(
+                    event.target.value,
+                  )
+                }
+                className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+              >
+                <option value="">
+                  No linked booking
+                </option>
+
+                {bookings.map(
+                  (booking) => (
+                    <option
+                      key={booking.id}
+                      value={booking.id}
+                    >
+                      {booking.guestName}
+                    </option>
                   ),
-              )
-              .map((member) => (
-                <option
-                  key={member.id}
-                  value={member.id}
-                >
-                  {member.firstName}{" "}
-                  {member.lastName}
-                </option>
-              ))}
-          </select>
+                )}
+              </select>
+            </div>
+          </div>
+
+          {/* Cleaner */}
+          <div className="min-w-0">
+            <label
+              htmlFor="cleaning-staff"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Cleaner
+            </label>
+
+            <select
+              id="cleaning-staff"
+              value={staffId}
+              onChange={(event) =>
+                setStaffId(
+                  event.target.value,
+                )
+              }
+              className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+            >
+              <option value="">
+                Unassigned
+              </option>
+
+              {staff
+                .filter(
+                  (member) =>
+                    member.isActive &&
+                    member.workTypes.includes(
+                      "cleaning",
+                    ),
+                )
+                .map((member) => (
+                  <option
+                    key={member.id}
+                    value={member.id}
+                  >
+                    {member.firstName}{" "}
+                    {member.lastName}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          {/* Date + Time */}
+          <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="min-w-0">
+              <label
+                htmlFor="cleaning-date"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Scheduled date
+              </label>
+
+              <input
+                id="cleaning-date"
+                type="date"
+                value={scheduledDate}
+                onChange={(event) =>
+                  setScheduledDate(
+                    event.target.value,
+                  )
+                }
+                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+              />
+            </div>
+
+            <div className="min-w-0">
+              <label
+                htmlFor="cleaning-time"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Start time
+              </label>
+
+              <input
+                id="cleaning-time"
+                type="time"
+                value={startTime}
+                onChange={(event) =>
+                  setStartTime(
+                    event.target.value,
+                  )
+                }
+                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+              />
+            </div>
+          </div>
+
+          {/* Instructions */}
+          <div className="min-w-0">
+            <label
+              htmlFor="cleaning-instructions"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Instructions
+            </label>
+
+            <textarea
+              id="cleaning-instructions"
+              value={instructions}
+              onChange={(event) =>
+                setInstructions(
+                  event.target.value,
+                )
+              }
+              rows={3}
+              placeholder="Optional cleaning instructions..."
+              className="w-full min-w-0 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            />
+          </div>
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Scheduled date
-          </label>
-
-          <input
-            type="date"
-            value={scheduledDate}
-            onChange={(event) =>
-              setScheduledDate(
-                event.target.value,
-              )
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Start time
-          </label>
-
-          <input
-            type="time"
-            value={startTime}
-            onChange={(event) =>
-              setStartTime(
-                event.target.value,
-              )
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Instructions
-          </label>
-
-          <textarea
-            value={instructions}
-            onChange={(event) =>
-              setInstructions(
-                event.target.value,
-              )
-            }
-            rows={3}
-            placeholder="Optional cleaning instructions..."
-            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2"
-          />
-        </div>
-
-        <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
+        {/* Footer */}
+        <div className="flex flex-col-reverse gap-3 border-t border-gray-200 p-4 sm:flex-row sm:justify-end sm:p-5">
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm"
+            className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white"
+            className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
           >
             Save Task
           </button>

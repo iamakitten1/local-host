@@ -14,7 +14,9 @@ const TaskAssignees = ({
   selectedStaffIds,
   onChange,
 }: TaskAssigneesProps) => {
-  const handleToggle = (staffId: string) => {
+  const handleToggle = (
+    staffId: string,
+  ) => {
     const isSelected =
       selectedStaffIds.includes(staffId);
 
@@ -39,8 +41,8 @@ const TaskAssignees = ({
     taskType === "property-cleaning" ||
     taskType === "event-cleaning";
 
-  const eligibleStaff = staffList.filter(
-    (member) => {
+  const eligibleStaff =
+    staffList.filter((member) => {
       if (!member.isActive) {
         return false;
       }
@@ -56,16 +58,15 @@ const TaskAssignees = ({
       }
 
       return true;
-    },
-  );
+    });
 
   return (
-    <div>
+    <div className="min-w-0">
       <p className="mb-2 text-sm font-medium text-gray-700">
         Assigned staff
       </p>
 
-      <div className="space-y-2 rounded-lg border border-gray-200 p-3">
+      <div className="min-w-0 space-y-2 rounded-lg border border-gray-200 p-3">
         {eligibleStaff.map((member) => {
           const isSelected =
             selectedStaffIds.includes(
@@ -75,7 +76,7 @@ const TaskAssignees = ({
           return (
             <label
               key={member.id}
-              className="flex cursor-pointer items-center gap-3 rounded-lg p-2 hover:bg-gray-50"
+              className="flex min-w-0 cursor-pointer items-start gap-3 rounded-lg p-2 hover:bg-gray-50"
             >
               <input
                 type="checkbox"
@@ -83,17 +84,19 @@ const TaskAssignees = ({
                 onChange={() =>
                   handleToggle(member.id)
                 }
-                className="h-4 w-4"
+                className="mt-0.5 h-4 w-4 shrink-0"
               />
 
-              <span className="text-sm text-gray-800">
-                {member.firstName}{" "}
-                {member.lastName}
-              </span>
+              <div className="min-w-0 flex-1">
+                <p className="wrap-break-word text-sm font-medium text-gray-800">
+                  {member.firstName}{" "}
+                  {member.lastName}
+                </p>
 
-              <span className="ml-auto text-xs capitalize text-gray-500">
-                {member.role}
-              </span>
+                <p className="mt-0.5 text-xs capitalize text-gray-500">
+                  {member.role}
+                </p>
+              </div>
             </label>
           );
         })}
@@ -105,7 +108,7 @@ const TaskAssignees = ({
         )}
       </div>
 
-      <p className="mt-1 text-xs text-gray-500">
+      <p className="mt-1 wrap-break-word text-xs text-gray-500">
         Leave everyone unchecked to keep
         the task unassigned.
       </p>

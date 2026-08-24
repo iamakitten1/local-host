@@ -42,14 +42,14 @@ const ScheduleTab = ({
   }, {});
 
   return (
-    <div>
+    <div className="min-w-0">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <h2 className="text-lg font-semibold text-gray-900">
             Schedule
           </h2>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 wrap-break-word text-sm text-gray-500">
             Staff tasks and daily assignments
           </p>
         </div>
@@ -57,7 +57,7 @@ const ScheduleTab = ({
         <button
           type="button"
           onClick={onAddTask}
-          className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+          className="w-full shrink-0 cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
         >
           + Add Task
         </button>
@@ -68,15 +68,18 @@ const ScheduleTab = ({
         availabilityList={availabilityList}
       />
 
-      <div className="space-y-8">
+      <div className="min-w-0 space-y-8">
         {Object.entries(tasksByDate).map(
           ([date, tasks]) => (
-            <section key={date}>
+            <section
+              key={date}
+              className="min-w-0"
+            >
               <h3 className="mb-3 text-sm font-semibold text-gray-700">
                 {date}
               </h3>
 
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
                 {[...tasks]
                   .sort((a, b) =>
                     (

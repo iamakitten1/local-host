@@ -18,9 +18,7 @@ import TaskStatus from "./TaskStatus";
 
 type WorkTaskFormModalProps = {
   task?: WorkTask;
-
   staffList: Staff[];
-
   initialStaffIds?: string[];
 
   onClose: () => void;
@@ -93,9 +91,10 @@ const WorkTaskFormModal = ({
       setError(
         "Please add a title and date.",
       );
-
       return;
     }
+
+    setError("");
 
     const isCompleted =
       status === "completed";
@@ -175,70 +174,72 @@ const WorkTaskFormModal = ({
     >
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 p-5"
+        className="min-w-0"
       >
-        {error && (
-          <p className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
+        <div className="space-y-4 p-4 sm:p-5">
+          {error && (
+            <p className="text-sm font-medium text-red-600">
+              {error}
+            </p>
+          )}
 
-        <TaskBasics
-          type={type}
-          title={title}
-          date={date}
-          startTime={startTime}
-          priority={priority}
-          onTypeChange={setType}
-          onTitleChange={setTitle}
-          onDateChange={setDate}
-          onStartTimeChange={
-            setStartTime
-          }
-          onPriorityChange={
-            setPriority
-          }
-        />
-
-        <TaskDetails
-          area={area}
-          instructions={instructions}
-          onAreaChange={setArea}
-          onInstructionsChange={
-            setInstructions
-          }
-        />
-
-        <TaskAssignees
-          staffList={staffList}
-          taskType={type}
-          selectedStaffIds={
-            selectedStaffIds
-          }
-          onChange={
-            setSelectedStaffIds
-          }
-        />
-
-        {isEditing && (
-          <TaskStatus
-            status={status}
-            onChange={setStatus}
+          <TaskBasics
+            type={type}
+            title={title}
+            date={date}
+            startTime={startTime}
+            priority={priority}
+            onTypeChange={setType}
+            onTitleChange={setTitle}
+            onDateChange={setDate}
+            onStartTimeChange={
+              setStartTime
+            }
+            onPriorityChange={
+              setPriority
+            }
           />
-        )}
 
-        <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
+          <TaskDetails
+            area={area}
+            instructions={instructions}
+            onAreaChange={setArea}
+            onInstructionsChange={
+              setInstructions
+            }
+          />
+
+          <TaskAssignees
+            staffList={staffList}
+            taskType={type}
+            selectedStaffIds={
+              selectedStaffIds
+            }
+            onChange={
+              setSelectedStaffIds
+            }
+          />
+
+          {isEditing && (
+            <TaskStatus
+              status={status}
+              onChange={setStatus}
+            />
+          )}
+        </div>
+
+        <div className="flex flex-col-reverse gap-3 border-t border-gray-200 p-4 sm:flex-row sm:justify-end sm:p-5">
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm"
+            className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700"
+            className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
           >
             {isEditing
               ? "Save Changes"
