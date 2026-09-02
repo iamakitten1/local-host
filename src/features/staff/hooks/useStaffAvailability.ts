@@ -1,16 +1,12 @@
-import { useState } from "react";
-
-import { staffAvailability } from "../../../data/staffAvailability";
+import { useStaffContext } from "../context/StaffContext";
 
 import type { StaffAvailability } from "../../../types/staff";
 
 const useStaffAvailability = () => {
-  const [
+  const {
     availabilityList,
     setAvailabilityList,
-  ] = useState<StaffAvailability[]>(
-    staffAvailability,
-  );
+  } = useStaffContext();
 
   const handleSaveAvailability = (
     availability: StaffAvailability,

@@ -1,10 +1,12 @@
-import { useState } from "react";
-import { staff } from "../../../data/staff";
+import { useStaffContext } from "../context/StaffContext";
+
 import type { Staff } from "../../../types/staff";
 
 const useStaffDirectory = () => {
-  const [staffList, setStaffList] =
-    useState<Staff[]>(staff);
+  const {
+    staffList,
+    setStaffList,
+  } = useStaffContext();
 
   const handleSaveStaff = (
     member: Staff,
@@ -13,15 +15,13 @@ const useStaffDirectory = () => {
       const staffExists =
         currentStaff.some(
           (currentMember) =>
-            currentMember.id ===
-            member.id,
+            currentMember.id === member.id,
         );
 
       if (staffExists) {
         return currentStaff.map(
           (currentMember) =>
-            currentMember.id ===
-            member.id
+            currentMember.id === member.id
               ? member
               : currentMember,
         );
