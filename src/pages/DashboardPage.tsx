@@ -3,10 +3,10 @@ import ArrivalsList from "../features/dashboard/components/ArrivalsList";
 import CleaningOverview from "../features/dashboard/components/CleaningOverview";
 import DeparturesList from "../features/dashboard/components/DeparturesList";
 
+import { useWorkTasksContext } from "../features/tasks/context/WorkTasksContext";
+
 import { rooms } from "../data/rooms";
 import { bookings } from "../data/bookings";
-import { workTasks } from "../data/workTasks";
-import { assignments } from "../data/assignments";
 
 const getTodayDateKey = () => {
   const today = new Date();
@@ -25,6 +25,11 @@ const getTodayDateKey = () => {
 };
 
 const DashboardPage = () => {
+  const {
+    taskList,
+    assignmentList,
+  } = useWorkTasksContext();
+
   const today = getTodayDateKey();
 
   const todaysArrivals = bookings.filter(
@@ -37,19 +42,13 @@ const DashboardPage = () => {
       booking.checkOutDate === today,
   );
 
-  const pendingCleaning =
-    workTasks.filter(
-      (task) =>
-        task.type === "room-cleaning" &&
-        task.status === "pending",
-    );
-
-  const cleaningAssignments =
-    assignments.filter(
-      (assignment) =>
-        assignment.sourceType ===
-        "work-task",
-    );
+  const pendingCleaning = taskList.filter(
+    (task) =>
+      task.type === "room-cleaning" &&
+      task.date <= today &&
+      task.status !== "completed" &&
+      task.status !== "cancelled",
+  );
 
   return (
     <div className="min-w-0">
@@ -97,7 +96,7 @@ const DashboardPage = () => {
 
       <CleaningOverview
         tasks={pendingCleaning}
-        assignments={cleaningAssignments}
+        assignments={assignmentList}
       />
     </div>
   );
