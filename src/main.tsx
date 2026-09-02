@@ -1,10 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
+import './index.css'
+
+import App from './App.tsx'
+import { WorkTasksProvider } from "./features/tasks/context/WorkTasksContext";
+
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <WorkTasksProvider>
+      <App />
+    </WorkTasksProvider>
   </StrictMode>,
-)
+);

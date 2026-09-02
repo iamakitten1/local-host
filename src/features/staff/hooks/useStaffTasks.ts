@@ -1,22 +1,15 @@
-import { useState } from "react";
-
-import { workTasks } from "../../../data/workTasks";
-import { assignments } from "../../../data/assignments";
+import { useWorkTasksContext } from "../../tasks/context/WorkTasksContext";
 
 import type { WorkTask } from "../../../types/workTask";
 import type { Assignment } from "../../../types/assignment";
 
 const useStaffTasks = () => {
-  const [taskList, setTaskList] =
-    useState<WorkTask[]>(workTasks);
-
-  const [assignmentList, setAssignmentList] =
-    useState<Assignment[]>(
-      assignments.filter(
-        (assignment) =>
-          assignment.sourceType === "work-task",
-      ),
-    );
+  const {
+    taskList,
+    assignmentList,
+    setTaskList,
+    setAssignmentList,
+  } = useWorkTasksContext();
 
   const handleSaveTask = (
     task: WorkTask,
@@ -24,77 +17,93 @@ const useStaffTasks = () => {
   ) => {
     setTaskList((currentTasks) => {
       const taskExists = currentTasks.some(
-        (currentTask) => currentTask.id === task.id,
+        (currentTask) =>
+          currentTask.id === task.id,
       );
 
       if (taskExists) {
-        return currentTasks.map((currentTask) =>
-          currentTask.id === task.id
-            ? task
-            : currentTask,
+        return currentTasks.map(
+          (currentTask) =>
+            currentTask.id === task.id
+              ? task
+              : currentTask,
         );
       }
 
       return [...currentTasks, task];
     });
 
-    setAssignmentList((currentAssignments) => {
-      const taskAssignments =
-        currentAssignments.filter(
-          (assignment) =>
-            assignment.sourceType === "work-task" &&
-            assignment.sourceId === task.id,
-        );
+    setAssignmentList(
+      (currentAssignments) => {
+        const taskAssignments =
+          currentAssignments.filter(
+            (assignment) =>
+              assignment.sourceType ===
+                "work-task" &&
+              assignment.sourceId ===
+                task.id,
+          );
 
-      const otherAssignments =
-        currentAssignments.filter(
-          (assignment) =>
-            !(
-              assignment.sourceType === "work-task" &&
-              assignment.sourceId === task.id
-            ),
-        );
+        const otherAssignments =
+          currentAssignments.filter(
+            (assignment) =>
+              !(
+                assignment.sourceType ===
+                  "work-task" &&
+                assignment.sourceId ===
+                  task.id
+              ),
+          );
 
-      const nextTaskAssignments =
-        selectedStaffIds.map((staffId) => {
-          const existingAssignment =
-            taskAssignments.find(
-              (assignment) =>
-                assignment.staffId === staffId,
-            );
+        const nextTaskAssignments =
+          selectedStaffIds.map(
+            (staffId) => {
+              const existingAssignment =
+                taskAssignments.find(
+                  (assignment) =>
+                    assignment.staffId ===
+                    staffId,
+                );
 
-          if (existingAssignment) {
-            return existingAssignment;
-          }
+              if (existingAssignment) {
+                return existingAssignment;
+              }
 
-          const newAssignment: Assignment = {
-            id: `assignment-${Date.now()}-${staffId}`,
-            propertyId: task.propertyId,
-            sourceType: "work-task",
-            sourceId: task.id,
-            staffId,
-            status: "pending",
-            assignedByStaffId:
-              task.createdByStaffId,
-            assignedAt:
-              new Date().toISOString(),
-          };
+              const newAssignment: Assignment =
+                {
+                  id: `assignment-${Date.now()}-${staffId}`,
+                  propertyId:
+                    task.propertyId,
+                  sourceType:
+                    "work-task",
+                  sourceId: task.id,
+                  staffId,
+                  status: "pending",
+                  assignedByStaffId:
+                    task.createdByStaffId,
+                  assignedAt:
+                    new Date().toISOString(),
+                };
 
-          return newAssignment;
-        });
+              return newAssignment;
+            },
+          );
 
-      return [
-        ...otherAssignments,
-        ...nextTaskAssignments,
-      ];
-    });
+        return [
+          ...otherAssignments,
+          ...nextTaskAssignments,
+        ];
+      },
+    );
   };
 
   const handleDeleteTask = (
     taskId: string,
   ) => {
     const shouldDelete =
-      window.confirm("Delete this task?");
+      window.confirm(
+        "Delete this task?",
+      );
 
     if (!shouldDelete) {
       return;
@@ -106,14 +115,17 @@ const useStaffTasks = () => {
       ),
     );
 
-    setAssignmentList((currentAssignments) =>
-      currentAssignments.filter(
-        (assignment) =>
-          !(
-            assignment.sourceType === "work-task" &&
-            assignment.sourceId === taskId
-          ),
-      ),
+    setAssignmentList(
+      (currentAssignments) =>
+        currentAssignments.filter(
+          (assignment) =>
+            !(
+              assignment.sourceType ===
+                "work-task" &&
+              assignment.sourceId ===
+                taskId
+            ),
+        ),
     );
   };
 
@@ -123,12 +135,16 @@ const useStaffTasks = () => {
     assignmentList
       .filter(
         (assignment) =>
-          assignment.sourceType === "work-task" &&
-          assignment.sourceId === taskId &&
-          assignment.status !== "cancelled",
+          assignment.sourceType ===
+            "work-task" &&
+          assignment.sourceId ===
+            taskId &&
+          assignment.status !==
+            "cancelled",
       )
       .map(
-        (assignment) => assignment.staffId,
+        (assignment) =>
+          assignment.staffId,
       );
 
   return {

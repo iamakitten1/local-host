@@ -1,12 +1,8 @@
 import { useState } from "react";
 
-import { workTasks } from "../../../data/workTasks";
-import { assignments } from "../../../data/assignments";
+import { useWorkTasksContext } from "../../tasks/context/WorkTasksContext";
 
-import type {
-  WorkTask,
-  WorkTaskStatus,
-} from "../../../types/workTask";
+import type { WorkTask } from "../../../types/workTask";
 import type { Assignment } from "../../../types/assignment";
 
 export type CleaningFilter =
@@ -18,7 +14,6 @@ const getTodayDateKey = () => {
   const today = new Date();
 
   const year = today.getFullYear();
-
   const month = String(
     today.getMonth() + 1,
   ).padStart(2, "0");
@@ -31,45 +26,23 @@ const getTodayDateKey = () => {
 };
 
 const useCleaningTasks = () => {
-  const [taskList, setTaskList] =
-    useState<WorkTask[]>(
-      workTasks.filter(
-        (task) =>
-          task.type === "room-cleaning",
-      ),
-    );
-
-  const [
+  const {
+    taskList,
     assignmentList,
+    setTaskList,
     setAssignmentList,
-  ] = useState<Assignment[]>(
-    assignments.filter(
-      (assignment) =>
-        assignment.sourceType ===
-        "work-task",
-    ),
-  );
+    handleStatusChange,
+  } = useWorkTasksContext();
 
   const [filter, setFilter] =
     useState<CleaningFilter>("today");
 
   const today = getTodayDateKey();
 
-  const handleStatusChange = (
-    taskId: string,
-    status: WorkTaskStatus,
-  ) => {
-    setTaskList((currentTasks) =>
-      currentTasks.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              status,
-            }
-          : task,
-      ),
-    );
-  };
+  const cleaningTasks = taskList.filter(
+    (task) =>
+      task.type === "room-cleaning",
+  );
 
   const handleStaffChange = (
     taskId: string,
@@ -126,21 +99,17 @@ const useCleaningTasks = () => {
           );
         }
 
-        const newAssignment: Assignment =
-          {
-            id: `assignment-${Date.now()}`,
-            propertyId:
-              "property-1",
-            sourceType:
-              "work-task",
-            sourceId: taskId,
-            staffId,
-            status: "pending",
-            assignedByStaffId:
-              "staff-1",
-            assignedAt:
-              new Date().toISOString(),
-          };
+        const newAssignment: Assignment = {
+          id: `assignment-${Date.now()}`,
+          propertyId: "property-1",
+          sourceType: "work-task",
+          sourceId: taskId,
+          staffId,
+          status: "pending",
+          assignedByStaffId: "staff-1",
+          assignedAt:
+            new Date().toISOString(),
+        };
 
         return [
           ...currentAssignments,
@@ -163,19 +132,18 @@ const useCleaningTasks = () => {
       return;
     }
 
-    const newAssignment: Assignment =
-      {
-        id: `assignment-${Date.now()}`,
-        propertyId: task.propertyId,
-        sourceType: "work-task",
-        sourceId: task.id,
-        staffId: assignedStaffId,
-        status: "pending",
-        assignedByStaffId:
-          task.createdByStaffId,
-        assignedAt:
-          new Date().toISOString(),
-      };
+    const newAssignment: Assignment = {
+      id: `assignment-${Date.now()}`,
+      propertyId: task.propertyId,
+      sourceType: "work-task",
+      sourceId: task.id,
+      staffId: assignedStaffId,
+      status: "pending",
+      assignedByStaffId:
+        task.createdByStaffId,
+      assignedAt:
+        new Date().toISOString(),
+    };
 
     setAssignmentList(
       (currentAssignments) => [
@@ -207,8 +175,7 @@ const useCleaningTasks = () => {
       );
 
     const currentStaffId =
-      currentAssignment?.staffId ??
-      null;
+      currentAssignment?.staffId ?? null;
 
     if (
       currentStaffId !== assignedStaffId
@@ -244,7 +211,7 @@ const useCleaningTasks = () => {
   };
 
   const filteredTasks =
-    taskList.filter((task) => {
+    cleaningTasks.filter((task) => {
       if (filter === "completed") {
         return (
           task.status === "completed"
