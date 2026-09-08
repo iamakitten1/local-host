@@ -6,41 +6,71 @@ type EventCardProps = {
   event: LocalHostEvent;
   assignments: Assignment[];
   staffList: Staff[];
+  onEdit: (event: LocalHostEvent) => void;
+  onDelete: (eventId: string) => void;
+};
+
+const getAssignmentStatus = (
+  status: Assignment["status"],
+) => {
+  switch (status) {
+    case "confirmed":
+      return {
+        label: "Confirmed",
+        className: "text-green-700",
+      };
+
+    case "pending":
+      return {
+        label: "Awaiting reply",
+        className: "text-amber-700",
+      };
+
+    case "declined":
+      return {
+        label: "Declined",
+        className: "text-red-600",
+      };
+
+    case "cancellation-requested":
+      return {
+        label: "Cancellation requested",
+        className: "text-orange-600",
+      };
+
+    case "cancelled":
+      return {
+        label: "Cancelled",
+        className: "text-gray-500",
+      };
+  }
 };
 
 const EventCard = ({
   event,
   assignments,
   staffList,
+  onEdit,
+  onDelete,
 }: EventCardProps) => {
-  const activeAssignments = assignments.filter(
-    (assignment) =>
-      assignment.status !== "cancelled" &&
-      assignment.status !== "declined",
-  );
+  const activeAssignments =
+    assignments.filter(
+      (assignment) =>
+        assignment.status !== "cancelled" &&
+        assignment.status !== "declined",
+    );
 
-  const confirmedCount = assignments.filter(
-    (assignment) =>
-      assignment.status === "confirmed",
-  ).length;
+  const confirmedCount =
+    assignments.filter(
+      (assignment) =>
+        assignment.status === "confirmed",
+    ).length;
 
-  const pendingCount = assignments.filter(
-    (assignment) =>
-      assignment.status === "pending",
-  ).length;
-
-  const assignedStaff = activeAssignments
-    .map((assignment) => {
-      const member = staffList.find(
-        (staff) =>
-          staff.id === assignment.staffId,
-      );
-
-      return member
-        ? `${member.firstName} ${member.lastName}`
-        : null;
-    })
-    .filter(Boolean);
+  const pendingCount =
+    assignments.filter(
+      (assignment) =>
+        assignment.status === "pending",
+    ).length;
 
   const needsMoreStaff =
     activeAssignments.length <
@@ -67,8 +97,7 @@ const EventCard = ({
 
         <div className="space-y-1 text-sm text-gray-600">
           <p>
-            {event.startTime} –{" "}
-            {event.endTime}
+            {event.startTime} – {event.endTime}
           </p>
 
           {event.area && (
@@ -106,14 +135,51 @@ const EventCard = ({
             </span>
           </div>
 
-          {assignedStaff.length > 0 && (
-            <p className="mt-3 wrap-break-word text-sm text-gray-600">
-              {assignedStaff.join(", ")}
+          {assignments.length > 0 ? (
+            <div className="mt-3 space-y-2">
+              {assignments.map(
+                (assignment) => {
+                  const member =
+                    staffList.find(
+                      (staff) =>
+                        staff.id ===
+                        assignment.staffId,
+                    );
+
+                  const status =
+                    getAssignmentStatus(
+                      assignment.status,
+                    );
+
+                  return (
+                    <div
+                      key={assignment.id}
+                      className="flex min-w-0 flex-col gap-1 border-t border-gray-200 pt-2 first:border-t-0 first:pt-0 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <p className="min-w-0 wrap-break-word text-sm font-medium text-gray-700">
+                        {member
+                          ? `${member.firstName} ${member.lastName}`
+                          : "Unknown staff"}
+                      </p>
+
+                      <span
+                        className={`shrink-0 text-xs font-medium ${status.className}`}
+                      >
+                        {status.label}
+                      </span>
+                    </div>
+                  );
+                },
+              )}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm text-gray-500">
+              No staff assigned
             </p>
           )}
 
           {needsMoreStaff && (
-            <p className="mt-2 text-xs font-medium text-orange-600">
+            <p className="mt-3 text-xs font-medium text-orange-600">
               More staff needed
             </p>
           )}
@@ -130,6 +196,24 @@ const EventCard = ({
             </p>
           </div>
         )}
+
+        <div className="flex flex-col gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            onClick={() => onEdit(event)}
+            className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
+          >
+            Edit
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onDelete(event.id)}
+            className="w-full cursor-pointer rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 sm:w-auto"
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </article>
   );

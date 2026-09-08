@@ -1,13 +1,18 @@
 import { useState } from "react";
 
 import Modal from "../../../components/ui/Modal";
+import EventStaffSelector from "./EventStaffSelector";
 
 import type { Event as LocalHostEvent } from "../../../types/event";
-import type { Staff } from "../../../types/staff";
+import type {
+  Staff,
+  StaffAvailability,
+} from "../../../types/staff";
 
 type EventFormModalProps = {
   event?: LocalHostEvent;
   staffList: Staff[];
+  availabilityList: StaffAvailability[];
   initialStaffIds?: string[];
   onClose: () => void;
   onSubmit: (
@@ -19,6 +24,7 @@ type EventFormModalProps = {
 const EventFormModal = ({
   event,
   staffList,
+  availabilityList,
   initialStaffIds = [],
   onClose,
   onSubmit,
@@ -64,14 +70,8 @@ const EventFormModal = ({
     initialStaffIds,
   );
 
-  const [error, setError] = useState("");
-
-  const eligibleStaff = staffList.filter(
-    (member) =>
-      member.isActive &&
-      member.role !== "owner" &&
-      member.workTypes.includes("event"),
-  );
+  const [error, setError] =
+    useState("");
 
   const handleStaffToggle = (
     staffId: string,
@@ -88,6 +88,45 @@ const EventFormModal = ({
             ],
     );
   };
+
+  const hasUnavailableSelectedStaff =
+    selectedStaffIds.some((staffId) => {
+      const availability =
+        availabilityList.find(
+          (entry) =>
+            entry.staffId === staffId &&
+            entry.date === date,
+        );
+
+      if (!availability) {
+        return false;
+      }
+
+      if (
+        availability.status ===
+        "unavailable"
+      ) {
+        return true;
+      }
+
+      if (
+        availability.status ===
+          "available" &&
+        availability.availableFrom &&
+        availability.availableUntil &&
+        startTime &&
+        endTime
+      ) {
+        return (
+          startTime <
+            availability.availableFrom ||
+          endTime >
+            availability.availableUntil
+        );
+      }
+
+      return false;
+    });
 
   const handleSubmit = (
     submitEvent: React.SubmitEvent<HTMLFormElement>,
@@ -123,6 +162,14 @@ const EventFormModal = ({
       return;
     }
 
+    if (hasUnavailableSelectedStaff) {
+      setError(
+        "Remove staff who are unavailable for this event time.",
+      );
+
+      return;
+    }
+
     setError("");
 
     const savedEvent: LocalHostEvent = {
@@ -146,7 +193,8 @@ const EventFormModal = ({
         area.trim() || undefined,
 
       instructions:
-        instructions.trim() || undefined,
+        instructions.trim() ||
+        undefined,
 
       requiredStaffCount,
 
@@ -323,50 +371,27 @@ const EventFormModal = ({
               Assign event staff
             </p>
 
-            {eligibleStaff.length === 0 ? (
-              <p className="text-sm text-gray-500">
-                No active event staff
-                available.
+            {!date ? (
+              <p className="rounded-lg bg-gray-50 p-3 text-sm text-gray-500">
+                Select the event date to
+                check staff availability.
               </p>
             ) : (
-              <div className="space-y-2">
-                {eligibleStaff.map(
-                  (member) => (
-                    <label
-                      key={member.id}
-                      className="flex min-w-0 cursor-pointer items-start gap-3 rounded-lg border border-gray-200 p-3"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedStaffIds.includes(
-                          member.id,
-                        )}
-                        onChange={() =>
-                          handleStaffToggle(
-                            member.id,
-                          )
-                        }
-                        className="mt-1"
-                      />
-
-                      <span className="min-w-0">
-                        <span className="block wrap-break-word text-sm font-medium text-gray-900">
-                          {
-                            member.firstName
-                          }{" "}
-                          {
-                            member.lastName
-                          }
-                        </span>
-
-                        <span className="block text-xs capitalize text-gray-500">
-                          {member.role}
-                        </span>
-                      </span>
-                    </label>
-                  ),
-                )}
-              </div>
+              <EventStaffSelector
+                staffList={staffList}
+                availabilityList={
+                  availabilityList
+                }
+                date={date}
+                startTime={startTime}
+                endTime={endTime}
+                selectedStaffIds={
+                  selectedStaffIds
+                }
+                onToggle={
+                  handleStaffToggle
+                }
+              />
             )}
 
             <p className="mt-2 text-xs text-gray-500">

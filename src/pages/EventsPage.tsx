@@ -6,17 +6,28 @@ import EventFormModal from "../features/events/components/EventFormModal";
 import useEventsManagement from "../features/events/hooks/useEventsManagement";
 import { useStaffContext } from "../features/staff/context/StaffContext";
 
+import type { Event as LocalHostEvent } from "../types/event";
+
 const EventsPage = () => {
-  const [isAddEventOpen, setIsAddEventOpen] =
-    useState(false);
+  const [isAddEventOpen, setIsAddEventOpen] = useState(false);
+
+  const [selectedEvent, setSelectedEvent] = useState<LocalHostEvent | null>(
+    null,
+  );
 
   const {
     eventList,
     eventAssignmentList,
     handleSaveEvent,
+    handleDeleteEvent,
+    getEventStaffIds,
   } = useEventsManagement();
 
-  const { staffList } = useStaffContext();
+  const { staffList, availabilityList } = useStaffContext();
+
+  const selectedEventStaffIds = selectedEvent
+    ? getEventStaffIds(selectedEvent.id)
+    : [];
 
   return (
     <div className="min-w-0">
@@ -33,9 +44,7 @@ const EventsPage = () => {
 
         <button
           type="button"
-          onClick={() =>
-            setIsAddEventOpen(true)
-          }
+          onClick={() => setIsAddEventOpen(true)}
           className="w-full shrink-0 cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
         >
           + Add Event
@@ -44,13 +53,10 @@ const EventsPage = () => {
 
       {eventList.length === 0 ? (
         <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-          <p className="text-sm font-medium text-gray-700">
-            No events yet
-          </p>
+          <p className="text-sm font-medium text-gray-700">No events yet</p>
 
           <p className="mt-1 text-sm text-gray-500">
-            Create an event to start planning
-            staff and event details.
+            Create an event to start planning staff and event details.
           </p>
         </div>
       ) : (
@@ -61,10 +67,12 @@ const EventsPage = () => {
               event={event}
               assignments={eventAssignmentList.filter(
                 (assignment) =>
-                  assignment.sourceId ===
-                  event.id,
+                  assignment.sourceType === "event" &&
+                  assignment.sourceId === event.id,
               )}
               staffList={staffList}
+              onEdit={setSelectedEvent}
+              onDelete={handleDeleteEvent}
             />
           ))}
         </div>
@@ -73,9 +81,19 @@ const EventsPage = () => {
       {isAddEventOpen && (
         <EventFormModal
           staffList={staffList}
-          onClose={() =>
-            setIsAddEventOpen(false)
-          }
+          availabilityList={availabilityList}
+          onClose={() => setIsAddEventOpen(false)}
+          onSubmit={handleSaveEvent}
+        />
+      )}
+
+      {selectedEvent && (
+        <EventFormModal
+          event={selectedEvent}
+          staffList={staffList}
+          availabilityList={availabilityList}
+          initialStaffIds={selectedEventStaffIds}
+          onClose={() => setSelectedEvent(null)}
           onSubmit={handleSaveEvent}
         />
       )}

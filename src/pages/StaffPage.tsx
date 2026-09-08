@@ -3,9 +3,11 @@ import { useState } from "react";
 import useStaffDirectory from "../features/staff/hooks/useStaffDirectory";
 import useStaffAvailability from "../features/staff/hooks/useStaffAvailability";
 import useStaffTasks from "../features/staff/hooks/useStaffTasks";
+import useEventsManagement from "../features/events/hooks/useEventsManagement";
 
 import type { Staff } from "../types/staff";
 import type { WorkTask } from "../types/workTask";
+import type { Event as LocalHostEvent } from "../types/event";
 
 import StaffTabs, {
   type StaffTab,
@@ -19,6 +21,8 @@ import ScheduleTab from "../features/staff/components/schedule/ScheduleTab";
 import AvailabilityTab from "../features/staff/components/availability/AvailabilityTab";
 
 import WorkTaskFormModal from "../features/staff/components/work-task/TaskFormModal";
+
+import EventFormModal from "../features/events/components/EventFormModal";
 
 const StaffPage = () => {
   const [activeTab, setActiveTab] =
@@ -42,6 +46,14 @@ const StaffPage = () => {
     getTaskStaffIds,
   } = useStaffTasks();
 
+  const {
+    eventList,
+    eventAssignmentList,
+    handleSaveEvent,
+    handleDeleteEvent,
+    getEventStaffIds,
+  } = useEventsManagement();
+
   const [
     isAddStaffOpen,
     setIsAddStaffOpen,
@@ -62,9 +74,21 @@ const StaffPage = () => {
     setSelectedTask,
   ] = useState<WorkTask | null>(null);
 
+  const [
+    selectedEvent,
+    setSelectedEvent,
+  ] = useState<LocalHostEvent | null>(
+    null,
+  );
+
   const selectedTaskStaffIds =
     selectedTask
       ? getTaskStaffIds(selectedTask.id)
+      : [];
+
+  const selectedEventStaffIds =
+    selectedEvent
+      ? getEventStaffIds(selectedEvent.id)
       : [];
 
   return (
@@ -101,6 +125,10 @@ const StaffPage = () => {
           assignmentList={
             assignmentList
           }
+          eventList={eventList}
+          eventAssignmentList={
+            eventAssignmentList
+          }
           staffList={staffList}
           availabilityList={
             availabilityList
@@ -111,6 +139,12 @@ const StaffPage = () => {
           onEditTask={setSelectedTask}
           onDeleteTask={
             handleDeleteTask
+          }
+          onEditEvent={
+            setSelectedEvent
+          }
+          onDeleteEvent={
+            handleDeleteEvent
           }
         />
       )}
@@ -175,6 +209,23 @@ const StaffPage = () => {
             setSelectedTask(null)
           }
           onSubmit={handleSaveTask}
+        />
+      )}
+
+      {selectedEvent && (
+        <EventFormModal
+          event={selectedEvent}
+          staffList={staffList}
+          availabilityList={
+            availabilityList
+          }
+          initialStaffIds={
+            selectedEventStaffIds
+          }
+          onClose={() =>
+            setSelectedEvent(null)
+          }
+          onSubmit={handleSaveEvent}
         />
       )}
     </div>
