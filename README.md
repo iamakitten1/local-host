@@ -1,3 +1,113 @@
+# LocalHost
+
+LocalHost is a B&B operations management application built to simplify the daily work of small hospitality properties.
+
+The project currently focuses on managing bookings, rooms, delegated cleaning, staff availability, work assignments, events, and operational schedules from one place.
+
+The first version is being developed for real use in a single B&B property. After testing it during daily operations, the project can later be expanded to support multiple properties.
+
+## Current Features
+
+### Dashboard
+- Today's arrivals and departures
+- Room overview
+- Pending cleaning overview
+- Shared operational task data
+
+### Rooms
+- Create and edit rooms
+- Room capacity management
+- Flexible bed configurations
+- Support for alternative bed setups
+
+### Bookings
+- Create and edit bookings
+- Guest and stay information
+- Room selection
+- Guest count
+- Check-in and check-out dates
+- Estimated arrival time
+- Booking status
+- Bed setup per booking
+
+### Cleaning
+- Delegated room-cleaning tasks
+- Task instructions
+- Cleaner assignment
+- Task status management
+- Today, upcoming, and completed filters
+- Shared task state with Staff and Dashboard
+
+### Staff
+- Team management
+- Owner, Operations, and Staff roles
+- Cleaning and Event work types
+- Active/inactive staff status
+
+### Availability
+- Weekly staff availability
+- Available, Unavailable, and Not Set states
+- Optional availability time ranges
+- Mobile day view
+- Desktop weekly view
+
+### Schedule
+- Work tasks and events in one operational schedule
+- Grouped by date
+- Ordered by start time
+- Staff assignment status
+- Staffing warnings
+- Cancellation review workflow
+
+### Events
+- Create, edit, and delete events
+- Event date and time
+- Area and instructions
+- Required staff count
+- Event staff assignments
+- Staff availability checks
+- Staffing status
+- Event integration with the Staff Schedule
+
+### Assignment Workflow
+Staff assignments support:
+
+- Pending
+- Confirmed
+- Declined
+- Cancellation requested
+- Cancelled
+
+Staff can:
+
+- Accept assignments
+- Decline assignments with a reason
+- Request cancellation of confirmed assignments
+
+Owner / Operations can:
+
+- Review cancellation requests
+- Approve cancellations
+- Reject cancellations
+
+A temporary development preview is currently used to test staff-specific schedules until authentication is implemented.
+
+## Tech Stack
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- TanStack Query
+- React Hook Form
+- Zod
+
+## Architecture
+
+LocalHost follows a feature-first structure.
+
+```text
 src/
 ├── components/
 ├── config/
