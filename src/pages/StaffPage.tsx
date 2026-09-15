@@ -3,9 +3,11 @@ import { useState } from "react";
 import useStaffDirectory from "../features/staff/hooks/useStaffDirectory";
 import useStaffAvailability from "../features/staff/hooks/useStaffAvailability";
 import useStaffTasks from "../features/staff/hooks/useStaffTasks";
+import useEventsManagement from "../features/events/hooks/useEventsManagement";
 
 import type { Staff } from "../types/staff";
 import type { WorkTask } from "../types/workTask";
+import type { Event as LocalHostEvent } from "../types/event";
 
 import StaffTabs, {
   type StaffTab,
@@ -15,24 +17,22 @@ import TeamTab from "../features/staff/components/team/TeamTab";
 import StaffFormModal from "../features/staff/components/team/StaffFormModal";
 
 import ScheduleTab from "../features/staff/components/schedule/ScheduleTab";
+import MySchedule from "../features/staff/components/my-schedule/MySchedule";
 
 import AvailabilityTab from "../features/staff/components/availability/AvailabilityTab";
 
 import WorkTaskFormModal from "../features/staff/components/work-task/TaskFormModal";
 
+import EventFormModal from "../features/events/components/EventFormModal";
+
+import useAssignmentActions from "../features/assignments/hooks/useAssignmentActions";
+
 const StaffPage = () => {
-  const [activeTab, setActiveTab] =
-    useState<StaffTab>("team");
+  const [activeTab, setActiveTab] = useState<StaffTab>("team");
 
-  const {
-    staffList,
-    handleSaveStaff,
-  } = useStaffDirectory();
+  const { staffList, handleSaveStaff } = useStaffDirectory();
 
-  const {
-    availabilityList,
-    handleSaveAvailability,
-  } = useStaffAvailability();
+  const { availabilityList, handleSaveAvailability } = useStaffAvailability();
 
   const {
     taskList,
@@ -42,55 +42,58 @@ const StaffPage = () => {
     getTaskStaffIds,
   } = useStaffTasks();
 
-  const [
-    isAddStaffOpen,
-    setIsAddStaffOpen,
-  ] = useState(false);
+  const {
+    eventList,
+    eventAssignmentList,
+    handleSaveEvent,
+    handleDeleteEvent,
+    getEventStaffIds,
+  } = useEventsManagement();
 
-  const [
-    selectedStaff,
-    setSelectedStaff,
-  ] = useState<Staff | null>(null);
+  const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
 
-  const [
-    isAddTaskOpen,
-    setIsAddTaskOpen,
-  ] = useState(false);
+  const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
 
-  const [
-    selectedTask,
-    setSelectedTask,
-  ] = useState<WorkTask | null>(null);
+  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
 
-  const selectedTaskStaffIds =
-    selectedTask
-      ? getTaskStaffIds(selectedTask.id)
-      : [];
+  const [selectedTask, setSelectedTask] = useState<WorkTask | null>(null);
+
+  const [selectedEvent, setSelectedEvent] = useState<LocalHostEvent | null>(
+    null,
+  );
+
+  const [previewStaffId, setPreviewStaffId] = useState("");
+
+  const selectedTaskStaffIds = selectedTask
+    ? getTaskStaffIds(selectedTask.id)
+    : [];
+
+  const selectedEventStaffIds = selectedEvent
+    ? getEventStaffIds(selectedEvent.id)
+    : [];
+
+  const previewStaff = staffList.filter(
+    (member) => member.isActive && member.role !== "owner",
+  );
+
+  const { approveCancellation, rejectCancellation } = useAssignmentActions();
 
   return (
     <div className="min-w-0">
       <div className="mb-6 min-w-0">
-        <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-          Staff
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Staff</h1>
 
         <p className="mt-1 wrap-break-word text-sm text-gray-500">
-          Manage team members, schedules,
-          and working hours
+          Manage team members, schedules, and working hours
         </p>
       </div>
 
-      <StaffTabs
-        activeTab={activeTab}
-        onChange={setActiveTab}
-      />
+      <StaffTabs activeTab={activeTab} onChange={setActiveTab} />
 
       {activeTab === "team" && (
         <TeamTab
           staffList={staffList}
-          onAddStaff={() =>
-            setIsAddStaffOpen(true)
-          }
+          onAddStaff={() => setIsAddStaffOpen(true)}
           onEditStaff={setSelectedStaff}
         />
       )}
@@ -98,48 +101,84 @@ const StaffPage = () => {
       {activeTab === "schedule" && (
         <ScheduleTab
           taskList={taskList}
-          assignmentList={
-            assignmentList
-          }
+          assignmentList={assignmentList}
+          eventList={eventList}
+          eventAssignmentList={eventAssignmentList}
           staffList={staffList}
-          availabilityList={
-            availabilityList
-          }
-          onAddTask={() =>
-            setIsAddTaskOpen(true)
-          }
+          availabilityList={availabilityList}
+          onAddTask={() => setIsAddTaskOpen(true)}
           onEditTask={setSelectedTask}
-          onDeleteTask={
-            handleDeleteTask
-          }
+          onDeleteTask={handleDeleteTask}
+          onEditEvent={setSelectedEvent}
+          onDeleteEvent={handleDeleteEvent}
+          onApproveCancellation={approveCancellation}
+          onRejectCancellation={rejectCancellation}
         />
       )}
 
-      {activeTab ===
-        "availability" && (
+      {activeTab === "my-schedule" && (
+        <div className="min-w-0">
+          <div className="mb-6 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4">
+            <label
+              htmlFor="preview-staff"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Development preview
+            </label>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Choose a staff member to preview their schedule.
+            </p>
+
+            <select
+              id="preview-staff"
+              value={previewStaffId}
+              onChange={(event) => setPreviewStaffId(event.target.value)}
+              className="mt-3 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500 sm:max-w-sm"
+            >
+              <option value="">Select staff member</option>
+
+              {previewStaff.map((member) => (
+                <option key={member.id} value={member.id}>
+                  {member.firstName} {member.lastName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {previewStaffId ? (
+            <MySchedule staffId={previewStaffId} />
+          ) : (
+            <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
+              <p className="text-sm font-medium text-gray-700">
+                Select a staff member
+              </p>
+
+              <p className="mt-1 text-sm text-gray-500">
+                Their assigned tasks and events will appear here.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === "availability" && (
         <AvailabilityTab
           staffList={staffList}
-          availabilityList={
-            availabilityList
-          }
-          onSaveAvailability={
-            handleSaveAvailability
-          }
+          availabilityList={availabilityList}
+          onSaveAvailability={handleSaveAvailability}
         />
       )}
 
       {activeTab === "hours" && (
         <p className="wrap-break-word text-sm text-gray-500">
-          Working hours and payroll
-          summary will go here.
+          Working hours and payroll summary will go here.
         </p>
       )}
 
       {isAddStaffOpen && (
         <StaffFormModal
-          onClose={() =>
-            setIsAddStaffOpen(false)
-          }
+          onClose={() => setIsAddStaffOpen(false)}
           onSubmit={handleSaveStaff}
         />
       )}
@@ -147,9 +186,7 @@ const StaffPage = () => {
       {selectedStaff && (
         <StaffFormModal
           member={selectedStaff}
-          onClose={() =>
-            setSelectedStaff(null)
-          }
+          onClose={() => setSelectedStaff(null)}
           onSubmit={handleSaveStaff}
         />
       )}
@@ -157,9 +194,7 @@ const StaffPage = () => {
       {isAddTaskOpen && (
         <WorkTaskFormModal
           staffList={staffList}
-          onClose={() =>
-            setIsAddTaskOpen(false)
-          }
+          onClose={() => setIsAddTaskOpen(false)}
           onSubmit={handleSaveTask}
         />
       )}
@@ -168,13 +203,20 @@ const StaffPage = () => {
         <WorkTaskFormModal
           task={selectedTask}
           staffList={staffList}
-          initialStaffIds={
-            selectedTaskStaffIds
-          }
-          onClose={() =>
-            setSelectedTask(null)
-          }
+          initialStaffIds={selectedTaskStaffIds}
+          onClose={() => setSelectedTask(null)}
           onSubmit={handleSaveTask}
+        />
+      )}
+
+      {selectedEvent && (
+        <EventFormModal
+          event={selectedEvent}
+          staffList={staffList}
+          availabilityList={availabilityList}
+          initialStaffIds={selectedEventStaffIds}
+          onClose={() => setSelectedEvent(null)}
+          onSubmit={handleSaveEvent}
         />
       )}
     </div>

@@ -1,18 +1,18 @@
-import type { Staff } from "../../../../types/staff";
-import type { WorkTask } from "../../../../types/workTask";
+import type { Event as LocalHostEvent } from "../../../../types/event";
 import type { Assignment } from "../../../../types/assignment";
+import type { Staff } from "../../../../types/staff";
 
 import AssignmentReviewActions from "../../../assignments/components/AssignmentReviewActions";
 
 import { getStaffColor } from "./staffColors";
 
-type ScheduleTaskCardProps = {
-  task: WorkTask;
+type ScheduleEventCardProps = {
+  event: LocalHostEvent;
   assignments: Assignment[];
   staffList: Staff[];
 
-  onEdit: (task: WorkTask) => void;
-  onDelete: (taskId: string) => void;
+  onEdit: (event: LocalHostEvent) => void;
+  onDelete: (eventId: string) => void;
 
   onApproveCancellation: (
     assignment: Assignment,
@@ -64,30 +64,20 @@ const getAssignmentStatusClasses = (
 };
 
 const getOperationalStatus = (
-  task: WorkTask,
+  event: LocalHostEvent,
   assignments: Assignment[],
 ) => {
-  if (task.status === "completed") {
+  if (event.status === "completed") {
     return {
       label: "Done",
-      classes:
-        "bg-green-100 text-green-700",
+      classes: "bg-green-100 text-green-700",
     };
   }
 
-  if (task.status === "in-progress") {
-    return {
-      label: "In progress",
-      classes:
-        "bg-blue-100 text-blue-700",
-    };
-  }
-
-  if (task.status === "cancelled") {
+  if (event.status === "cancelled") {
     return {
       label: "Cancelled",
-      classes:
-        "bg-gray-200 text-gray-600",
+      classes: "bg-gray-200 text-gray-600",
     };
   }
 
@@ -101,25 +91,24 @@ const getOperationalStatus = (
   if (hasCancellationRequest) {
     return {
       label: "Needs review",
-      classes:
-        "bg-orange-100 text-orange-700",
+      classes: "bg-orange-100 text-orange-700",
     };
   }
 
-  const hasStaffingProblem =
-    assignments.some(
+  const activeAssignments =
+    assignments.filter(
       (assignment) =>
-        assignment.status ===
-          "declined" ||
-        assignment.status ===
-          "cancelled",
+        assignment.status !== "declined" &&
+        assignment.status !== "cancelled",
     );
 
-  if (hasStaffingProblem) {
+  if (
+    activeAssignments.length <
+    event.requiredStaffCount
+  ) {
     return {
-      label: "Staffing issue",
-      classes:
-        "bg-red-100 text-red-700",
+      label: "Needs staff",
+      classes: "bg-red-100 text-red-700",
     };
   }
 
@@ -132,48 +121,30 @@ const getOperationalStatus = (
   if (hasPendingAssignment) {
     return {
       label: "Awaiting confirmation",
-      classes:
-        "bg-amber-100 text-amber-700",
-    };
-  }
-
-  const hasConfirmedAssignment =
-    assignments.some(
-      (assignment) =>
-        assignment.status ===
-        "confirmed",
-    );
-
-  if (hasConfirmedAssignment) {
-    return {
-      label: "Ready",
-      classes:
-        "bg-green-100 text-green-700",
+      classes: "bg-amber-100 text-amber-700",
     };
   }
 
   return {
-    label: "Unassigned",
-    classes:
-      "bg-gray-100 text-gray-600",
+    label: "Ready",
+    classes: "bg-green-100 text-green-700",
   };
 };
 
-const ScheduleTaskCard = ({
-  task,
+const ScheduleEventCard = ({
+  event,
   assignments,
   staffList,
   onEdit,
   onDelete,
   onApproveCancellation,
   onRejectCancellation,
-}: ScheduleTaskCardProps) => {
+}: ScheduleEventCardProps) => {
   const assignedStaff = assignments
     .map((assignment) => {
       const member = staffList.find(
         (member) =>
-          member.id ===
-          assignment.staffId,
+          member.id === assignment.staffId,
       );
 
       if (!member) {
@@ -203,23 +174,36 @@ const ScheduleTaskCard = ({
 
   const operationalStatus =
     getOperationalStatus(
-      task,
+      event,
       assignments,
     );
+
+  const activeStaffCount =
+    assignments.filter(
+      (assignment) =>
+        assignment.status !== "declined" &&
+        assignment.status !== "cancelled",
+    ).length;
 
   return (
     <article
       className={`min-w-0 overflow-hidden rounded-xl border ${primaryColor.border} ${primaryColor.background}`}
     >
       <div className="flex min-w-0 flex-col sm:flex-row">
-        {/* Time */}
-        <div className="flex shrink-0 items-center border-b border-black/5 px-4 py-3 sm:w-20 sm:items-start sm:justify-center sm:border-r sm:border-b-0 sm:px-3 sm:py-4">
+        <div className="flex shrink-0 items-center border-b border-black/5 px-4 py-3 sm:w-24 sm:flex-col sm:items-center sm:justify-start sm:border-r sm:border-b-0 sm:px-3 sm:py-4">
           <span className="text-sm font-semibold text-gray-700">
-            {task.startTime ?? "—"}
+            {event.startTime}
+          </span>
+
+          <span className="mx-1 text-xs text-gray-400 sm:mx-0">
+            –
+          </span>
+
+          <span className="text-xs text-gray-500">
+            {event.endTime}
           </span>
         </div>
 
-        {/* Main content */}
         <div className="min-w-0 flex-1 p-4">
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 flex-1">
@@ -242,32 +226,35 @@ const ScheduleTaskCard = ({
                     },
                   )}
 
-                  {assignedStaff.length ===
-                    0 && (
+                  {assignedStaff.length === 0 && (
                     <span className="h-3 w-3 rounded-full bg-gray-300" />
                   )}
                 </div>
 
-                <h3
-                  className={`min-w-0 wrap-break-word font-semibold ${primaryColor.text}`}
-                >
-                  {task.title}
-                </h3>
+                <div className="min-w-0">
+                  <p className="mb-0.5 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    Event
+                  </p>
+
+                  <h3
+                    className={`wrap-break-word font-semibold ${primaryColor.text}`}
+                  >
+                    {event.title}
+                  </h3>
+                </div>
               </div>
 
               <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
-                {task.area && (
+                {event.area && (
                   <span>
-                    {task.area}
+                    {event.area}
                   </span>
                 )}
 
-                {task.priority !==
-                  "normal" && (
-                  <span className="font-semibold capitalize">
-                    {task.priority}
-                  </span>
-                )}
+                <span>
+                  Staff: {activeStaffCount} /{" "}
+                  {event.requiredStaffCount}
+                </span>
               </div>
             </div>
 
@@ -278,7 +265,6 @@ const ScheduleTaskCard = ({
             </span>
           </div>
 
-          {/* Assignees */}
           <div className="mt-3 space-y-3">
             {assignedStaff.length > 0 ? (
               assignedStaff.map(
@@ -292,12 +278,8 @@ const ScheduleTaskCard = ({
                   >
                     <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
                       <span className="wrap-break-word font-medium text-gray-700">
-                        {
-                          member.firstName
-                        }{" "}
-                        {
-                          member.lastName
-                        }
+                        {member.firstName}{" "}
+                        {member.lastName}
                       </span>
 
                       <span
@@ -333,19 +315,17 @@ const ScheduleTaskCard = ({
             )}
           </div>
 
-          {/* Instructions */}
-          {task.instructions && (
+          {event.instructions && (
             <p className="mt-3 line-clamp-2 wrap-break-word text-sm text-gray-500">
-              {task.instructions}
+              {event.instructions}
             </p>
           )}
 
-          {/* Actions */}
           <div className="mt-4 flex gap-2 border-t border-black/5 pt-3 sm:justify-end">
             <button
               type="button"
               onClick={() =>
-                onEdit(task)
+                onEdit(event)
               }
               className="flex-1 cursor-pointer rounded-md px-3 py-2 text-xs font-medium text-gray-600 hover:bg-white/70 sm:flex-none"
             >
@@ -355,7 +335,7 @@ const ScheduleTaskCard = ({
             <button
               type="button"
               onClick={() =>
-                onDelete(task.id)
+                onDelete(event.id)
               }
               className="flex-1 cursor-pointer rounded-md px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 sm:flex-none"
             >
@@ -368,4 +348,4 @@ const ScheduleTaskCard = ({
   );
 };
 
-export default ScheduleTaskCard;
+export default ScheduleEventCard;
