@@ -2,6 +2,8 @@ import type { Event as LocalHostEvent } from "../../../../types/event";
 import type { Assignment } from "../../../../types/assignment";
 import type { Staff } from "../../../../types/staff";
 
+import AssignmentReviewActions from "../../../assignments/components/AssignmentReviewActions";
+
 import { getStaffColor } from "./staffColors";
 
 type ScheduleEventCardProps = {
@@ -11,6 +13,14 @@ type ScheduleEventCardProps = {
 
   onEdit: (event: LocalHostEvent) => void;
   onDelete: (eventId: string) => void;
+
+  onApproveCancellation: (
+    assignment: Assignment,
+  ) => void;
+
+  onRejectCancellation: (
+    assignment: Assignment,
+  ) => void;
 };
 
 const getAssignmentLabel = (
@@ -71,13 +81,6 @@ const getOperationalStatus = (
     };
   }
 
-  const activeAssignments =
-    assignments.filter(
-      (assignment) =>
-        assignment.status !== "declined" &&
-        assignment.status !== "cancelled",
-    );
-
   const hasCancellationRequest =
     assignments.some(
       (assignment) =>
@@ -88,10 +91,16 @@ const getOperationalStatus = (
   if (hasCancellationRequest) {
     return {
       label: "Needs review",
-      classes:
-        "bg-orange-100 text-orange-700",
+      classes: "bg-orange-100 text-orange-700",
     };
   }
+
+  const activeAssignments =
+    assignments.filter(
+      (assignment) =>
+        assignment.status !== "declined" &&
+        assignment.status !== "cancelled",
+    );
 
   if (
     activeAssignments.length <
@@ -112,15 +121,13 @@ const getOperationalStatus = (
   if (hasPendingAssignment) {
     return {
       label: "Awaiting confirmation",
-      classes:
-        "bg-amber-100 text-amber-700",
+      classes: "bg-amber-100 text-amber-700",
     };
   }
 
   return {
     label: "Ready",
-    classes:
-      "bg-green-100 text-green-700",
+    classes: "bg-green-100 text-green-700",
   };
 };
 
@@ -130,6 +137,8 @@ const ScheduleEventCard = ({
   staffList,
   onEdit,
   onDelete,
+  onApproveCancellation,
+  onRejectCancellation,
 }: ScheduleEventCardProps) => {
   const assignedStaff = assignments
     .map((assignment) => {
@@ -169,12 +178,18 @@ const ScheduleEventCard = ({
       assignments,
     );
 
+  const activeStaffCount =
+    assignments.filter(
+      (assignment) =>
+        assignment.status !== "declined" &&
+        assignment.status !== "cancelled",
+    ).length;
+
   return (
     <article
       className={`min-w-0 overflow-hidden rounded-xl border ${primaryColor.border} ${primaryColor.background}`}
     >
       <div className="flex min-w-0 flex-col sm:flex-row">
-        {/* Time */}
         <div className="flex shrink-0 items-center border-b border-black/5 px-4 py-3 sm:w-24 sm:flex-col sm:items-center sm:justify-start sm:border-r sm:border-b-0 sm:px-3 sm:py-4">
           <span className="text-sm font-semibold text-gray-700">
             {event.startTime}
@@ -189,12 +204,10 @@ const ScheduleEventCard = ({
           </span>
         </div>
 
-        {/* Main content */}
         <div className="min-w-0 flex-1 p-4">
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 flex-1">
               <div className="flex min-w-0 items-start gap-2">
-                {/* Staff colors */}
                 <div className="mt-1 flex shrink-0 -space-x-1">
                   {assignedStaff.map(
                     ({ member }) => {
@@ -213,8 +226,7 @@ const ScheduleEventCard = ({
                     },
                   )}
 
-                  {assignedStaff.length ===
-                    0 && (
+                  {assignedStaff.length === 0 && (
                     <span className="h-3 w-3 rounded-full bg-gray-300" />
                   )}
                 </div>
@@ -234,26 +246,18 @@ const ScheduleEventCard = ({
 
               <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
                 {event.area && (
-                  <span>{event.area}</span>
+                  <span>
+                    {event.area}
+                  </span>
                 )}
 
                 <span>
-                  Staff:{" "}
-                  {
-                    assignments.filter(
-                      (assignment) =>
-                        assignment.status !==
-                          "declined" &&
-                        assignment.status !==
-                          "cancelled",
-                    ).length
-                  }{" "}
-                  / {event.requiredStaffCount}
+                  Staff: {activeStaffCount} /{" "}
+                  {event.requiredStaffCount}
                 </span>
               </div>
             </div>
 
-            {/* One main status */}
             <span
               className={`w-fit shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${operationalStatus.classes}`}
             >
@@ -261,8 +265,7 @@ const ScheduleEventCard = ({
             </span>
           </div>
 
-          {/* Assignees */}
-          <div className="mt-3 space-y-1.5">
+          <div className="mt-3 space-y-3">
             {assignedStaff.length > 0 ? (
               assignedStaff.map(
                 ({
@@ -271,27 +274,37 @@ const ScheduleEventCard = ({
                 }) => (
                   <div
                     key={assignment.id}
-                    className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm"
+                    className="min-w-0"
                   >
-                    <span className="wrap-break-word font-medium text-gray-700">
-                      {
-                        member.firstName
-                      }{" "}
-                      {
-                        member.lastName
-                      }
-                    </span>
+                    <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
+                      <span className="wrap-break-word font-medium text-gray-700">
+                        {member.firstName}{" "}
+                        {member.lastName}
+                      </span>
 
-                    <span
-                      className={`text-xs font-medium ${getAssignmentStatusClasses(
-                        assignment.status,
-                      )}`}
-                    >
-                      ·{" "}
-                      {getAssignmentLabel(
-                        assignment.status,
-                      )}
-                    </span>
+                      <span
+                        className={`text-xs font-medium ${getAssignmentStatusClasses(
+                          assignment.status,
+                        )}`}
+                      >
+                        ·{" "}
+                        {getAssignmentLabel(
+                          assignment.status,
+                        )}
+                      </span>
+                    </div>
+
+                    <AssignmentReviewActions
+                      assignment={
+                        assignment
+                      }
+                      onApprove={
+                        onApproveCancellation
+                      }
+                      onReject={
+                        onRejectCancellation
+                      }
+                    />
                   </div>
                 ),
               )
@@ -302,14 +315,12 @@ const ScheduleEventCard = ({
             )}
           </div>
 
-          {/* Instructions */}
           {event.instructions && (
-            <p className="mt-3 wrap-break-word line-clamp-2 text-sm text-gray-500">
+            <p className="mt-3 line-clamp-2 wrap-break-word text-sm text-gray-500">
               {event.instructions}
             </p>
           )}
 
-          {/* Actions */}
           <div className="mt-4 flex gap-2 border-t border-black/5 pt-3 sm:justify-end">
             <button
               type="button"

@@ -1,6 +1,7 @@
 export type StaffTab =
   | "team"
   | "schedule"
+  | "my-schedule"
   | "availability"
   | "hours";
 
@@ -21,12 +22,8 @@ const StaffTabs = ({
       <button
         type="button"
         role="tab"
-        aria-selected={
-          activeTab === "team"
-        }
-        onClick={() =>
-          onChange("team")
-        }
+        aria-selected={activeTab === "team"}
+        onClick={() => onChange("team")}
         className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium ${
           activeTab === "team"
             ? "bg-gray-900 text-white"
@@ -39,12 +36,8 @@ const StaffTabs = ({
       <button
         type="button"
         role="tab"
-        aria-selected={
-          activeTab === "schedule"
-        }
-        onClick={() =>
-          onChange("schedule")
-        }
+        aria-selected={activeTab === "schedule"}
+        onClick={() => onChange("schedule")}
         className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium ${
           activeTab === "schedule"
             ? "bg-gray-900 text-white"
@@ -57,12 +50,22 @@ const StaffTabs = ({
       <button
         type="button"
         role="tab"
-        aria-selected={
-          activeTab === "availability"
-        }
-        onClick={() =>
-          onChange("availability")
-        }
+        aria-selected={activeTab === "my-schedule"}
+        onClick={() => onChange("my-schedule")}
+        className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium ${
+          activeTab === "my-schedule"
+            ? "bg-gray-900 text-white"
+            : "text-gray-600 hover:bg-gray-100"
+        }`}
+      >
+        My Schedule
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        aria-selected={activeTab === "availability"}
+        onClick={() => onChange("availability")}
         className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium ${
           activeTab === "availability"
             ? "bg-gray-900 text-white"
@@ -75,12 +78,8 @@ const StaffTabs = ({
       <button
         type="button"
         role="tab"
-        aria-selected={
-          activeTab === "hours"
-        }
-        onClick={() =>
-          onChange("hours")
-        }
+        aria-selected={activeTab === "hours"}
+        onClick={() => onChange("hours")}
         className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium ${
           activeTab === "hours"
             ? "bg-gray-900 text-white"

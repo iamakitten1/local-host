@@ -2,10 +2,7 @@ import type { WorkTask } from "../../../../types/workTask";
 import type { Assignment } from "../../../../types/assignment";
 import type { Event as LocalHostEvent } from "../../../../types/event";
 
-import type {
-  Staff,
-  StaffAvailability,
-} from "../../../../types/staff";
+import type { Staff, StaffAvailability } from "../../../../types/staff";
 
 import ScheduleTaskCard from "./ScheduleTaskCard";
 import ScheduleEventCard from "./ScheduleEventCard";
@@ -28,6 +25,10 @@ type ScheduleTabProps = {
 
   onEditEvent: (event: LocalHostEvent) => void;
   onDeleteEvent: (eventId: string) => void;
+
+  onApproveCancellation: (assignment: Assignment) => void;
+
+  onRejectCancellation: (assignment: Assignment) => void;
 };
 
 type ScheduleItem =
@@ -56,6 +57,8 @@ const ScheduleTab = ({
   onDeleteTask,
   onEditEvent,
   onDeleteEvent,
+  onApproveCancellation,
+  onRejectCancellation,
 }: ScheduleTabProps) => {
   const scheduleItems: ScheduleItem[] = [
     ...taskList.map((task) => ({
@@ -73,21 +76,20 @@ const ScheduleTab = ({
     })),
   ];
 
-  const itemsByDate = scheduleItems.reduce<
-    Record<string, ScheduleItem[]>
-  >((groups, item) => {
-    if (!groups[item.date]) {
-      groups[item.date] = [];
-    }
+  const itemsByDate = scheduleItems.reduce<Record<string, ScheduleItem[]>>(
+    (groups, item) => {
+      if (!groups[item.date]) {
+        groups[item.date] = [];
+      }
 
-    groups[item.date].push(item);
+      groups[item.date].push(item);
 
-    return groups;
-  }, {});
+      return groups;
+    },
+    {},
+  );
 
-  const sortedDates = Object.entries(
-    itemsByDate,
-  ).sort(([dateA], [dateB]) =>
+  const sortedDates = Object.entries(itemsByDate).sort(([dateA], [dateB]) =>
     dateA.localeCompare(dateB),
   );
 
@@ -95,9 +97,7 @@ const ScheduleTab = ({
     <div className="min-w-0">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Schedule
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">Schedule</h2>
 
           <p className="mt-1 wrap-break-word text-sm text-gray-500">
             Staff tasks, events, and daily assignments
@@ -120,9 +120,7 @@ const ScheduleTab = ({
 
       {sortedDates.length === 0 ? (
         <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-          <p className="text-sm font-medium text-gray-700">
-            Nothing scheduled
-          </p>
+          <p className="text-sm font-medium text-gray-700">Nothing scheduled</p>
 
           <p className="mt-1 text-sm text-gray-500">
             Tasks and events will appear here.
@@ -130,86 +128,59 @@ const ScheduleTab = ({
         </div>
       ) : (
         <div className="min-w-0 space-y-8">
-          {sortedDates.map(
-            ([date, items]) => (
-              <section
-                key={date}
-                className="min-w-0"
-              >
-                <h3 className="mb-3 text-sm font-semibold text-gray-700">
-                  {date}
-                </h3>
+          {sortedDates.map(([date, items]) => (
+            <section key={date} className="min-w-0">
+              <h3 className="mb-3 text-sm font-semibold text-gray-700">
+                {date}
+              </h3>
 
-                <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
-                  {[...items]
-                    .sort((a, b) =>
-                      a.startTime.localeCompare(
-                        b.startTime,
-                      ),
-                    )
-                    .map((item) => {
-                      if (
-                        item.kind === "task"
-                      ) {
-                        const taskAssignments =
-                          assignmentList.filter(
-                            (assignment) =>
-                              assignment.sourceType ===
-                                "work-task" &&
-                              assignment.sourceId ===
-                                item.task.id,
-                          );
-
-                        return (
-                          <ScheduleTaskCard
-                            key={`task-${item.task.id}`}
-                            task={item.task}
-                            assignments={
-                              taskAssignments
-                            }
-                            staffList={
-                              staffList
-                            }
-                            onEdit={
-                              onEditTask
-                            }
-                            onDelete={
-                              onDeleteTask
-                            }
-                          />
-                        );
-                      }
-
-                      const eventAssignments =
-                        eventAssignmentList.filter(
-                          (assignment) =>
-                            assignment.sourceType ===
-                              "event" &&
-                            assignment.sourceId ===
-                              item.event.id,
-                        );
+              <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
+                {[...items]
+                  .sort((a, b) => a.startTime.localeCompare(b.startTime))
+                  .map((item) => {
+                    if (item.kind === "task") {
+                      const taskAssignments = assignmentList.filter(
+                        (assignment) =>
+                          assignment.sourceType === "work-task" &&
+                          assignment.sourceId === item.task.id,
+                      );
 
                       return (
-                        <ScheduleEventCard
-                          key={`event-${item.event.id}`}
-                          event={item.event}
-                          assignments={
-                            eventAssignments
-                          }
+                        <ScheduleTaskCard
+                          key={`task-${item.task.id}`}
+                          task={item.task}
+                          assignments={taskAssignments}
                           staffList={staffList}
-                          onEdit={
-                            onEditEvent
-                          }
-                          onDelete={
-                            onDeleteEvent
-                          }
+                          onEdit={onEditTask}
+                          onDelete={onDeleteTask}
+                          onApproveCancellation={onApproveCancellation}
+                          onRejectCancellation={onRejectCancellation}
                         />
                       );
-                    })}
-                </div>
-              </section>
-            ),
-          )}
+                    }
+
+                    const eventAssignments = eventAssignmentList.filter(
+                      (assignment) =>
+                        assignment.sourceType === "event" &&
+                        assignment.sourceId === item.event.id,
+                    );
+
+                    return (
+                      <ScheduleEventCard
+                        key={`event-${item.event.id}`}
+                        event={item.event}
+                        assignments={eventAssignments}
+                        staffList={staffList}
+                        onEdit={onEditEvent}
+                        onDelete={onDeleteEvent}
+                        onApproveCancellation={onApproveCancellation}
+                        onRejectCancellation={onRejectCancellation}
+                      />
+                    );
+                  })}
+              </div>
+            </section>
+          ))}
         </div>
       )}
     </div>

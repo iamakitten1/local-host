@@ -2,6 +2,8 @@ import type { Staff } from "../../../../types/staff";
 import type { WorkTask } from "../../../../types/workTask";
 import type { Assignment } from "../../../../types/assignment";
 
+import AssignmentReviewActions from "../../../assignments/components/AssignmentReviewActions";
+
 import { getStaffColor } from "./staffColors";
 
 type ScheduleTaskCardProps = {
@@ -11,6 +13,14 @@ type ScheduleTaskCardProps = {
 
   onEdit: (task: WorkTask) => void;
   onDelete: (taskId: string) => void;
+
+  onApproveCancellation: (
+    assignment: Assignment,
+  ) => void;
+
+  onRejectCancellation: (
+    assignment: Assignment,
+  ) => void;
 };
 
 const getAssignmentLabel = (
@@ -60,21 +70,24 @@ const getOperationalStatus = (
   if (task.status === "completed") {
     return {
       label: "Done",
-      classes: "bg-green-100 text-green-700",
+      classes:
+        "bg-green-100 text-green-700",
     };
   }
 
   if (task.status === "in-progress") {
     return {
       label: "In progress",
-      classes: "bg-blue-100 text-blue-700",
+      classes:
+        "bg-blue-100 text-blue-700",
     };
   }
 
   if (task.status === "cancelled") {
     return {
       label: "Cancelled",
-      classes: "bg-gray-200 text-gray-600",
+      classes:
+        "bg-gray-200 text-gray-600",
     };
   }
 
@@ -105,7 +118,8 @@ const getOperationalStatus = (
   if (hasStaffingProblem) {
     return {
       label: "Staffing issue",
-      classes: "bg-red-100 text-red-700",
+      classes:
+        "bg-red-100 text-red-700",
     };
   }
 
@@ -140,7 +154,8 @@ const getOperationalStatus = (
 
   return {
     label: "Unassigned",
-    classes: "bg-gray-100 text-gray-600",
+    classes:
+      "bg-gray-100 text-gray-600",
   };
 };
 
@@ -150,6 +165,8 @@ const ScheduleTaskCard = ({
   staffList,
   onEdit,
   onDelete,
+  onApproveCancellation,
+  onRejectCancellation,
 }: ScheduleTaskCardProps) => {
   const assignedStaff = assignments
     .map((assignment) => {
@@ -207,7 +224,6 @@ const ScheduleTaskCard = ({
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 flex-1">
               <div className="flex min-w-0 items-start gap-2">
-                {/* Staff colors */}
                 <div className="mt-1 flex shrink-0 -space-x-1">
                   {assignedStaff.map(
                     ({ member }) => {
@@ -239,7 +255,6 @@ const ScheduleTaskCard = ({
                 </h3>
               </div>
 
-              {/* Area + priority */}
               <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
                 {task.area && (
                   <span>
@@ -256,7 +271,6 @@ const ScheduleTaskCard = ({
               </div>
             </div>
 
-            {/* One main status */}
             <span
               className={`w-fit shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${operationalStatus.classes}`}
             >
@@ -265,7 +279,7 @@ const ScheduleTaskCard = ({
           </div>
 
           {/* Assignees */}
-          <div className="mt-3 space-y-1.5">
+          <div className="mt-3 space-y-3">
             {assignedStaff.length > 0 ? (
               assignedStaff.map(
                 ({
@@ -274,27 +288,41 @@ const ScheduleTaskCard = ({
                 }) => (
                   <div
                     key={assignment.id}
-                    className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm"
+                    className="min-w-0"
                   >
-                    <span className="wrap-break-word font-medium text-gray-700">
-                      {
-                        member.firstName
-                      }{" "}
-                      {
-                        member.lastName
-                      }
-                    </span>
+                    <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
+                      <span className="wrap-break-word font-medium text-gray-700">
+                        {
+                          member.firstName
+                        }{" "}
+                        {
+                          member.lastName
+                        }
+                      </span>
 
-                    <span
-                      className={`text-xs font-medium ${getAssignmentStatusClasses(
-                        assignment.status,
-                      )}`}
-                    >
-                      ·{" "}
-                      {getAssignmentLabel(
-                        assignment.status,
-                      )}
-                    </span>
+                      <span
+                        className={`text-xs font-medium ${getAssignmentStatusClasses(
+                          assignment.status,
+                        )}`}
+                      >
+                        ·{" "}
+                        {getAssignmentLabel(
+                          assignment.status,
+                        )}
+                      </span>
+                    </div>
+
+                    <AssignmentReviewActions
+                      assignment={
+                        assignment
+                      }
+                      onApprove={
+                        onApproveCancellation
+                      }
+                      onReject={
+                        onRejectCancellation
+                      }
+                    />
                   </div>
                 ),
               )
@@ -307,7 +335,7 @@ const ScheduleTaskCard = ({
 
           {/* Instructions */}
           {task.instructions && (
-            <p className="mt-3 wrap-break-word line-clamp-2 text-sm text-gray-500">
+            <p className="mt-3 line-clamp-2 wrap-break-word text-sm text-gray-500">
               {task.instructions}
             </p>
           )}
