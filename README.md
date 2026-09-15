@@ -1,75 +1,108 @@
-# React + TypeScript + Vite
+src/
+├── components/
+├── config/
+├── data/
+├── features/
+│   ├── assignments/
+│   ├── bookings/
+│   ├── cleaning/
+│   ├── dashboard/
+│   ├── events/
+│   ├── rooms/
+│   ├── staff/
+│   └── tasks/
+├── layouts/
+├── pages/
+└── types/
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Current shared frontend state includes:
 
-Currently, two official plugins are available:
+Work tasks
+Work-task assignments
+Events
+Event assignments
+Staff
+Staff availability
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This shared state is temporary frontend infrastructure. Once the backend is implemented, server-managed data will move to the API/database layer and TanStack Query will manage server state.
 
-## React Compiler
+Development Status
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+LocalHost is currently in active development.
 
-## Expanding the ESLint configuration
+The frontend uses local mock data and React shared state. Data changes persist while navigating through the application but currently reset after a full browser refresh.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Roadmap
+Frontend
+ App shell and responsive navigation
+ Dashboard
+ Rooms management
+ Bookings management
+ Cleaning management
+ Staff management
+ Staff availability
+ Shared operational schedule
+ Events management
+ Assignment confirmation workflow
+ Cancellation request workflow
+ Hours & Pay
+ Cleaning time tracking
+ Shopping list
+ Role-based UI permissions
+ Final validation and UX polish
+Backend
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Planned backend work includes:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Authentication
+User sessions
+Role-based authorization
+PostgreSQL database
+REST API
+Persistent rooms and bookings
+Persistent staff and availability
+Persistent tasks and assignments
+Persistent events
+Work-session tracking
+Payment records
+Server-side validation
+Production
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The first production version will be tested in one real B&B property.
 
-```
+Future work may include:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Multi-property support
+Property onboarding
+Notifications
+Improved reporting
+Production monitoring
+Deployment and custom domain
+Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Clone the repository:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+git clone https://github.com/iamakitten1/local-host.git
 
-```
+Enter the project:
+
+cd local-host
+
+Install dependencies:
+
+npm install
+
+Start the development server:
+
+npm run dev
+
+Create a production build:
+
+npm run build
+Project Goal
+
+LocalHost is designed around real hospitality workflows rather than generic property-management features.
+
+The goal is to create a practical operations tool that reduces manual coordination between bookings, cleaning, staff availability, assignments, events, and daily schedules.
+
+The application is being developed incrementally and tested against real B&B workflows before broader expansion.
