@@ -1,75 +1,218 @@
-# React + TypeScript + Vite
+# LocalHost
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+LocalHost is a B&B operations management application built to simplify the daily work of small hospitality properties.
 
-Currently, two official plugins are available:
+The project currently focuses on managing bookings, rooms, delegated cleaning, staff availability, work assignments, events, and operational schedules from one place.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The first version is being developed for real use in a single B&B property. After testing it during daily operations, the project can later be expanded to support multiple properties.
 
-## React Compiler
+## Current Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Dashboard
+- Today's arrivals and departures
+- Room overview
+- Pending cleaning overview
+- Shared operational task data
 
-## Expanding the ESLint configuration
+### Rooms
+- Create and edit rooms
+- Room capacity management
+- Flexible bed configurations
+- Support for alternative bed setups
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Bookings
+- Create and edit bookings
+- Guest and stay information
+- Room selection
+- Guest count
+- Check-in and check-out dates
+- Estimated arrival time
+- Booking status
+- Bed setup per booking
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Cleaning
+- Delegated room-cleaning tasks
+- Task instructions
+- Cleaner assignment
+- Task status management
+- Today, upcoming, and completed filters
+- Shared task state with Staff and Dashboard
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Staff
+- Team management
+- Owner, Operations, and Staff roles
+- Cleaning and Event work types
+- Active/inactive staff status
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Availability
+- Weekly staff availability
+- Available, Unavailable, and Not Set states
+- Optional availability time ranges
+- Mobile day view
+- Desktop weekly view
 
-```
+### Schedule
+- Work tasks and events in one operational schedule
+- Grouped by date
+- Ordered by start time
+- Staff assignment status
+- Staffing warnings
+- Cancellation review workflow
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Events
+- Create, edit, and delete events
+- Event date and time
+- Area and instructions
+- Required staff count
+- Event staff assignments
+- Staff availability checks
+- Staffing status
+- Event integration with the Staff Schedule
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Assignment Workflow
+Staff assignments support:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Pending
+- Confirmed
+- Declined
+- Cancellation requested
+- Cancelled
 
-```
+Staff can:
+
+- Accept assignments
+- Decline assignments with a reason
+- Request cancellation of confirmed assignments
+
+Owner / Operations can:
+
+- Review cancellation requests
+- Approve cancellations
+- Reject cancellations
+
+A temporary development preview is currently used to test staff-specific schedules until authentication is implemented.
+
+## Tech Stack
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- TanStack Query
+- React Hook Form
+- Zod
+
+## Architecture
+
+LocalHost follows a feature-first structure.
+
+```text
+src/
+├── components/
+├── config/
+├── data/
+├── features/
+│   ├── assignments/
+│   ├── bookings/
+│   ├── cleaning/
+│   ├── dashboard/
+│   ├── events/
+│   ├── rooms/
+│   ├── staff/
+│   └── tasks/
+├── layouts/
+├── pages/
+└── types/
+
+Current shared frontend state includes:
+
+Work tasks
+Work-task assignments
+Events
+Event assignments
+Staff
+Staff availability
+
+This shared state is temporary frontend infrastructure. Once the backend is implemented, server-managed data will move to the API/database layer and TanStack Query will manage server state.
+
+Development Status
+
+LocalHost is currently in active development.
+
+The frontend uses local mock data and React shared state. Data changes persist while navigating through the application but currently reset after a full browser refresh.
+
+Roadmap
+Frontend
+ App shell and responsive navigation
+ Dashboard
+ Rooms management
+ Bookings management
+ Cleaning management
+ Staff management
+ Staff availability
+ Shared operational schedule
+ Events management
+ Assignment confirmation workflow
+ Cancellation request workflow
+ Hours & Pay
+ Cleaning time tracking
+ Shopping list
+ Role-based UI permissions
+ Final validation and UX polish
+Backend
+
+Planned backend work includes:
+
+Authentication
+User sessions
+Role-based authorization
+PostgreSQL database
+REST API
+Persistent rooms and bookings
+Persistent staff and availability
+Persistent tasks and assignments
+Persistent events
+Work-session tracking
+Payment records
+Server-side validation
+Production
+
+The first production version will be tested in one real B&B property.
+
+Future work may include:
+
+Multi-property support
+Property onboarding
+Notifications
+Improved reporting
+Production monitoring
+Deployment and custom domain
+Getting Started
+
+Clone the repository:
+
+git clone https://github.com/iamakitten1/local-host.git
+
+Enter the project:
+
+cd local-host
+
+Install dependencies:
+
+npm install
+
+Start the development server:
+
+npm run dev
+
+Create a production build:
+
+npm run build
+Project Goal
+
+LocalHost is designed around real hospitality workflows rather than generic property-management features.
+
+The goal is to create a practical operations tool that reduces manual coordination between bookings, cleaning, staff availability, assignments, events, and daily schedules.
+
+The application is being developed incrementally and tested against real B&B workflows before broader expansion.
