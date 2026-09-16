@@ -8,13 +8,16 @@ import App from "./App";
 import { StaffProvider } from "./features/staff/context/StaffContext";
 import { WorkTasksProvider } from "./features/tasks/context/WorkTasksContext";
 import { EventsProvider } from "./features/events/context/EventsContext";
+import { HoursPayProvider } from "./features/hours-pay/context/HoursPayContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <StaffProvider>
       <WorkTasksProvider>
         <EventsProvider>
-          <App />
+          <HoursPayProvider>
+            <App />
+          </HoursPayProvider>
         </EventsProvider>
       </WorkTasksProvider>
     </StaffProvider>

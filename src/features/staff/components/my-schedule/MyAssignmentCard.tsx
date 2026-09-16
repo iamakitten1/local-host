@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import type { Assignment } from "../../../../types/assignment";
 
 type MyAssignmentCardProps = {
@@ -11,8 +13,14 @@ type MyAssignmentCardProps = {
   area?: string;
   instructions?: string;
 
+  workControls?: ReactNode;
+
   onAccept: (assignment: Assignment) => void;
-  onDecline: (assignment: Assignment) => void;
+
+  onDecline: (
+    assignment: Assignment,
+  ) => void;
+
   onRequestCancellation: (
     assignment: Assignment,
   ) => void;
@@ -68,6 +76,7 @@ const MyAssignmentCard = ({
   sourceLabel,
   area,
   instructions,
+  workControls,
   onAccept,
   onDecline,
   onRequestCancellation,
@@ -126,6 +135,8 @@ const MyAssignmentCard = ({
             </p>
           </div>
         )}
+
+        {workControls}
 
         {assignment.status ===
           "declined" &&

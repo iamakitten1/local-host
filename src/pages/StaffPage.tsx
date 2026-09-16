@@ -27,6 +27,9 @@ import EventFormModal from "../features/events/components/EventFormModal";
 
 import useAssignmentActions from "../features/assignments/hooks/useAssignmentActions";
 
+import HoursPayTab from "../features/hours-pay/components/HoursPayTab";
+import { useHoursPayContext } from "../features/hours-pay/context/HoursPayContext";
+
 const StaffPage = () => {
   const [activeTab, setActiveTab] = useState<StaffTab>("team");
 
@@ -77,6 +80,8 @@ const StaffPage = () => {
   );
 
   const { approveCancellation, rejectCancellation } = useAssignmentActions();
+
+  const { workSessionList } = useHoursPayContext();
 
   return (
     <div className="min-w-0">
@@ -171,9 +176,7 @@ const StaffPage = () => {
       )}
 
       {activeTab === "hours" && (
-        <p className="wrap-break-word text-sm text-gray-500">
-          Working hours and payroll summary will go here.
-        </p>
+        <HoursPayTab staffList={staffList} workSessionList={workSessionList} />
       )}
 
       {isAddStaffOpen && (
