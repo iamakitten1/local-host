@@ -1,14 +1,18 @@
 import { useState } from "react";
 
 import MyAssignmentCard from "./MyAssignmentCard";
+
 import AssignmentReasonModal from "../../../assignments/components/AssignmentReasonModal";
+import WorkSessionControls from "../../../hours-pay/components/WorkSessionControls";
 
 import useAssignmentActions from "../../../assignments/hooks/useAssignmentActions";
+import useWorkSessions from "../../../hours-pay/hooks/useWorkSessions";
 
 import { useWorkTasksContext } from "../../../tasks/context/WorkTasksContext";
 import { useEventsContext } from "../../../events/context/EventsContext";
 
 import type { Assignment } from "../../../../types/assignment";
+import type { WorkTask } from "../../../../types/workTask";
 
 type MyScheduleProps = {
   staffId: string;
@@ -18,6 +22,17 @@ type ReasonAction = {
   assignment: Assignment;
   type: "decline" | "cancellation";
 };
+
+type WorkError = {
+  assignmentId: string;
+  message: string;
+};
+
+const cleaningTaskTypes: WorkTask["type"][] = [
+  "room-cleaning",
+  "property-cleaning",
+  "event-cleaning",
+];
 
 const MySchedule = ({
   staffId,
@@ -29,6 +44,12 @@ const MySchedule = ({
     requestCancellation,
   } = useAssignmentActions();
 
+  const {
+    getWorkSession,
+    startWork,
+    finishWork,
+  } = useWorkSessions();
+
   const { taskList } =
     useWorkTasksContext();
 
@@ -38,9 +59,12 @@ const MySchedule = ({
   const [
     reasonAction,
     setReasonAction,
-  ] = useState<ReasonAction | null>(
-    null,
-  );
+  ] = useState<ReasonAction | null>(null);
+
+  const [
+    workError,
+    setWorkError,
+  ] = useState<WorkError | null>(null);
 
   const myAssignments =
     allAssignments.filter(
@@ -74,6 +98,11 @@ const MySchedule = ({
           area: task.area,
           instructions:
             task.instructions,
+          taskId: task.id,
+          isCleaningTask:
+            cleaningTaskTypes.includes(
+              task.type,
+            ),
         };
       }
 
@@ -97,6 +126,8 @@ const MySchedule = ({
         area: event.area,
         instructions:
           event.instructions,
+        taskId: undefined,
+        isCleaningTask: false,
       };
     })
     .filter(
@@ -146,6 +177,46 @@ const MySchedule = ({
     );
   };
 
+  const handleStartWork = (
+    assignment: Assignment,
+    taskId: string,
+  ) => {
+    setWorkError(null);
+
+    const result = startWork(
+      taskId,
+      assignment.staffId,
+    );
+
+    if (!result.success && result.error) {
+      setWorkError({
+        assignmentId:
+          assignment.id,
+        message: result.error,
+      });
+    }
+  };
+
+  const handleFinishWork = (
+    assignment: Assignment,
+    taskId: string,
+  ) => {
+    setWorkError(null);
+
+    const result = finishWork(
+      taskId,
+      assignment.staffId,
+    );
+
+    if (!result.success && result.error) {
+      setWorkError({
+        assignmentId:
+          assignment.id,
+        message: result.error,
+      });
+    }
+  };
+
   return (
     <div className="min-w-0">
       <div className="mb-6">
@@ -173,48 +244,99 @@ const MySchedule = ({
       ) : (
         <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
           {scheduleItems.map(
-            (item) => (
-              <MyAssignmentCard
-                key={
-                  item.assignment.id
-                }
-                assignment={
-                  item.assignment
-                }
-                title={item.title}
-                date={item.date}
-                startTime={
-                  item.startTime
-                }
-                endTime={item.endTime}
-                sourceLabel={
-                  item.sourceLabel
-                }
-                area={item.area}
-                instructions={
-                  item.instructions
-                }
-                onAccept={
-                  acceptAssignment
-                }
-                onDecline={(
-                  assignment,
-                ) =>
-                  setReasonAction({
+            (item) => {
+              const session =
+                item.taskId
+                  ? getWorkSession(
+                      item.taskId,
+                      item.assignment
+                        .staffId,
+                    )
+                  : undefined;
+
+              const canTrackWork =
+                item.isCleaningTask &&
+                item.taskId &&
+                item.assignment.status ===
+                  "confirmed";
+
+              const controls =
+                canTrackWork ? (
+                  <div className="space-y-2">
+                    <WorkSessionControls
+                      session={session}
+                      onStart={() =>
+                        handleStartWork(
+                          item.assignment,
+                          item.taskId!,
+                        )
+                      }
+                      onFinish={() =>
+                        handleFinishWork(
+                          item.assignment,
+                          item.taskId!,
+                        )
+                      }
+                    />
+
+                    {workError?.assignmentId ===
+                      item.assignment.id && (
+                      <p className="text-sm font-medium text-red-600">
+                        {
+                          workError.message
+                        }
+                      </p>
+                    )}
+                  </div>
+                ) : undefined;
+
+              return (
+                <MyAssignmentCard
+                  key={
+                    item.assignment.id
+                  }
+                  assignment={
+                    item.assignment
+                  }
+                  title={item.title}
+                  date={item.date}
+                  startTime={
+                    item.startTime
+                  }
+                  endTime={item.endTime}
+                  sourceLabel={
+                    item.sourceLabel
+                  }
+                  area={item.area}
+                  instructions={
+                    item.instructions
+                  }
+                  workControls={
+                    controls
+                  }
+                  onAccept={
+                    acceptAssignment
+                  }
+                  onDecline={(
                     assignment,
-                    type: "decline",
-                  })
-                }
-                onRequestCancellation={(
-                  assignment,
-                ) =>
-                  setReasonAction({
+                  ) =>
+                    setReasonAction({
+                      assignment,
+                      type: "decline",
+                    })
+                  }
+                  onRequestCancellation={(
                     assignment,
-                    type: "cancellation",
-                  })
-                }
-              />
-            ),
+                  ) =>
+                    setReasonAction({
+                      assignment,
+                      type:
+                        "cancellation",
+                    })
+                  }
+                />
+              );
+            },
           )}
         </div>
       )}
