@@ -121,9 +121,11 @@ const EditBookingModal = ({
       >
         <div className="p-4 sm:p-5">
           {error && (
-            <p className="mb-4 text-sm font-medium text-red-600">
-              {error}
-            </p>
+            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5">
+              <p className="text-sm font-medium text-red-700">
+                {error}
+              </p>
+            </div>
           )}
 
           <BookingFormFields
@@ -157,7 +159,7 @@ const EditBookingModal = ({
           />
 
           {selectedRoom && (
-            <div className="mt-6 border-t border-gray-200 pt-5">
+            <div className="mt-6 border-t border-[#efede7] pt-5">
               <BedSetupSelector
                 availableBeds={
                   selectedRoom.availableBeds
@@ -173,18 +175,18 @@ const EditBookingModal = ({
           )}
         </div>
 
-        <div className="flex flex-col-reverse gap-3 border-t border-gray-200 p-4 sm:flex-row sm:justify-end sm:p-5">
+        <div className="flex flex-col-reverse gap-3 border-t border-[#e7e5df] p-4 sm:flex-row sm:justify-end sm:p-5">
           <button
             type="button"
             onClick={onClose}
-            className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl border border-[#ddd9d0] px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-[#f7f6f2] sm:w-auto"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl bg-[#3f6f60] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#345f52] sm:w-auto"
           >
             Save Changes
           </button>

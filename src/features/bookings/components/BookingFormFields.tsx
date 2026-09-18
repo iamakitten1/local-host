@@ -39,6 +39,9 @@ type BookingFormFieldsProps = {
   ) => void;
 };
 
+const fieldClasses =
+  "w-full min-w-0 rounded-xl border border-[#ddd9d0] bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-[#5b7e72] focus:ring-2 focus:ring-[#5b7e72]/10";
+
 const BookingFormFields = ({
   guestName,
   roomId,
@@ -56,8 +59,7 @@ const BookingFormFields = ({
   onArrivalTimeChange,
 }: BookingFormFieldsProps) => {
   return (
-    <div className="min-w-0 space-y-4">
-      {/* Guest name */}
+    <div className="min-w-0 space-y-5">
       <div className="min-w-0">
         <label
           htmlFor="booking-guest-name"
@@ -75,11 +77,11 @@ const BookingFormFields = ({
               event.target.value,
             )
           }
-          className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+          placeholder="Guest full name"
+          className={fieldClasses}
         />
       </div>
 
-      {/* Room + Guest count */}
       <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="min-w-0">
           <label
@@ -97,7 +99,7 @@ const BookingFormFields = ({
                 event.target.value,
               )
             }
-            className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+            className={`${fieldClasses} cursor-pointer`}
           >
             <option value="">
               Select room
@@ -132,12 +134,11 @@ const BookingFormFields = ({
                 event.target.value,
               )
             }
-            className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+            className={fieldClasses}
           />
         </div>
       </div>
 
-      {/* Dates */}
       <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="min-w-0">
           <label
@@ -156,7 +157,7 @@ const BookingFormFields = ({
                 event.target.value,
               )
             }
-            className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+            className={fieldClasses}
           />
         </div>
 
@@ -177,12 +178,11 @@ const BookingFormFields = ({
                 event.target.value,
               )
             }
-            className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+            className={fieldClasses}
           />
         </div>
       </div>
 
-      {/* Arrival time + Status */}
       <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="min-w-0">
           <label
@@ -201,7 +201,7 @@ const BookingFormFields = ({
                 event.target.value,
               )
             }
-            className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+            className={fieldClasses}
           />
         </div>
 
@@ -222,7 +222,7 @@ const BookingFormFields = ({
                   .value as BookingStatus,
               )
             }
-            className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+            className={`${fieldClasses} cursor-pointer`}
           >
             <option value="confirmed">
               Confirmed

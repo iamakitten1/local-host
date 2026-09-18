@@ -1,4 +1,8 @@
 import { useState } from "react";
+import {
+  BedDouble,
+  Plus,
+} from "lucide-react";
 
 import { rooms } from "../data/rooms";
 
@@ -73,14 +77,18 @@ const RoomsPage = () => {
 
   return (
     <div className="min-w-0">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+          <p className="text-xs font-medium uppercase tracking-widest text-[#5b7e72]">
+            Property
+          </p>
+
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
             Rooms
           </h1>
 
           <p className="mt-1 text-sm text-gray-500">
-            Manage your rooms and available beds
+            Manage rooms, capacity and bed configurations.
           </p>
         </div>
 
@@ -89,10 +97,39 @@ const RoomsPage = () => {
           onClick={() =>
             setIsAddRoomOpen(true)
           }
-          className="w-full shrink-0 cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 sm:w-auto"
+          className="inline-flex w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#3f6f60] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#345f52] sm:w-auto"
         >
-          + Add Room
+          <Plus
+            size={17}
+            strokeWidth={2}
+            aria-hidden="true"
+          />
+
+          Add Room
         </button>
+      </div>
+
+      <div className="mb-5 flex items-center gap-3 rounded-2xl border border-[#e7e5df] bg-white px-4 py-3 shadow-sm">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#edf3ef] text-[#3f6f60]">
+          <BedDouble
+            size={18}
+            strokeWidth={1.9}
+            aria-hidden="true"
+          />
+        </div>
+
+        <div>
+          <p className="text-sm font-semibold text-gray-900">
+            {roomList.length}{" "}
+            {roomList.length === 1
+              ? "room"
+              : "rooms"}
+          </p>
+
+          <p className="text-xs text-gray-500">
+            Current property configuration
+          </p>
+        </div>
       </div>
 
       <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
