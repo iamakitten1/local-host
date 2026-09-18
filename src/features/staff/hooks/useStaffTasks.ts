@@ -66,7 +66,34 @@ const useStaffTasks = () => {
                 );
 
               if (existingAssignment) {
-                return existingAssignment;
+                const shouldReoffer =
+                  existingAssignment.status ===
+                    "declined" ||
+                  existingAssignment.status ===
+                    "cancelled";
+
+                if (!shouldReoffer) {
+                  return existingAssignment;
+                }
+
+                const reofferedAssignment: Assignment =
+                  {
+                    ...existingAssignment,
+                    status: "pending",
+                    assignedByStaffId:
+                      task.createdByStaffId,
+                    assignedAt:
+                      new Date().toISOString(),
+                    respondedAt: undefined,
+                    declineReason: undefined,
+                    cancellationRequestedAt:
+                      undefined,
+                    cancellationReason:
+                      undefined,
+                    cancelledAt: undefined,
+                  };
+
+                return reofferedAssignment;
               }
 
               const newAssignment: Assignment =
@@ -140,7 +167,9 @@ const useStaffTasks = () => {
           assignment.sourceId ===
             taskId &&
           assignment.status !==
-            "cancelled",
+            "cancelled" &&
+          assignment.status !==
+            "declined",
       )
       .map(
         (assignment) =>

@@ -19,6 +19,7 @@ const useWorkSessions = () => {
   const {
     taskList,
     assignmentList,
+    setTaskList,
     handleStatusChange,
   } = useWorkTasksContext();
 
@@ -73,7 +74,7 @@ const useWorkSessions = () => {
     if (
       !cleaningTaskTypes.includes(
         task.type as
-          (typeof cleaningTaskTypes)[number],
+        (typeof cleaningTaskTypes)[number],
       )
     ) {
       return {
@@ -87,11 +88,11 @@ const useWorkSessions = () => {
       assignmentList.find(
         (assignment) =>
           assignment.sourceType ===
-            "work-task" &&
+          "work-task" &&
           assignment.sourceId === taskId &&
           assignment.staffId === staffId &&
           assignment.status ===
-            "confirmed",
+          "confirmed",
       );
 
     if (!assignment) {
@@ -110,6 +111,21 @@ const useWorkSessions = () => {
         success: false,
         error:
           "A work session already exists for this task.",
+      };
+    }
+
+    const activeSession =
+      workSessionList.find(
+        (session) =>
+          session.staffId === staffId &&
+          session.status === "in-progress",
+      );
+
+    if (activeSession) {
+      return {
+        success: false,
+        error:
+          "This staff member already has an active work session.",
       };
     }
 
@@ -188,7 +204,7 @@ const useWorkSessions = () => {
       Math.floor(
         (finishedAt.getTime() -
           startedAt.getTime()) /
-          60000,
+        60000,
       ) - session.breakMinutes,
     );
 
@@ -197,7 +213,7 @@ const useWorkSessions = () => {
         ((totalMinutes / 60) *
           session.hourlyRate +
           Number.EPSILON) *
-          100,
+        100,
       ) / 100;
 
     setWorkSessionList(
@@ -205,21 +221,30 @@ const useWorkSessions = () => {
         currentSessions.map(
           (currentSession) =>
             currentSession.id ===
-            session.id
+              session.id
               ? {
-                  ...currentSession,
-                  finishedAt:
-                    finishedAt.toISOString(),
-                  earnedAmount,
-                  status: "completed",
-                }
+                ...currentSession,
+                finishedAt:
+                  finishedAt.toISOString(),
+                earnedAmount,
+                status: "completed",
+              }
               : currentSession,
         ),
     );
 
-    handleStatusChange(
-      taskId,
-      "completed",
+    setTaskList((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === taskId
+          ? {
+            ...task,
+            status: "completed",
+            completedAt:
+              finishedAt.toISOString(),
+            completedByStaffId: staffId,
+          }
+          : task,
+      ),
     );
 
     return {

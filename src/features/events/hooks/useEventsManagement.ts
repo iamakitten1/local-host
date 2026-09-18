@@ -60,7 +60,29 @@ const useEventsManagement = () => {
               );
 
             if (existingAssignment) {
-              return existingAssignment;
+              const shouldReoffer =
+                existingAssignment.status === "declined" ||
+                existingAssignment.status === "cancelled";
+
+              if (!shouldReoffer) {
+                return existingAssignment;
+              }
+
+              const reofferedAssignment: Assignment = {
+                ...existingAssignment,
+                status: "pending",
+                assignedByStaffId:
+                  event.createdByStaffId,
+                assignedAt:
+                  new Date().toISOString(),
+                respondedAt: undefined,
+                declineReason: undefined,
+                cancellationRequestedAt: undefined,
+                cancellationReason: undefined,
+                cancelledAt: undefined,
+              };
+
+              return reofferedAssignment;
             }
 
             const newAssignment: Assignment = {

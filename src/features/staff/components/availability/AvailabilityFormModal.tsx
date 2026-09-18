@@ -55,6 +55,28 @@ const AvailabilityFormModal = ({
     event: React.SubmitEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
+    if (status === "available") {
+      const hasFrom = Boolean(availableFrom);
+      const hasUntil = Boolean(availableUntil);
+    
+      if (hasFrom !== hasUntil) {
+        window.alert(
+          "Please set both From and Until times, or leave both empty.",
+        );
+        return;
+      }
+    
+      if (
+        availableFrom &&
+        availableUntil &&
+        availableFrom >= availableUntil
+      ) {
+        window.alert(
+          "Until time must be later than From time.",
+        );
+        return;
+      }
+    }
 
     const savedAvailability: StaffAvailability =
       {
