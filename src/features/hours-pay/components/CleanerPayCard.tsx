@@ -1,3 +1,8 @@
+import {
+  CircleDollarSign,
+  UserRound,
+} from "lucide-react";
+
 import PaySummaryGrid from "./PaySummaryGrid";
 import HourlyRatePanel from "./HourlyRatePanel";
 import CompletedSessionsList from "./CompletedSessionsList";
@@ -46,27 +51,37 @@ const CleanerPayCard = ({
   onUpdateRate,
 }: CleanerPayCardProps) => {
   return (
-    <article className="min-w-0 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h3 className="wrap-break-word text-lg font-semibold text-gray-900">
-            {member.firstName}{" "}
-            {member.lastName}
-          </h3>
+    <article className="min-w-0 rounded-3xl border border-(--color-border) bg-(--color-surface) p-5 shadow-sm">
+      <div className="flex min-w-0 items-start justify-between gap-4">
+        <div className="flex min-w-0 items-start gap-3">
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-(--color-primary-soft) text-(--color-primary)">
+            <UserRound
+              size={20}
+              strokeWidth={1.9}
+              aria-hidden="true"
+            />
+          </div>
 
-          <p className="mt-1 text-sm text-gray-500">
-            Cleaner
-          </p>
+          <div className="min-w-0">
+            <h3 className="text-lg font-semibold tracking-tight text-(--color-text)">
+              {member.firstName}{" "}
+              {member.lastName}
+            </h3>
+
+            <p className="mt-1 text-sm text-(--color-text-muted)">
+              Cleaner
+            </p>
+          </div>
         </div>
 
         {activeSession && (
-          <span className="w-fit shrink-0 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">
+          <span className="shrink-0 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">
             Working now
           </span>
         )}
       </div>
 
-      <div className="mt-4">
+      <div className="mt-5">
         <PaySummaryGrid
           worked={worked}
           earned={earned}
@@ -76,7 +91,7 @@ const CleanerPayCard = ({
         />
       </div>
 
-      <div className="mt-5">
+      <div className="mt-5 rounded-2xl border border-(--color-border) bg-(--color-surface-soft) p-4">
         <HourlyRatePanel
           currentRate={currentRate}
           rateHistory={rateHistory}
@@ -88,19 +103,25 @@ const CleanerPayCard = ({
         <button
           type="button"
           onClick={onRecordPayment}
-          className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+          className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-(--color-primary) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-(--color-primary-hover) sm:w-auto"
         >
+          <CircleDollarSign
+            size={17}
+            strokeWidth={1.9}
+            aria-hidden="true"
+          />
+
           Record Payment
         </button>
       </div>
 
-      <div className="mt-5">
+      <div className="mt-5 border-t border-(--color-border) pt-5">
         <CompletedSessionsList
           sessions={completedSessions}
         />
       </div>
 
-      <div className="mt-5">
+      <div className="mt-5 border-t border-(--color-border) pt-5">
         <PaymentHistory
           payments={payments}
         />

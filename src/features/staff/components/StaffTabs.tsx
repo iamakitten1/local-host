@@ -10,6 +10,32 @@ type StaffTabsProps = {
   onChange: (tab: StaffTab) => void;
 };
 
+const tabs: {
+  label: string;
+  value: StaffTab;
+}[] = [
+  {
+    label: "Team",
+    value: "team",
+  },
+  {
+    label: "Schedule",
+    value: "schedule",
+  },
+  {
+    label: "My Schedule",
+    value: "my-schedule",
+  },
+  {
+    label: "Availability",
+    value: "availability",
+  },
+  {
+    label: "Hours & Pay",
+    value: "hours",
+  },
+];
+
 const StaffTabs = ({
   activeTab,
   onChange,
@@ -17,77 +43,31 @@ const StaffTabs = ({
   return (
     <div
       role="tablist"
-      className="mb-6 flex min-w-0 flex-nowrap gap-2 overflow-x-auto border-b border-gray-200 pb-3"
+      className="flex min-w-0 flex-nowrap gap-1 overflow-x-auto rounded-2xl border border-(--color-border) bg-(--color-surface) p-2 shadow-sm"
     >
-      <button
-        type="button"
-        role="tab"
-        aria-selected={activeTab === "team"}
-        onClick={() => onChange("team")}
-        className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium ${
-          activeTab === "team"
-            ? "bg-gray-900 text-white"
-            : "text-gray-600 hover:bg-gray-100"
-        }`}
-      >
-        Team
-      </button>
+      {tabs.map((tab) => {
+        const isActive =
+          activeTab === tab.value;
 
-      <button
-        type="button"
-        role="tab"
-        aria-selected={activeTab === "schedule"}
-        onClick={() => onChange("schedule")}
-        className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium ${
-          activeTab === "schedule"
-            ? "bg-gray-900 text-white"
-            : "text-gray-600 hover:bg-gray-100"
-        }`}
-      >
-        Schedule
-      </button>
-
-      <button
-        type="button"
-        role="tab"
-        aria-selected={activeTab === "my-schedule"}
-        onClick={() => onChange("my-schedule")}
-        className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium ${
-          activeTab === "my-schedule"
-            ? "bg-gray-900 text-white"
-            : "text-gray-600 hover:bg-gray-100"
-        }`}
-      >
-        My Schedule
-      </button>
-
-      <button
-        type="button"
-        role="tab"
-        aria-selected={activeTab === "availability"}
-        onClick={() => onChange("availability")}
-        className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium ${
-          activeTab === "availability"
-            ? "bg-gray-900 text-white"
-            : "text-gray-600 hover:bg-gray-100"
-        }`}
-      >
-        Availability
-      </button>
-
-      <button
-        type="button"
-        role="tab"
-        aria-selected={activeTab === "hours"}
-        onClick={() => onChange("hours")}
-        className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium ${
-          activeTab === "hours"
-            ? "bg-gray-900 text-white"
-            : "text-gray-600 hover:bg-gray-100"
-        }`}
-      >
-        Hours & Pay
-      </button>
+        return (
+          <button
+            key={tab.value}
+            type="button"
+            role="tab"
+            aria-selected={isActive}
+            onClick={() =>
+              onChange(tab.value)
+            }
+            className={`shrink-0 cursor-pointer whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-medium transition ${
+              isActive
+                ? "bg-(--color-primary-soft) text-(--color-primary)"
+                : "text-(--color-text-muted) hover:bg-(--color-surface-soft) hover:text-(--color-text)"
+            }`}
+          >
+            {tab.label}
+          </button>
+        );
+      })}
     </div>
   );
 };

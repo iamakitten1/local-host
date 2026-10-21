@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { WalletCards } from "lucide-react";
 
 import RecordPaymentModal from "./RecordPaymentModal";
 import UpdateHourlyRateModal from "./UpdateHourlyRateModal";
@@ -23,18 +24,34 @@ type HoursPayTabProps = {
   workSessionList: WorkSession[];
 };
 
-const HoursPayTab = ({ staffList, workSessionList }: HoursPayTabProps) => {
-  const [paymentMember, setPaymentMember] = useState<Staff | null>(null);
+const HoursPayTab = ({
+  staffList,
+  workSessionList,
+}: HoursPayTabProps) => {
+  const [
+    paymentMember,
+    setPaymentMember,
+  ] = useState<Staff | null>(null);
 
-  const [rateMember, setRateMember] = useState<Staff | null>(null);
+  const [
+    rateMember,
+    setRateMember,
+  ] = useState<Staff | null>(null);
 
-  const [period, setPeriod] = useState<HoursPayPeriod>("month");
+  const [period, setPeriod] =
+    useState<HoursPayPeriod>("month");
 
-  const { recordPayment, getStaffPaymentSummary, getStaffPayments } =
-    usePayments();
+  const {
+    recordPayment,
+    getStaffPaymentSummary,
+    getStaffPayments,
+  } = usePayments();
 
-  const { getCurrentHourlyRate, getStaffRateHistory, updateHourlyRate } =
-    useHourlyRates();
+  const {
+    getCurrentHourlyRate,
+    getStaffRateHistory,
+    updateHourlyRate,
+  } = useHourlyRates();
 
   const cleaners = staffList.filter(
     (member) =>
@@ -44,71 +61,141 @@ const HoursPayTab = ({ staffList, workSessionList }: HoursPayTabProps) => {
   );
 
   return (
-    <div className="min-w-0">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="min-w-0 space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Hours & Pay</h2>
-
-          <p className="mt-1 text-sm text-gray-500">
-            Cleaning hours, earnings, payments, balances, and hourly rates
+          <p className="text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
+            Payroll
           </p>
+
+          <div className="mt-2 flex items-center gap-3">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-(--color-primary-soft) text-(--color-primary)">
+              <WalletCards
+                size={19}
+                strokeWidth={1.9}
+                aria-hidden="true"
+              />
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold tracking-tight text-(--color-text)">
+                Hours & Pay
+              </h2>
+
+              <p className="mt-1 text-sm text-(--color-text-muted)">
+                Cleaning hours, earnings, payments and hourly rates.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <HoursPayPeriodFilter value={period} onChange={setPeriod} />
+        <HoursPayPeriodFilter
+          value={period}
+          onChange={setPeriod}
+        />
       </div>
 
       {cleaners.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-          <p className="text-sm font-medium text-gray-700">No cleaners found</p>
+        <div className="rounded-2xl border border-dashed border-(--color-border) bg-(--color-surface) p-8 text-center">
+          <p className="text-sm font-semibold text-(--color-text)">
+            No cleaners found
+          </p>
+
+          <p className="mt-1 text-sm text-(--color-text-muted)">
+            Active cleaning staff will appear here.
+          </p>
         </div>
       ) : (
         <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
           {cleaners.map((member) => {
-            const staffSessions = workSessionList.filter(
-              (session) => session.staffId === member.id,
-            );
+            const staffSessions =
+              workSessionList.filter(
+                (session) =>
+                  session.staffId ===
+                  member.id,
+              );
 
-            const activeSession = staffSessions.find(
-              (session) => session.status === "in-progress",
-            );
+            const activeSession =
+              staffSessions.find(
+                (session) =>
+                  session.status ===
+                  "in-progress",
+              );
 
-            const completedSessions = staffSessions.filter(
-              (session) =>
-                session.status === "completed" &&
-                session.finishedAt &&
-                isDateInPeriod(new Date(session.finishedAt), period),
-            );
+            const completedSessions =
+              staffSessions.filter(
+                (session) =>
+                  session.status ===
+                    "completed" &&
+                  session.finishedAt &&
+                  isDateInPeriod(
+                    new Date(
+                      session.finishedAt,
+                    ),
+                    period,
+                  ),
+              );
 
-            const totalMinutes = completedSessions.reduce(
-              (total, session) => total + getWorkedMinutes(session),
-              0,
-            );
+            const totalMinutes =
+              completedSessions.reduce(
+                (total, session) =>
+                  total +
+                  getWorkedMinutes(
+                    session,
+                  ),
+                0,
+              );
 
-            const periodEarned = completedSessions.reduce(
-              (total, session) => total + session.earnedAmount,
-              0,
-            );
+            const periodEarned =
+              completedSessions.reduce(
+                (total, session) =>
+                  total +
+                  session.earnedAmount,
+                0,
+              );
 
-            const summary = getStaffPaymentSummary(member.id);
+            const summary =
+              getStaffPaymentSummary(
+                member.id,
+              );
 
-            const payments = getStaffPayments(member.id).filter((payment) =>
-              isDateInPeriod(new Date(`${payment.paidAt}T00:00:00`), period),
-            );
+            const payments =
+              getStaffPayments(
+                member.id,
+              ).filter((payment) =>
+                isDateInPeriod(
+                  new Date(
+                    `${payment.paidAt}T00:00:00`,
+                  ),
+                  period,
+                ),
+              );
 
-            const periodPaid = payments.reduce(
-              (total, payment) => total + payment.amount,
-              0,
-            );
+            const periodPaid =
+              payments.reduce(
+                (total, payment) =>
+                  total +
+                  payment.amount,
+                0,
+              );
 
-            const currentRate = getCurrentHourlyRate(member.id);
+            const currentRate =
+              getCurrentHourlyRate(
+                member.id,
+              );
 
-            const rateHistory = getStaffRateHistory(member.id);
+            const rateHistory =
+              getStaffRateHistory(
+                member.id,
+              );
 
             return (
               <CleanerPayCard
                 key={member.id}
                 member={member}
-                activeSession={activeSession}
+                activeSession={
+                  activeSession
+                }
                 completedSessions={
                   completedSessions
                 }
@@ -121,11 +208,17 @@ const HoursPayTab = ({ staffList, workSessionList }: HoursPayTabProps) => {
                   summary.amountDue
                 }
                 credit={summary.credit}
-                currentRate={currentRate}
-                rateHistory={rateHistory}
+                currentRate={
+                  currentRate
+                }
+                rateHistory={
+                  rateHistory
+                }
                 payments={payments}
                 onRecordPayment={() =>
-                  setPaymentMember(member)
+                  setPaymentMember(
+                    member,
+                  )
                 }
                 onUpdateRate={() =>
                   setRateMember(member)
@@ -139,7 +232,9 @@ const HoursPayTab = ({ staffList, workSessionList }: HoursPayTabProps) => {
       {paymentMember && (
         <RecordPaymentModal
           member={paymentMember}
-          onClose={() => setPaymentMember(null)}
+          onClose={() =>
+            setPaymentMember(null)
+          }
           onSubmit={recordPayment}
         />
       )}
@@ -147,8 +242,12 @@ const HoursPayTab = ({ staffList, workSessionList }: HoursPayTabProps) => {
       {rateMember && (
         <UpdateHourlyRateModal
           member={rateMember}
-          currentRate={getCurrentHourlyRate(rateMember.id)}
-          onClose={() => setRateMember(null)}
+          currentRate={getCurrentHourlyRate(
+            rateMember.id,
+          )}
+          onClose={() =>
+            setRateMember(null)
+          }
           onSubmit={updateHourlyRate}
         />
       )}

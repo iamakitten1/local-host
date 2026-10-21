@@ -1,66 +1,63 @@
 import { useState } from "react";
-import {
-  Outlet,
-  useLocation,
-} from "react-router-dom";
+import { CalendarDays } from "lucide-react";
+import { Outlet } from "react-router-dom";
 
 import Sidebar from "../components/Sidebar";
 import MobileHeader from "../components/MobileHeader";
 import MobileSidebar from "../components/MobileSidebar";
 
-import { navItems } from "../config/navigation";
+const formatToday = () =>
+  new Intl.DateTimeFormat("en", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(new Date());
 
 const DashboardLayout = () => {
-  const [
-    isMobileMenuOpen,
-    setIsMobileMenuOpen,
-  ] = useState(false);
-
-  const location = useLocation();
-
-  const currentPage =
-    navItems.find(
-      (item) =>
-        location.pathname === item.path,
-    )?.label ?? "LocalHost";
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[#f5f4ef]">
-      <MobileHeader
-        onMenuOpen={() =>
-          setIsMobileMenuOpen(true)
-        }
-      />
+    <div className="flex min-h-dvh flex-col bg-(--color-background)">
+      <MobileHeader onMenuOpen={() => setIsMobileMenuOpen(true)} />
 
       {isMobileMenuOpen && (
-        <MobileSidebar
-          onClose={() =>
-            setIsMobileMenuOpen(false)
-          }
-        />
+        <MobileSidebar onClose={() => setIsMobileMenuOpen(false)} />
       )}
 
       <div className="flex min-h-0 flex-1">
         <Sidebar />
 
         <div className="min-w-0 flex-1">
-          <header className="sticky top-0 z-30 hidden border-b border-[#e7e5df] bg-[#f5f4ef]/95 px-8 py-4 backdrop-blur xl:flex xl:items-center xl:justify-between">
-            <div>
-              <p className="text-xs font-medium text-[#5b7e72]">
-                LocalHost workspace
-              </p>
+          <header className="sticky top-0 z-30 hidden border-b border-(--color-border)] bg-[var(--color-background)/95 px-8 py-4 backdrop-blur xl:block">
+            <div className="mx-auto flex w-full max-w-[1600px] items-center justify-end">
+              <div className="flex shrink-0 items-center gap-4">
+                <div className="flex items-center gap-2 text-sm text-(--color-text-muted)">
+                  <CalendarDays
+                    size={17}
+                    strokeWidth={1.8}
+                    aria-hidden="true"
+                  />
+                  <span>{formatToday()}</span>
+                </div>
 
-              <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-gray-900">
-                {currentPage}
-              </h2>
-            </div>
+                <div className="h-7 w-px bg-(--color-border)" />
 
-            <div className="flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm ring-1 ring-black/5">
-              <span className="size-2 rounded-full bg-[#5f8b7a]" />
+                <div className="flex items-center gap-3">
+                  <div className="flex size-9 items-center justify-center rounded-full bg-(--color-primary-soft) text-sm font-semibold text-(--color-primary)">
+                    LH
+                  </div>
 
-              <span className="text-xs font-medium text-gray-600">
-                Property operations
-              </span>
+                  <div>
+                    <p className="text-sm font-medium text-(--color-text)">
+                      LocalHost
+                    </p>
+
+                    <p className="text-xs text-(--color-text-muted)">
+                      Property workspace
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </header>
 

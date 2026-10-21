@@ -16,34 +16,20 @@ type AddCleaningTaskModalProps = {
   ) => void;
 };
 
+const fieldClasses =
+  "w-full min-w-0 rounded-xl border border-(--color-border-strong) bg-(--color-surface) px-3 py-2.5 text-sm text-(--color-text) outline-none transition focus:border-(--color-primary-muted) focus:ring-2 focus:ring-(--color-primary-soft)";
+
 const AddCleaningTaskModal = ({
   onClose,
   onAddTask,
 }: AddCleaningTaskModalProps) => {
-  const [roomId, setRoomId] =
-    useState("");
-
-  const [bookingId, setBookingId] =
-    useState("");
-
-  const [staffId, setStaffId] =
-    useState("");
-
-  const [
-    scheduledDate,
-    setScheduledDate,
-  ] = useState("");
-
-  const [startTime, setStartTime] =
-    useState("");
-
-  const [
-    instructions,
-    setInstructions,
-  ] = useState("");
-
-  const [error, setError] =
-    useState("");
+  const [roomId, setRoomId] = useState("");
+  const [bookingId, setBookingId] = useState("");
+  const [staffId, setStaffId] = useState("");
+  const [scheduledDate, setScheduledDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [instructions, setInstructions] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (
     event: React.SubmitEvent<HTMLFormElement>,
@@ -66,7 +52,6 @@ const AddCleaningTaskModal = ({
     const newTask: WorkTask = {
       id: `task-${Date.now()}`,
       propertyId: "property-1",
-
       type: "room-cleaning",
 
       title: room
@@ -74,25 +59,18 @@ const AddCleaningTaskModal = ({
         : "Clean room",
 
       instructions:
-        instructions.trim() ||
-        undefined,
+        instructions.trim() || undefined,
 
       date: scheduledDate,
-
-      startTime:
-        startTime || undefined,
-
+      startTime: startTime || undefined,
       roomId,
-
-      bookingId:
-        bookingId || undefined,
+      bookingId: bookingId || undefined,
 
       status: "pending",
       priority: "normal",
 
       createdByStaffId: "staff-1",
-      createdAt:
-        new Date().toISOString(),
+      createdAt: new Date().toISOString(),
     };
 
     onAddTask(
@@ -112,19 +90,20 @@ const AddCleaningTaskModal = ({
         onSubmit={handleSubmit}
         className="min-w-0"
       >
-        <div className="space-y-4 p-4 sm:p-5">
+        <div className="space-y-5 p-4 sm:p-5">
           {error && (
-            <p className="text-sm font-medium text-red-600">
-              {error}
-            </p>
+            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5">
+              <p className="text-sm font-medium text-red-700">
+                {error}
+              </p>
+            </div>
           )}
 
-          {/* Room + Booking */}
           <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="min-w-0">
               <label
                 htmlFor="cleaning-room"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Room
               </label>
@@ -133,11 +112,9 @@ const AddCleaningTaskModal = ({
                 id="cleaning-room"
                 value={roomId}
                 onChange={(event) =>
-                  setRoomId(
-                    event.target.value,
-                  )
+                  setRoomId(event.target.value)
                 }
-                className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+                className={`${fieldClasses} cursor-pointer`}
               >
                 <option value="">
                   Select room
@@ -157,7 +134,7 @@ const AddCleaningTaskModal = ({
             <div className="min-w-0">
               <label
                 htmlFor="cleaning-booking"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Linked booking
               </label>
@@ -166,35 +143,30 @@ const AddCleaningTaskModal = ({
                 id="cleaning-booking"
                 value={bookingId}
                 onChange={(event) =>
-                  setBookingId(
-                    event.target.value,
-                  )
+                  setBookingId(event.target.value)
                 }
-                className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+                className={`${fieldClasses} cursor-pointer`}
               >
                 <option value="">
                   No linked booking
                 </option>
 
-                {bookings.map(
-                  (booking) => (
-                    <option
-                      key={booking.id}
-                      value={booking.id}
-                    >
-                      {booking.guestName}
-                    </option>
-                  ),
-                )}
+                {bookings.map((booking) => (
+                  <option
+                    key={booking.id}
+                    value={booking.id}
+                  >
+                    {booking.guestName}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
 
-          {/* Cleaner */}
           <div className="min-w-0">
             <label
               htmlFor="cleaning-staff"
-              className="mb-1.5 block text-sm font-medium text-gray-700"
+              className="mb-1.5 block text-sm font-medium text-(--color-text)"
             >
               Cleaner
             </label>
@@ -203,11 +175,9 @@ const AddCleaningTaskModal = ({
               id="cleaning-staff"
               value={staffId}
               onChange={(event) =>
-                setStaffId(
-                  event.target.value,
-                )
+                setStaffId(event.target.value)
               }
-              className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+              className={`${fieldClasses} cursor-pointer`}
             >
               <option value="">
                 Unassigned
@@ -233,12 +203,11 @@ const AddCleaningTaskModal = ({
             </select>
           </div>
 
-          {/* Date + Time */}
           <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="min-w-0">
               <label
                 htmlFor="cleaning-date"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Scheduled date
               </label>
@@ -252,14 +221,14 @@ const AddCleaningTaskModal = ({
                     event.target.value,
                   )
                 }
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+                className={fieldClasses}
               />
             </div>
 
             <div className="min-w-0">
               <label
                 htmlFor="cleaning-time"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Start time
               </label>
@@ -269,20 +238,17 @@ const AddCleaningTaskModal = ({
                 type="time"
                 value={startTime}
                 onChange={(event) =>
-                  setStartTime(
-                    event.target.value,
-                  )
+                  setStartTime(event.target.value)
                 }
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+                className={fieldClasses}
               />
             </div>
           </div>
 
-          {/* Instructions */}
           <div className="min-w-0">
             <label
               htmlFor="cleaning-instructions"
-              className="mb-1.5 block text-sm font-medium text-gray-700"
+              className="mb-1.5 block text-sm font-medium text-(--color-text)"
             >
               Instructions
             </label>
@@ -297,24 +263,23 @@ const AddCleaningTaskModal = ({
               }
               rows={3}
               placeholder="Optional cleaning instructions..."
-              className="w-full min-w-0 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+              className={`${fieldClasses} min-h-24 resize-none`}
             />
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex flex-col-reverse gap-3 border-t border-gray-200 p-4 sm:flex-row sm:justify-end sm:p-5">
+        <div className="flex flex-col-reverse gap-3 border-t border-(--color-border) p-4 sm:flex-row sm:justify-end sm:p-5">
           <button
             type="button"
             onClick={onClose}
-            className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl border border-(--color-border-strong) px-4 py-2.5 text-sm font-medium text-(--color-text) transition hover:bg-(--color-surface-soft) sm:w-auto"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl bg-(--color-primary) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-(--color-primary-hover) sm:w-auto"
           >
             Save Task
           </button>

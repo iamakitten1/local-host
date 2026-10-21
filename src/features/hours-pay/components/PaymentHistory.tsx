@@ -10,36 +10,41 @@ const PaymentHistory = ({
   payments,
 }: PaymentHistoryProps) => {
   return (
-    <div className="border-t border-gray-100 pt-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+    <div className="min-w-0">
+      <p className="text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
         Payment history
       </p>
 
       {payments.length === 0 ? (
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-(--color-text-muted)">
           No payments in this period.
         </p>
       ) : (
-        <div className="mt-2 space-y-2">
+        <div className="mt-3 space-y-2">
           {payments.map((payment) => (
             <div
               key={payment.id}
-              className="flex min-w-0 items-start justify-between gap-3 border-t border-gray-100 pt-2 first:border-t-0 first:pt-0"
+              className="flex min-w-0 items-start justify-between gap-3 border-t border-(--color-border) pt-2 first:border-t-0 first:pt-0"
             >
               <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-700">
-                  {formatDate(payment.paidAt)}
+                <p className="text-sm font-medium text-(--color-text)">
+                  {formatDate(
+                    payment.paidAt,
+                  )}
                 </p>
 
                 {payment.note && (
-                  <p className="mt-0.5 wrap-break-word text-xs text-gray-500">
+                  <p className="mt-0.5 text-xs text-(--color-text-muted)">
                     {payment.note}
                   </p>
                 )}
               </div>
 
-              <span className="shrink-0 text-sm font-semibold text-gray-900">
-                €{payment.amount.toFixed(2)}
+              <span className="shrink-0 text-sm font-semibold text-(--color-text)">
+                €
+                {payment.amount.toFixed(
+                  2,
+                )}
               </span>
             </div>
           ))}

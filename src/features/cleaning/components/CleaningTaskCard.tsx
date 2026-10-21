@@ -1,3 +1,5 @@
+import { Pencil, Trash2 } from "lucide-react";
+
 import { rooms } from "../../../data/rooms";
 import { staff } from "../../../data/staff";
 
@@ -50,9 +52,6 @@ const getAssignmentLabel = (
 
     case "cancelled":
       return "Cancelled";
-
-    default:
-      return "";
   }
 };
 
@@ -75,10 +74,12 @@ const getAssignmentClasses = (
       return "bg-orange-100 text-orange-700";
 
     case "pending":
-    default:
       return "bg-amber-100 text-amber-700";
   }
 };
+
+const fieldClasses =
+  "h-10 w-full min-w-0 rounded-xl border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-text)] outline-none transition focus:border-[var(--color-primary-muted)] focus:ring-2 focus:ring-[var(--color-primary-muted)]/10";
 
 const CleaningTaskCard = ({
   task,
@@ -92,6 +93,13 @@ const CleaningTaskCard = ({
     (room) => room.id === task.roomId,
   );
 
+  const assignedStaff = assignment
+    ? staff.find(
+        (member) =>
+          member.id === assignment.staffId,
+      )
+    : undefined;
+
   const assignedBy = assignment
     ? staff.find(
         (member) =>
@@ -101,84 +109,66 @@ const CleaningTaskCard = ({
     : undefined;
 
   return (
-    <article className="min-w-0 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-      {/* Task info */}
-      <div className="min-w-0">
-        <h2 className="wrap-break-word text-lg font-semibold text-gray-900">
-          {room?.name ?? task.title}
-        </h2>
+    <article className="min-w-0 rounded-3xl border border-(--color-border) bg-(--color-surface) p-5 shadow-sm">
+      <div className="flex min-w-0 items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
+            Room cleaning
+          </p>
 
-        <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-500">
-          <span>{task.date}</span>
+          <h2 className="mt-1 text-lg font-semibold tracking-tight text-(--color-text)">
+            {room?.name ?? task.title}
+          </h2>
 
-          {task.startTime && (
-            <>
-              <span>•</span>
+          <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm text-(--color-text-muted)">
+            <span>{task.date}</span>
+
+            {task.startTime && (
               <span>{task.startTime}</span>
-            </>
-          )}
+            )}
+          </div>
         </div>
+
+        <span
+          className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${getAssignmentClasses(
+            assignment,
+          )}`}
+        >
+          {getAssignmentLabel(assignment)}
+        </span>
       </div>
 
-      {/* Instructions */}
       {task.instructions && (
-        <div className="mt-4 min-w-0 rounded-lg bg-gray-50 p-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+        <div className="mt-4 rounded-2xl border border-(--color-border) bg-(--color-surface-soft) p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
             Instructions
           </p>
 
-          <p className="mt-1 wrap-break-word text-sm text-gray-700">
+          <p className="mt-2 text-sm leading-6 text-(--color-text-muted)">
             {task.instructions}
           </p>
         </div>
       )}
 
-      {/* Assignment status */}
-      <div className="mt-4 border-t border-gray-200 pt-4">
-        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs font-medium text-gray-500">
-            Assignment
-          </p>
-
-          <span
-            className={`w-fit rounded-full px-2.5 py-1 text-xs font-semibold ${getAssignmentClasses(
-              assignment,
-            )}`}
-          >
-            {getAssignmentLabel(
-              assignment,
-            )}
-          </span>
-        </div>
-
-        {assignedBy && (
-          <p className="mt-2 wrap-break-word text-xs text-gray-500">
-            Assigned by{" "}
-            {assignedBy.firstName}{" "}
-            {assignedBy.lastName}
-          </p>
-        )}
-      </div>
-
-      {/* Controls */}
-      <div className="mt-4 grid min-w-0 grid-cols-1 gap-3 border-t border-gray-200 pt-4 md:grid-cols-[minmax(0,1fr)_160px]">
+      <div className="mt-5 grid min-w-0 grid-cols-1 gap-4 border-t border-(--color-border) pt-5 md:grid-cols-2">
         <div className="min-w-0">
-          <label className="mb-1 block text-xs font-medium text-gray-500">
+          <label
+            htmlFor={`cleaner-${task.id}`}
+            className="mb-1.5 block text-xs font-medium text-(--color-text-muted)"
+          >
             Cleaner
           </label>
 
           <select
-            value={
-              assignment?.staffId ?? ""
-            }
+            id={`cleaner-${task.id}`}
+            value={assignment?.staffId ?? ""}
             onChange={(event) =>
               onStaffChange(
                 task.id,
-                event.target.value ||
-                  null,
+                event.target.value || null,
               )
             }
-            className="h-10 w-full min-w-0 cursor-pointer rounded-md border border-gray-300 bg-white px-3 text-sm outline-none focus:border-gray-500"
+            className={`${fieldClasses} cursor-pointer`}
           >
             <option value="">
               Unassigned
@@ -202,14 +192,24 @@ const CleaningTaskCard = ({
                 </option>
               ))}
           </select>
+
+          <p className="mt-2 text-xs text-(--color-text-muted)">
+            {assignedStaff
+              ? `Assigned to ${assignedStaff.firstName} ${assignedStaff.lastName}`
+              : "No cleaner assigned yet"}
+          </p>
         </div>
 
         <div className="min-w-0">
-          <label className="mb-1 block text-xs font-medium text-gray-500">
+          <label
+            htmlFor={`status-${task.id}`}
+            className="mb-1.5 block text-xs font-medium text-(--color-text-muted)"
+          >
             Task status
           </label>
 
           <select
+            id={`status-${task.id}`}
             value={task.status}
             onChange={(event) =>
               onStatusChange(
@@ -218,7 +218,7 @@ const CleaningTaskCard = ({
                   .value as WorkTaskStatus,
               )
             }
-            className="h-10 w-full min-w-0 cursor-pointer rounded-md border border-gray-300 bg-white px-3 text-sm outline-none focus:border-gray-500"
+            className={`${fieldClasses} cursor-pointer`}
           >
             <option value="pending">
               Pending
@@ -236,16 +236,29 @@ const CleaningTaskCard = ({
               Cancelled
             </option>
           </select>
+
+          {assignedBy && (
+            <p className="mt-2 text-xs text-(--color-text-muted)">
+              Assigned by{" "}
+              {assignedBy.firstName}{" "}
+              {assignedBy.lastName}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="mt-4 flex gap-2 border-t border-gray-200 pt-4 sm:justify-end">
+      <div className="mt-5 flex flex-col gap-2 border-t border-(--color-border) pt-4 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={() => onEdit(task)}
-          className="flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 sm:flex-none"
+          className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-(--color-border-strong) px-3 py-2 text-sm font-medium text-(--color-text) transition hover:bg-(--color-surface-soft)sm:w-auto"
         >
+          <Pencil
+            size={15}
+            strokeWidth={1.9}
+            aria-hidden="true"
+          />
+
           Edit
         </button>
 
@@ -261,8 +274,14 @@ const CleaningTaskCard = ({
               onDelete(task.id);
             }
           }}
-          className="flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 sm:flex-none"
+          className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 sm:w-auto"
         >
+          <Trash2
+            size={15}
+            strokeWidth={1.9}
+            aria-hidden="true"
+          />
+
           Delete
         </button>
       </div>

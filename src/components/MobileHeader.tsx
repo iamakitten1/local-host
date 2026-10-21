@@ -1,7 +1,4 @@
-import {
-  Building2,
-  Menu,
-} from "lucide-react";
+import { Building2, Menu } from "lucide-react";
 
 type MobileHeaderProps = {
   onMenuOpen: () => void;
@@ -11,9 +8,9 @@ const MobileHeader = ({
   onMenuOpen,
 }: MobileHeaderProps) => {
   return (
-    <header className="sticky top-0 z-40 flex shrink-0 items-center justify-between border-b border-[#e7e5df] bg-[#fbfaf7]/95 px-4 py-3 backdrop-blur sm:px-6 xl:hidden">
+    <header className="sticky top-0 z-40 flex shrink-0 items-center justify-between border-b border-(--color-border) bg-(--color-surface-soft)]/95 px-4 py-3 backdrop-blur sm:px-6 xl:hidden">
       <div className="flex items-center gap-3">
-        <div className="flex size-9 items-center justify-center rounded-xl bg-[#3f6f60] text-white shadow-sm">
+        <div className="flex size-9 items-center justify-center rounded-xl bg-(--color-primary) text-white shadow-sm">
           <Building2
             size={18}
             strokeWidth={2}
@@ -22,11 +19,11 @@ const MobileHeader = ({
         </div>
 
         <div>
-          <h1 className="text-base font-semibold tracking-tight text-gray-900">
+          <h1 className="text-base font-semibold tracking-tight text-(--color-text)">
             LocalHost
           </h1>
 
-          <p className="text-[11px] text-gray-500">
+          <p className="text-[11px] text-(--color-text-muted)">
             Property operations
           </p>
         </div>
@@ -36,7 +33,7 @@ const MobileHeader = ({
         type="button"
         aria-label="Open navigation menu"
         onClick={onMenuOpen}
-        className="flex size-10 cursor-pointer items-center justify-center rounded-xl text-gray-600 transition hover:bg-[#f1f0eb] hover:text-gray-900"
+        className="flex size-10 cursor-pointer items-center justify-center rounded-xl text-(--color-text-muted) transition hover:bg-(--color-background) hover:text-(--color-text)"
       >
         <Menu
           size={21}
