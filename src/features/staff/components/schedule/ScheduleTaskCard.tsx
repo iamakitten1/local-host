@@ -155,7 +155,7 @@ const getOperationalStatus = (
   return {
     label: "Unassigned",
     classes:
-      "bg-gray-100 text-gray-600",
+      "bg-(--color-surface-soft) text-(--color-text-muted)",
   };
 };
 
@@ -208,18 +208,14 @@ const ScheduleTaskCard = ({
     );
 
   return (
-    <article
-      className={`min-w-0 overflow-hidden rounded-xl border ${primaryColor.border} ${primaryColor.background}`}
-    >
+    <article className="min-w-0 overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-sm">
       <div className="flex min-w-0 flex-col sm:flex-row">
-        {/* Time */}
-        <div className="flex shrink-0 items-center border-b border-black/5 px-4 py-3 sm:w-20 sm:items-start sm:justify-center sm:border-r sm:border-b-0 sm:px-3 sm:py-4">
-          <span className="text-sm font-semibold text-gray-700">
+        <div className="flex shrink-0 items-center border-b border-(--color-border) bg-(--color-surface-soft) px-4 py-3 sm:w-20 sm:items-start sm:justify-center sm:border-r sm:border-b-0 sm:px-3 sm:py-4">
+          <span className="text-sm font-semibold text-(--color-text)">
             {task.startTime ?? "—"}
           </span>
         </div>
 
-        {/* Main content */}
         <div className="min-w-0 flex-1 p-4">
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 flex-1">
@@ -236,7 +232,7 @@ const ScheduleTaskCard = ({
                         <span
                           key={member.id}
                           title={`${member.firstName} ${member.lastName}`}
-                          className={`h-3 w-3 rounded-full border-2 border-white ${color.dot}`}
+                          className={`size-3 rounded-full border-2 border-white ${color.dot}`}
                         />
                       );
                     },
@@ -244,18 +240,16 @@ const ScheduleTaskCard = ({
 
                   {assignedStaff.length ===
                     0 && (
-                    <span className="h-3 w-3 rounded-full bg-gray-300" />
+                    <span className="size-3 rounded-full bg-gray-300" />
                   )}
                 </div>
 
-                <h3
-                  className={`min-w-0 wrap-break-word font-semibold ${primaryColor.text}`}
-                >
+                <h3 className={`min-w-0 font-semibold ${primaryColor.text}`}>
                   {task.title}
                 </h3>
               </div>
 
-              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-(--color-text-muted)">
                 {task.area && (
                   <span>
                     {task.area}
@@ -278,7 +272,6 @@ const ScheduleTaskCard = ({
             </span>
           </div>
 
-          {/* Assignees */}
           <div className="mt-3 space-y-3">
             {assignedStaff.length > 0 ? (
               assignedStaff.map(
@@ -291,13 +284,9 @@ const ScheduleTaskCard = ({
                     className="min-w-0"
                   >
                     <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
-                      <span className="wrap-break-word font-medium text-gray-700">
-                        {
-                          member.firstName
-                        }{" "}
-                        {
-                          member.lastName
-                        }
+                      <span className="font-medium text-(--color-text)">
+                        {member.firstName}{" "}
+                        {member.lastName}
                       </span>
 
                       <span
@@ -327,27 +316,25 @@ const ScheduleTaskCard = ({
                 ),
               )
             ) : (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-(--color-text-muted)">
                 No staff assigned
               </p>
             )}
           </div>
 
-          {/* Instructions */}
           {task.instructions && (
-            <p className="mt-3 line-clamp-2 wrap-break-word text-sm text-gray-500">
+            <p className="mt-3 line-clamp-2 text-sm text-(--color-text-muted)">
               {task.instructions}
             </p>
           )}
 
-          {/* Actions */}
-          <div className="mt-4 flex gap-2 border-t border-black/5 pt-3 sm:justify-end">
+          <div className="mt-4 flex gap-2 border-t border-(--color-border) pt-3 sm:justify-end">
             <button
               type="button"
               onClick={() =>
                 onEdit(task)
               }
-              className="flex-1 cursor-pointer rounded-md px-3 py-2 text-xs font-medium text-gray-600 hover:bg-white/70 sm:flex-none"
+              className="flex-1 cursor-pointer rounded-xl px-3 py-2 text-xs font-medium text-(--color-text-muted) transition hover:bg-(--color-surface-soft) hover:text-(--color-text) sm:flex-none"
             >
               Edit
             </button>
@@ -357,7 +344,7 @@ const ScheduleTaskCard = ({
               onClick={() =>
                 onDelete(task.id)
               }
-              className="flex-1 cursor-pointer rounded-md px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 sm:flex-none"
+              className="flex-1 cursor-pointer rounded-xl px-3 py-2 text-xs font-medium text-red-600 transition hover:bg-red-50 sm:flex-none"
             >
               Delete
             </button>

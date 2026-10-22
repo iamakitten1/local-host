@@ -171,7 +171,7 @@ const DashboardPage = () => {
 
       <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(18rem,0.8fr)]">
         {/* Today's Schedule */}
-        <section className="min-w-0 rounded-3xl border border-(--color-border) bg-[var(--color-surface) p-5 shadow-sm sm:p-6">
+        <section className="min-w-0 rounded-3xl border border-(--color-border) bg-(--color-surface) p-5 shadow-sm sm:p-6">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
