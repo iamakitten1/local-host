@@ -1,9 +1,4 @@
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import DashboardLayout from "./layouts/DashboardLayout";
 
@@ -15,57 +10,31 @@ import CleaningPage from "./pages/CleaningPage";
 import StaffPage from "./pages/StaffPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import EventsPage from "./pages/EventsPage";
+import ShoppingListPage from "./pages/ShoppingListPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<DashboardLayout />}>
-          <Route
-            index
-            element={
-              <Navigate
-                to="/dashboard"
-                replace
-              />
-            }
-          />
+          <Route index element={<Navigate to="/dashboard" replace />} />
 
-          <Route
-            path="/dashboard"
-            element={<DashboardPage />}
-          />
+          <Route path="/dashboard" element={<DashboardPage />} />
 
-          <Route
-            path="/rooms"
-            element={<RoomsPage />}
-          />
+          <Route path="/rooms" element={<RoomsPage />} />
 
-          <Route
-            path="/bookings"
-            element={<BookingsPage />}
-          />
+          <Route path="/bookings" element={<BookingsPage />} />
 
-          <Route
-            path="/cleaning"
-            element={<CleaningPage />}
-          />
+          <Route path="/cleaning" element={<CleaningPage />} />
 
-          <Route
-            path="/events"
-            element={<EventsPage />}
-          />
+          <Route path="/events" element={<EventsPage />} />
 
-          <Route
-            path="/staff"
-            element={<StaffPage />}
-          />
+          <Route path="/staff" element={<StaffPage />} />
         </Route>
 
-        <Route
-          path="*"
-          element={<NotFoundPage />}
-        />
+        <Route path="/shopping-list" element={<ShoppingListPage />} />
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
