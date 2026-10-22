@@ -48,13 +48,12 @@ const BedSetupSelector = ({
   return (
     <div className="min-w-0 space-y-3">
       <div className="min-w-0">
-        <h3 className="text-sm font-semibold text-gray-800">
+        <h3 className="text-sm font-semibold text-gray-900">
           Bed setup
         </h3>
 
-        <p className="mt-1 wrap-break-word text-sm text-gray-500">
-          Select the beds to prepare for
-          this booking.
+        <p className="mt-1 text-sm text-gray-500">
+          Select the beds to prepare for this booking.
         </p>
       </div>
 
@@ -62,10 +61,10 @@ const BedSetupSelector = ({
         {availableBeds.map((bed) => (
           <div
             key={bed.type}
-            className="flex min-w-0 items-center justify-between gap-4 rounded-lg border border-gray-200 p-3"
+            className="flex min-w-0 items-center justify-between gap-4 rounded-xl border border-[#e7e5df] bg-[#f8f7f3] p-3"
           >
             <div className="min-w-0">
-              <p className="wrap-break-word font-medium capitalize text-gray-800">
+              <p className="font-medium capitalize text-gray-800">
                 {bed.type}
               </p>
 
@@ -87,7 +86,7 @@ const BedSetupSelector = ({
                 )
               }
               aria-label={`Quantity of ${bed.type} beds`}
-              className="shrink-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+              className="shrink-0 cursor-pointer rounded-xl border border-[#ddd9d0] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#5b7e72] focus:ring-2 focus:ring-[#5b7e72]/10"
             >
               {Array.from(
                 {

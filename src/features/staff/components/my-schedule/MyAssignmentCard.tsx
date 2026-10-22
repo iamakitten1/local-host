@@ -85,15 +85,15 @@ const MyAssignmentCard = ({
     getStatusStyles(assignment.status);
 
   return (
-    <article className="min-w-0 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+    <article className="min-w-0 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-sm sm:p-5">
       <div className="flex min-w-0 flex-col gap-4">
-        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+            <p className="text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
               {sourceLabel}
             </p>
 
-            <h3 className="mt-1 wrap-break-word text-lg font-semibold text-gray-900">
+            <h3 className="mt-1 text-lg font-semibold text-(--color-text)">
               {title}
             </h3>
           </div>
@@ -105,11 +105,13 @@ const MyAssignmentCard = ({
           </span>
         </div>
 
-        <div className="space-y-1 text-sm text-gray-600">
-          <p>{date}</p>
+        <div className="rounded-xl bg-(--color-surface-soft) p-3 text-sm text-(--color-text-muted)">
+          <p className="font-medium text-(--color-text)">
+            {date}
+          </p>
 
           {startTime && (
-            <p>
+            <p className="mt-1">
               {startTime}
               {endTime
                 ? ` – ${endTime}`
@@ -118,7 +120,7 @@ const MyAssignmentCard = ({
           )}
 
           {area && (
-            <p className="wrap-break-word">
+            <p className="mt-1">
               {area}
             </p>
           )}
@@ -126,11 +128,11 @@ const MyAssignmentCard = ({
 
         {instructions && (
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+            <p className="text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
               Instructions
             </p>
 
-            <p className="mt-1 wrap-break-word text-sm text-gray-600">
+            <p className="mt-1 text-sm text-(--color-text-muted)">
               {instructions}
             </p>
           </div>
@@ -141,15 +143,13 @@ const MyAssignmentCard = ({
         {assignment.status ===
           "declined" &&
           assignment.declineReason && (
-            <div className="rounded-lg bg-red-50 p-3">
-              <p className="text-xs font-medium text-red-700">
+            <div className="rounded-xl border border-red-200 bg-red-50 p-3">
+              <p className="text-xs font-semibold text-red-700">
                 Decline reason
               </p>
 
-              <p className="mt-1 wrap-break-word text-sm text-red-700">
-                {
-                  assignment.declineReason
-                }
+              <p className="mt-1 text-sm text-red-700">
+                {assignment.declineReason}
               </p>
             </div>
           )}
@@ -157,12 +157,12 @@ const MyAssignmentCard = ({
         {assignment.status ===
           "cancellation-requested" &&
           assignment.cancellationReason && (
-            <div className="rounded-lg bg-orange-50 p-3">
-              <p className="text-xs font-medium text-orange-700">
+            <div className="rounded-xl border border-orange-200 bg-orange-50 p-3">
+              <p className="text-xs font-semibold text-orange-700">
                 Cancellation reason
               </p>
 
-              <p className="mt-1 wrap-break-word text-sm text-orange-700">
+              <p className="mt-1 text-sm text-orange-700">
                 {
                   assignment.cancellationReason
                 }
@@ -172,13 +172,13 @@ const MyAssignmentCard = ({
 
         {assignment.status ===
           "pending" && (
-          <div className="flex flex-col gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+          <div className="flex flex-col gap-2 border-t border-(--color-border) pt-4 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={() =>
                 onDecline(assignment)
               }
-              className="w-full cursor-pointer rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 sm:w-auto"
+              className="w-full cursor-pointer rounded-xl border border-red-200 px-4 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-50 sm:w-auto"
             >
               Decline
             </button>
@@ -188,7 +188,7 @@ const MyAssignmentCard = ({
               onClick={() =>
                 onAccept(assignment)
               }
-              className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+              className="w-full cursor-pointer rounded-xl bg-(--color-primary) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-(--color-primary-hover) sm:w-auto"
             >
               Accept
             </button>
@@ -197,7 +197,7 @@ const MyAssignmentCard = ({
 
         {assignment.status ===
           "confirmed" && (
-          <div className="border-t border-gray-100 pt-4 sm:text-right">
+          <div className="border-t border-(--color-border) pt-4 sm:text-right">
             <button
               type="button"
               onClick={() =>
@@ -205,7 +205,7 @@ const MyAssignmentCard = ({
                   assignment,
                 )
               }
-              className="w-full cursor-pointer rounded-lg border border-orange-200 px-4 py-2 text-sm font-medium text-orange-700 hover:bg-orange-50 sm:w-auto"
+              className="w-full cursor-pointer rounded-xl border border-orange-200 px-4 py-2.5 text-sm font-medium text-orange-700 transition hover:bg-orange-50 sm:w-auto"
             >
               Request cancellation
             </button>

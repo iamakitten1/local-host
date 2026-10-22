@@ -20,6 +20,9 @@ type AvailabilityFormModalProps = {
   ) => void;
 };
 
+const fieldClasses =
+  "w-full min-w-0 rounded-xl border border-(--color-border-strong) bg-(--color-surface) px-3 py-2.5 text-sm text-(--color-text) outline-none transition focus:border-(--color-primary-muted) focus:ring-2 focus:ring-(--color-primary-soft)";
+
 const AvailabilityFormModal = ({
   member,
   date,
@@ -29,23 +32,18 @@ const AvailabilityFormModal = ({
 }: AvailabilityFormModalProps) => {
   const [status, setStatus] =
     useState<AvailabilityStatus>(
-      availability?.status ??
-        "available",
+      availability?.status ?? "available",
     );
 
-  const [
-    availableFrom,
-    setAvailableFrom,
-  ] = useState(
-    availability?.availableFrom ?? "",
-  );
+  const [availableFrom, setAvailableFrom] =
+    useState(
+      availability?.availableFrom ?? "",
+    );
 
-  const [
-    availableUntil,
-    setAvailableUntil,
-  ] = useState(
-    availability?.availableUntil ?? "",
-  );
+  const [availableUntil, setAvailableUntil] =
+    useState(
+      availability?.availableUntil ?? "",
+    );
 
   const [note, setNote] = useState(
     availability?.note ?? "",
@@ -55,17 +53,18 @@ const AvailabilityFormModal = ({
     event: React.SubmitEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
+
     if (status === "available") {
       const hasFrom = Boolean(availableFrom);
       const hasUntil = Boolean(availableUntil);
-    
+
       if (hasFrom !== hasUntil) {
         window.alert(
           "Please set both From and Until times, or leave both empty.",
         );
         return;
       }
-    
+
       if (
         availableFrom &&
         availableUntil &&
@@ -78,34 +77,32 @@ const AvailabilityFormModal = ({
       }
     }
 
-    const savedAvailability: StaffAvailability =
-      {
-        id:
-          availability?.id ??
-          `availability-${Date.now()}`,
+    const savedAvailability: StaffAvailability = {
+      id:
+        availability?.id ??
+        `availability-${Date.now()}`,
 
-        propertyId:
-          availability?.propertyId ??
-          "property-1",
+      propertyId:
+        availability?.propertyId ??
+        "property-1",
 
-        staffId: member.id,
-        date,
+      staffId: member.id,
+      date,
+      status,
 
-        status,
+      availableFrom:
+        status === "available"
+          ? availableFrom || null
+          : null,
 
-        availableFrom:
-          status === "available"
-            ? availableFrom || null
-            : null,
+      availableUntil:
+        status === "available"
+          ? availableUntil || null
+          : null,
 
-        availableUntil:
-          status === "available"
-            ? availableUntil || null
-            : null,
-
-        note:
-          note.trim() || undefined,
-      };
+      note:
+        note.trim() || undefined,
+    };
 
     onSave(savedAvailability);
     onClose();
@@ -124,24 +121,21 @@ const AvailabilityFormModal = ({
         onSubmit={handleSubmit}
         className="min-w-0"
       >
-        <div className="space-y-4 p-4 sm:p-5">
-          {/* Staff + date */}
-          <div className="min-w-0 rounded-lg bg-gray-50 p-3">
-            <p className="wrap-break-word font-medium text-gray-900">
-              {member.firstName}{" "}
-              {member.lastName}
+        <div className="space-y-5 p-4 sm:p-5">
+          <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-soft) p-4">
+            <p className="font-semibold text-(--color-text)">
+              {member.firstName} {member.lastName}
             </p>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-(--color-text-muted)">
               {date}
             </p>
           </div>
 
-          {/* Availability status */}
-          <div className="min-w-0">
+          <div>
             <label
               htmlFor="availability-status"
-              className="mb-1.5 block text-sm font-medium text-gray-700"
+              className="mb-1.5 block text-sm font-medium text-(--color-text)"
             >
               Availability
             </label>
@@ -155,7 +149,7 @@ const AvailabilityFormModal = ({
                     .value as AvailabilityStatus,
                 )
               }
-              className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+              className={`${fieldClasses} cursor-pointer`}
             >
               <option value="available">
                 Available
@@ -167,13 +161,12 @@ const AvailabilityFormModal = ({
             </select>
           </div>
 
-          {/* Available time */}
           {status === "available" && (
-            <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="min-w-0">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
                 <label
                   htmlFor="availability-from"
-                  className="mb-1.5 block text-sm font-medium text-gray-700"
+                  className="mb-1.5 block text-sm font-medium text-(--color-text)"
                 >
                   From
                 </label>
@@ -187,14 +180,14 @@ const AvailabilityFormModal = ({
                       event.target.value,
                     )
                   }
-                  className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+                  className={fieldClasses}
                 />
               </div>
 
-              <div className="min-w-0">
+              <div>
                 <label
                   htmlFor="availability-until"
-                  className="mb-1.5 block text-sm font-medium text-gray-700"
+                  className="mb-1.5 block text-sm font-medium text-(--color-text)"
                 >
                   Until
                 </label>
@@ -208,17 +201,16 @@ const AvailabilityFormModal = ({
                       event.target.value,
                     )
                   }
-                  className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+                  className={fieldClasses}
                 />
               </div>
             </div>
           )}
 
-          {/* Note */}
-          <div className="min-w-0">
+          <div>
             <label
               htmlFor="availability-note"
-              className="mb-1.5 block text-sm font-medium text-gray-700"
+              className="mb-1.5 block text-sm font-medium text-(--color-text)"
             >
               Note
             </label>
@@ -227,30 +219,27 @@ const AvailabilityFormModal = ({
               id="availability-note"
               value={note}
               onChange={(event) =>
-                setNote(
-                  event.target.value,
-                )
+                setNote(event.target.value)
               }
               rows={3}
               placeholder="Optional note..."
-              className="w-full min-w-0 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+              className={`${fieldClasses} resize-none`}
             />
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex flex-col-reverse gap-3 border-t border-gray-200 p-4 sm:flex-row sm:justify-end sm:p-5">
+        <div className="flex flex-col-reverse gap-3 border-t border-(--color-border) p-4 sm:flex-row sm:justify-end sm:p-5">
           <button
             type="button"
             onClick={onClose}
-            className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl border border-(--color-border-strong) px-4 py-2.5 text-sm font-medium text-(--color-text) transition hover:bg-(--color-surface-soft) sm:w-auto"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl bg-(--color-primary) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-(--color-primary-hover) sm:w-auto"
           >
             Save
           </button>

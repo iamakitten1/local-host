@@ -30,7 +30,7 @@ const HoursPayPeriodFilter = ({
   onChange,
 }: HoursPayPeriodFilterProps) => {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-1 rounded-xl border border-(--color-border) bg-(--color-surface) p-1 shadow-sm">
       {options.map((option) => {
         const isActive =
           value === option.value;
@@ -44,8 +44,8 @@ const HoursPayPeriodFilter = ({
             }
             className={`cursor-pointer rounded-lg px-3 py-2 text-sm font-medium transition ${
               isActive
-                ? "bg-gray-900 text-white"
-                : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                ? "bg-(--color-primary-soft) text-(--color-primary)"
+                : "text-(--color-text-muted) hover:bg-(--color-surface-soft) hover:text-(--color-text)"
             }`}
           >
             {option.label}

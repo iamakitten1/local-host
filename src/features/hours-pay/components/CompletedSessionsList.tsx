@@ -13,36 +13,43 @@ const CompletedSessionsList = ({
   sessions,
 }: CompletedSessionsListProps) => {
   return (
-    <div className="border-t border-gray-100 pt-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+    <div className="min-w-0">
+      <p className="text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
         Completed cleanings
       </p>
 
       {sessions.length === 0 ? (
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-(--color-text-muted)">
           No completed work sessions in this period.
         </p>
       ) : (
-        <div className="mt-2 space-y-2">
+        <div className="mt-3 space-y-2">
           {sessions.map((session) => (
             <div
               key={session.id}
-              className="flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-2 text-sm first:border-t-0 first:pt-0"
+              className="flex flex-wrap items-center justify-between gap-2 border-t border-(--color-border) pt-2 text-sm first:border-t-0 first:pt-0"
             >
               <div>
-                <p className="font-medium text-gray-700">
+                <p className="font-medium text-(--color-text)">
                   {formatMinutes(
                     getWorkedMinutes(session),
                   )}
                 </p>
 
-                <p className="text-xs text-gray-500">
-                  €{session.hourlyRate.toFixed(2)}/h
+                <p className="text-xs text-(--color-text-muted)">
+                  €
+                  {session.hourlyRate.toFixed(
+                    2,
+                  )}
+                  /h
                 </p>
               </div>
 
-              <span className="font-semibold text-gray-900">
-                €{session.earnedAmount.toFixed(2)}
+              <span className="font-semibold text-(--color-text)">
+                €
+                {session.earnedAmount.toFixed(
+                  2,
+                )}
               </span>
             </div>
           ))}

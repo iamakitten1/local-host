@@ -15,11 +15,15 @@ type EventFormModalProps = {
   availabilityList: StaffAvailability[];
   initialStaffIds?: string[];
   onClose: () => void;
+
   onSubmit: (
     event: LocalHostEvent,
     selectedStaffIds: string[],
   ) => void;
 };
+
+const fieldClasses =
+  "w-full min-w-0 rounded-xl border border-(--color-border-strong) bg-(--color-surface) px-3 py-2.5 text-sm text-(--color-text) outline-none transition focus:border-(--color-primary-muted) focus:ring-2 focus:ring-(--color-primary-soft)";
 
 const EventFormModal = ({
   event,
@@ -66,12 +70,9 @@ const EventFormModal = ({
   const [
     selectedStaffIds,
     setSelectedStaffIds,
-  ] = useState<string[]>(
-    initialStaffIds,
-  );
+  ] = useState<string[]>(initialStaffIds);
 
-  const [error, setError] =
-    useState("");
+  const [error, setError] = useState("");
 
   const handleStaffToggle = (
     staffId: string,
@@ -142,7 +143,6 @@ const EventFormModal = ({
       setError(
         "Title, date, start time and end time are required.",
       );
-
       return;
     }
 
@@ -150,7 +150,6 @@ const EventFormModal = ({
       setError(
         "End time must be later than start time.",
       );
-
       return;
     }
 
@@ -158,7 +157,6 @@ const EventFormModal = ({
       setError(
         "Required staff must be at least 1.",
       );
-
       return;
     }
 
@@ -166,7 +164,6 @@ const EventFormModal = ({
       setError(
         "Remove staff who are unavailable for this event time.",
       );
-
       return;
     }
 
@@ -184,20 +181,16 @@ const EventFormModal = ({
       title: title.trim(),
 
       date,
-
       startTime,
-
       endTime,
 
       area:
         area.trim() || undefined,
 
       instructions:
-        instructions.trim() ||
-        undefined,
+        instructions.trim() || undefined,
 
       requiredStaffCount,
-
       status,
 
       createdByStaffId:
@@ -228,13 +221,21 @@ const EventFormModal = ({
     >
       <form
         onSubmit={handleSubmit}
-        className="min-w-0 p-4 sm:p-5"
+        className="min-w-0"
       >
-        <div className="space-y-5">
+        <div className="space-y-5 p-4 sm:p-5">
+          {error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5">
+              <p className="text-sm font-medium text-red-700">
+                {error}
+              </p>
+            </div>
+          )}
+
           <div className="min-w-0">
             <label
               htmlFor="event-title"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1.5 block text-sm font-medium text-(--color-text)"
             >
               Event title
             </label>
@@ -244,12 +245,10 @@ const EventFormModal = ({
               type="text"
               value={title}
               onChange={(event) =>
-                setTitle(
-                  event.target.value,
-                )
+                setTitle(event.target.value)
               }
-              placeholder="Birthday Party"
-              className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+              placeholder="Birthday party"
+              className={fieldClasses}
             />
           </div>
 
@@ -257,7 +256,7 @@ const EventFormModal = ({
             <div className="min-w-0">
               <label
                 htmlFor="event-date"
-                className="mb-1 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Date
               </label>
@@ -267,18 +266,16 @@ const EventFormModal = ({
                 type="date"
                 value={date}
                 onChange={(event) =>
-                  setDate(
-                    event.target.value,
-                  )
+                  setDate(event.target.value)
                 }
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+                className={fieldClasses}
               />
             </div>
 
             <div className="min-w-0">
               <label
                 htmlFor="event-area"
-                className="mb-1 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Area
               </label>
@@ -288,12 +285,10 @@ const EventFormModal = ({
                 type="text"
                 value={area}
                 onChange={(event) =>
-                  setArea(
-                    event.target.value,
-                  )
+                  setArea(event.target.value)
                 }
                 placeholder="Garden"
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+                className={fieldClasses}
               />
             </div>
           </div>
@@ -302,7 +297,7 @@ const EventFormModal = ({
             <div className="min-w-0">
               <label
                 htmlFor="event-start-time"
-                className="mb-1 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Start time
               </label>
@@ -316,14 +311,14 @@ const EventFormModal = ({
                     event.target.value,
                   )
                 }
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+                className={fieldClasses}
               />
             </div>
 
             <div className="min-w-0">
               <label
                 htmlFor="event-end-time"
-                className="mb-1 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 End time
               </label>
@@ -337,7 +332,7 @@ const EventFormModal = ({
                     event.target.value,
                   )
                 }
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+                className={fieldClasses}
               />
             </div>
           </div>
@@ -345,7 +340,7 @@ const EventFormModal = ({
           <div className="min-w-0">
             <label
               htmlFor="required-staff"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1.5 block text-sm font-medium text-(--color-text)"
             >
               Required staff
             </label>
@@ -357,25 +352,25 @@ const EventFormModal = ({
               value={requiredStaffCount}
               onChange={(event) =>
                 setRequiredStaffCount(
-                  Number(
-                    event.target.value,
-                  ),
+                  Number(event.target.value),
                 )
               }
-              className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+              className={fieldClasses}
             />
           </div>
 
           <div className="min-w-0">
-            <p className="mb-2 text-sm font-medium text-gray-700">
+            <p className="mb-2 text-sm font-medium text-(--color-text)">
               Assign event staff
             </p>
 
             {!date ? (
-              <p className="rounded-lg bg-gray-50 p-3 text-sm text-gray-500">
-                Select the event date to
-                check staff availability.
-              </p>
+              <div className="rounded-xl border border-dashed border-(--color-border) bg-(--color-surface-soft) p-4">
+                <p className="text-sm text-(--color-text-muted)">
+                  Select the event date to
+                  check staff availability.
+                </p>
+              </div>
             ) : (
               <EventStaffSelector
                 staffList={staffList}
@@ -394,7 +389,7 @@ const EventFormModal = ({
               />
             )}
 
-            <p className="mt-2 text-xs text-gray-500">
+            <p className="mt-2 text-xs text-(--color-text-muted)">
               Selected:{" "}
               {selectedStaffIds.length} /{" "}
               {requiredStaffCount}
@@ -404,7 +399,7 @@ const EventFormModal = ({
           <div className="min-w-0">
             <label
               htmlFor="event-instructions"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1.5 block text-sm font-medium text-(--color-text)"
             >
               Instructions
             </label>
@@ -419,7 +414,7 @@ const EventFormModal = ({
                 )
               }
               placeholder="Setup and event instructions..."
-              className="w-full min-w-0 resize-y rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+              className={`${fieldClasses} min-h-28 resize-y`}
             />
           </div>
 
@@ -427,7 +422,7 @@ const EventFormModal = ({
             <div className="min-w-0">
               <label
                 htmlFor="event-status"
-                className="mb-1 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Status
               </label>
@@ -441,7 +436,7 @@ const EventFormModal = ({
                       .value as LocalHostEvent["status"],
                   )
                 }
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+                className={`${fieldClasses} cursor-pointer`}
               >
                 <option value="scheduled">
                   Scheduled
@@ -457,26 +452,20 @@ const EventFormModal = ({
               </select>
             </div>
           )}
-
-          {error && (
-            <p className="text-sm font-medium text-red-600">
-              {error}
-            </p>
-          )}
         </div>
 
-        <div className="mt-6 flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+        <div className="flex flex-col-reverse gap-3 border-t border-(--color-border) p-4 sm:flex-row sm:justify-end sm:p-5">
           <button
             type="button"
             onClick={onClose}
-            className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl border border-(--color-border-strong) px-4 py-2.5 text-sm font-medium text-(--color-text) transition hover:bg-(--color-surface-soft) sm:w-auto"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl bg-(--color-primary) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-(--color-primary-hover) sm:w-auto"
           >
             {isEditing
               ? "Save Changes"

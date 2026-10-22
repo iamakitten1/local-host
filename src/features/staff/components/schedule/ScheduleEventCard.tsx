@@ -70,14 +70,16 @@ const getOperationalStatus = (
   if (event.status === "completed") {
     return {
       label: "Done",
-      classes: "bg-green-100 text-green-700",
+      classes:
+        "bg-green-100 text-green-700",
     };
   }
 
   if (event.status === "cancelled") {
     return {
       label: "Cancelled",
-      classes: "bg-gray-200 text-gray-600",
+      classes:
+        "bg-gray-200 text-gray-600",
     };
   }
 
@@ -91,7 +93,8 @@ const getOperationalStatus = (
   if (hasCancellationRequest) {
     return {
       label: "Needs review",
-      classes: "bg-orange-100 text-orange-700",
+      classes:
+        "bg-orange-100 text-orange-700",
     };
   }
 
@@ -108,7 +111,8 @@ const getOperationalStatus = (
   ) {
     return {
       label: "Needs staff",
-      classes: "bg-red-100 text-red-700",
+      classes:
+        "bg-red-100 text-red-700",
     };
   }
 
@@ -121,13 +125,15 @@ const getOperationalStatus = (
   if (hasPendingAssignment) {
     return {
       label: "Awaiting confirmation",
-      classes: "bg-amber-100 text-amber-700",
+      classes:
+        "bg-amber-100 text-amber-700",
     };
   }
 
   return {
     label: "Ready",
-    classes: "bg-green-100 text-green-700",
+    classes:
+      "bg-green-100 text-green-700",
   };
 };
 
@@ -144,7 +150,8 @@ const ScheduleEventCard = ({
     .map((assignment) => {
       const member = staffList.find(
         (member) =>
-          member.id === assignment.staffId,
+          member.id ===
+          assignment.staffId,
       );
 
       if (!member) {
@@ -186,20 +193,18 @@ const ScheduleEventCard = ({
     ).length;
 
   return (
-    <article
-      className={`min-w-0 overflow-hidden rounded-xl border ${primaryColor.border} ${primaryColor.background}`}
-    >
+    <article className="min-w-0 overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-sm">
       <div className="flex min-w-0 flex-col sm:flex-row">
-        <div className="flex shrink-0 items-center border-b border-black/5 px-4 py-3 sm:w-24 sm:flex-col sm:items-center sm:justify-start sm:border-r sm:border-b-0 sm:px-3 sm:py-4">
-          <span className="text-sm font-semibold text-gray-700">
+        <div className="flex shrink-0 items-center border-b border-(--color-border) bg-(--color-surface-soft) px-4 py-3 sm:w-24 sm:flex-col sm:items-center sm:justify-start sm:border-r sm:border-b-0 sm:px-3 sm:py-4">
+          <span className="text-sm font-semibold text-(--color-text)">
             {event.startTime}
           </span>
 
-          <span className="mx-1 text-xs text-gray-400 sm:mx-0">
+          <span className="mx-1 text-xs text-(--color-text-muted) sm:mx-0">
             –
           </span>
 
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-(--color-text-muted)">
             {event.endTime}
           </span>
         </div>
@@ -220,31 +225,30 @@ const ScheduleEventCard = ({
                         <span
                           key={member.id}
                           title={`${member.firstName} ${member.lastName}`}
-                          className={`h-3 w-3 rounded-full border-2 border-white ${color.dot}`}
+                          className={`size-3 rounded-full border-2 border-white ${color.dot}`}
                         />
                       );
                     },
                   )}
 
-                  {assignedStaff.length === 0 && (
-                    <span className="h-3 w-3 rounded-full bg-gray-300" />
+                  {assignedStaff.length ===
+                    0 && (
+                    <span className="size-3 rounded-full bg-gray-300" />
                   )}
                 </div>
 
                 <div className="min-w-0">
-                  <p className="mb-0.5 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                  <p className="mb-0.5 text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
                     Event
                   </p>
 
-                  <h3
-                    className={`wrap-break-word font-semibold ${primaryColor.text}`}
-                  >
+                  <h3 className={`font-semibold ${primaryColor.text}`}>
                     {event.title}
                   </h3>
                 </div>
               </div>
 
-              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-(--color-text-muted)">
                 {event.area && (
                   <span>
                     {event.area}
@@ -277,7 +281,7 @@ const ScheduleEventCard = ({
                     className="min-w-0"
                   >
                     <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
-                      <span className="wrap-break-word font-medium text-gray-700">
+                      <span className="font-medium text-(--color-text)">
                         {member.firstName}{" "}
                         {member.lastName}
                       </span>
@@ -309,25 +313,25 @@ const ScheduleEventCard = ({
                 ),
               )
             ) : (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-(--color-text-muted)">
                 No staff assigned
               </p>
             )}
           </div>
 
           {event.instructions && (
-            <p className="mt-3 line-clamp-2 wrap-break-word text-sm text-gray-500">
+            <p className="mt-3 line-clamp-2 text-sm text-(--color-text-muted)">
               {event.instructions}
             </p>
           )}
 
-          <div className="mt-4 flex gap-2 border-t border-black/5 pt-3 sm:justify-end">
+          <div className="mt-4 flex gap-2 border-t border-(--color-border) pt-3 sm:justify-end">
             <button
               type="button"
               onClick={() =>
                 onEdit(event)
               }
-              className="flex-1 cursor-pointer rounded-md px-3 py-2 text-xs font-medium text-gray-600 hover:bg-white/70 sm:flex-none"
+              className="flex-1 cursor-pointer rounded-xl px-3 py-2 text-xs font-medium text-(--color-text-muted) transition hover:bg-(--color-surface-soft) hover:text-(--color-text) sm:flex-none"
             >
               Edit
             </button>
@@ -337,7 +341,7 @@ const ScheduleEventCard = ({
               onClick={() =>
                 onDelete(event.id)
               }
-              className="flex-1 cursor-pointer rounded-md px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 sm:flex-none"
+              className="flex-1 cursor-pointer rounded-xl px-3 py-2 text-xs font-medium text-red-600 transition hover:bg-red-50 sm:flex-none"
             >
               Delete
             </button>

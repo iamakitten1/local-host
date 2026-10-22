@@ -14,6 +14,9 @@ type StaffFormModalProps = {
   onSubmit: (member: Staff) => void;
 };
 
+const fieldClasses =
+  "w-full min-w-0 rounded-xl border border-(--color-border-strong) bg-(--color-surface) px-3 py-2.5 text-sm text-(--color-text) outline-none transition focus:border-(--color-primary-muted) focus:ring-2 focus:ring-(--color-primary-soft)";
+
 const StaffFormModal = ({
   member,
   onClose,
@@ -52,19 +55,12 @@ const StaffFormModal = ({
   const handleWorkTypeChange = (
     workType: StaffWorkType,
   ) => {
-    setWorkTypes(
-      (currentWorkTypes) =>
-        currentWorkTypes.includes(
-          workType,
-        )
-          ? currentWorkTypes.filter(
-              (type) =>
-                type !== workType,
-            )
-          : [
-              ...currentWorkTypes,
-              workType,
-            ],
+    setWorkTypes((currentWorkTypes) =>
+      currentWorkTypes.includes(workType)
+        ? currentWorkTypes.filter(
+            (type) => type !== workType,
+          )
+        : [...currentWorkTypes, workType],
     );
   };
 
@@ -142,19 +138,20 @@ const StaffFormModal = ({
         onSubmit={handleSubmit}
         className="min-w-0"
       >
-        <div className="space-y-4 p-4 sm:p-5">
+        <div className="space-y-5 p-4 sm:p-5">
           {error && (
-            <p className="text-sm font-medium text-red-600">
-              {error}
-            </p>
+            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5">
+              <p className="text-sm font-medium text-red-700">
+                {error}
+              </p>
+            </div>
           )}
 
-          {/* First name + Last name */}
           <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="min-w-0">
               <label
                 htmlFor="staff-first-name"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 First name
               </label>
@@ -168,14 +165,14 @@ const StaffFormModal = ({
                     event.target.value,
                   )
                 }
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
+                className={fieldClasses}
               />
             </div>
 
             <div className="min-w-0">
               <label
                 htmlFor="staff-last-name"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Last name
               </label>
@@ -189,17 +186,16 @@ const StaffFormModal = ({
                     event.target.value,
                   )
                 }
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
+                className={fieldClasses}
               />
             </div>
           </div>
 
-          {/* Email + Phone */}
           <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="min-w-0">
               <label
                 htmlFor="staff-email"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Email
               </label>
@@ -213,14 +209,14 @@ const StaffFormModal = ({
                     event.target.value,
                   )
                 }
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
+                className={fieldClasses}
               />
             </div>
 
             <div className="min-w-0">
               <label
                 htmlFor="staff-phone"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Phone
               </label>
@@ -234,12 +230,11 @@ const StaffFormModal = ({
                     event.target.value,
                   )
                 }
-                className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
+                className={fieldClasses}
               />
             </div>
           </div>
 
-          {/* Role + Status */}
           <div
             className={`grid min-w-0 grid-cols-1 gap-4 ${
               isEditing &&
@@ -251,7 +246,7 @@ const StaffFormModal = ({
             <div className="min-w-0">
               <label
                 htmlFor="staff-role"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-(--color-text)"
               >
                 Role
               </label>
@@ -265,7 +260,7 @@ const StaffFormModal = ({
                       .value as StaffRole,
                   )
                 }
-                className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 outline-none focus:border-gray-500"
+                className={`${fieldClasses} cursor-pointer`}
               >
                 <option value="staff">
                   Staff
@@ -286,7 +281,7 @@ const StaffFormModal = ({
                 <div className="min-w-0">
                   <label
                     htmlFor="staff-status"
-                    className="mb-1.5 block text-sm font-medium text-gray-700"
+                    className="mb-1.5 block text-sm font-medium text-(--color-text)"
                   >
                     Status
                   </label>
@@ -300,12 +295,11 @@ const StaffFormModal = ({
                     }
                     onChange={(event) =>
                       setIsActive(
-                        event.target
-                          .value ===
+                        event.target.value ===
                           "active",
                       )
                     }
-                    className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 outline-none focus:border-gray-500"
+                    className={`${fieldClasses} cursor-pointer`}
                   >
                     <option value="active">
                       Active
@@ -319,15 +313,22 @@ const StaffFormModal = ({
               )}
           </div>
 
-          {/* Work types */}
           {role !== "owner" && (
             <div className="min-w-0">
-              <p className="mb-2 text-sm font-medium text-gray-700">
+              <p className="mb-2 text-sm font-medium text-(--color-text)">
                 Work types
               </p>
 
-              <div className="flex flex-wrap gap-x-5 gap-y-3">
-                <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <label
+                  className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition ${
+                    workTypes.includes(
+                      "cleaning",
+                    )
+                      ? "border-(--color-primary-muted) bg-(--color-primary-soft)"
+                      : "border-(--color-border) bg-(--color-surface) hover:bg-(--color-surface-soft)"
+                  }`}
+                >
                   <input
                     type="checkbox"
                     checked={workTypes.includes(
@@ -338,12 +339,23 @@ const StaffFormModal = ({
                         "cleaning",
                       )
                     }
+                    className="size-4 accent-(--color-primary)"
                   />
 
-                  Cleaning
+                  <span className="text-sm font-medium text-(--color-text)">
+                    Cleaning
+                  </span>
                 </label>
 
-                <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+                <label
+                  className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition ${
+                    workTypes.includes(
+                      "event",
+                    )
+                      ? "border-(--color-primary-muted) bg-(--color-primary-soft)"
+                      : "border-(--color-border) bg-(--color-surface) hover:bg-(--color-surface-soft)"
+                  }`}
+                >
                   <input
                     type="checkbox"
                     checked={workTypes.includes(
@@ -354,28 +366,30 @@ const StaffFormModal = ({
                         "event",
                       )
                     }
+                    className="size-4 accent-(--color-primary)"
                   />
 
-                  Event
+                  <span className="text-sm font-medium text-(--color-text)">
+                    Event
+                  </span>
                 </label>
               </div>
             </div>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="flex flex-col-reverse gap-3 border-t border-gray-200 p-4 sm:flex-row sm:justify-end sm:p-5">
+        <div className="flex flex-col-reverse gap-3 border-t border-(--color-border) p-4 sm:flex-row sm:justify-end sm:p-5">
           <button
             type="button"
             onClick={onClose}
-            className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl border border-(--color-border-strong) px-4 py-2.5 text-sm font-medium text-(--color-text) transition hover:bg-(--color-surface-soft) sm:w-auto"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl bg-(--color-primary) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-(--color-primary-hover) sm:w-auto"
           >
             {isEditing
               ? "Save Changes"

@@ -1,4 +1,8 @@
 import { useState } from "react";
+import {
+  Plus,
+  Trash2,
+} from "lucide-react";
 
 import Modal from "../../../components/ui/Modal";
 
@@ -134,7 +138,7 @@ const AddRoomModal = ({
         onSubmit={handleSubmit}
         className="min-w-0"
       >
-        <div className="space-y-4 p-4 sm:p-5">
+        <div className="space-y-5 p-4 sm:p-5">
           <div>
             <label
               htmlFor="room-name"
@@ -153,7 +157,7 @@ const AddRoomModal = ({
                 )
               }
               placeholder="e.g. Room Green"
-              className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+              className="w-full min-w-0 rounded-xl border border-[#ddd9d0] bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-[#5b7e72] focus:ring-2 focus:ring-[#5b7e72]/10"
             />
           </div>
 
@@ -176,37 +180,51 @@ const AddRoomModal = ({
                 )
               }
               placeholder="e.g. 2"
-              className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-500"
+              className="w-full min-w-0 rounded-xl border border-[#ddd9d0] bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-[#5b7e72] focus:ring-2 focus:ring-[#5b7e72]/10"
             />
           </div>
 
           {error && (
-            <p className="text-sm font-medium text-red-600">
-              {error}
-            </p>
+            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5">
+              <p className="text-sm font-medium text-red-700">
+                {error}
+              </p>
+            </div>
           )}
 
-          <div className="border-t border-gray-200 pt-4">
-            <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <h3 className="text-sm font-semibold text-gray-900">
-                Available beds
-              </h3>
+          <div className="border-t border-[#efede7] pt-5">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  Available beds
+                </h3>
+
+                <p className="mt-0.5 text-xs text-gray-500">
+                  Add the bed types available in this room.
+                </p>
+              </div>
 
               <button
                 type="button"
                 onClick={handleAddBed}
-                className="cursor-pointer text-sm font-semibold text-gray-700 hover:text-gray-900"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#edf3ef] px-3 py-2 text-sm font-semibold text-[#3f6f60] transition hover:bg-[#e1ebe5]"
               >
-                + Add bed
+                <Plus
+                  size={15}
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+
+                Add bed
               </button>
             </div>
 
-            <div className="mt-3 space-y-3">
+            <div className="mt-4 space-y-3">
               {availableBeds.map(
                 (bed, bedIndex) => (
                   <div
                     key={bedIndex}
-                    className="min-w-0 rounded-lg border border-gray-200 bg-gray-50 p-3"
+                    className="min-w-0 rounded-2xl border border-[#e7e5df] bg-[#f8f7f3] p-3"
                   >
                     <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
                       <div className="min-w-0">
@@ -221,12 +239,11 @@ const AddRoomModal = ({
                           ) =>
                             handleBedTypeChange(
                               bedIndex,
-                              event
-                                .target
+                              event.target
                                 .value as BedType,
                             )
                           }
-                          className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+                          className="w-full min-w-0 cursor-pointer rounded-xl border border-[#ddd9d0] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#5b7e72] focus:ring-2 focus:ring-[#5b7e72]/10"
                         >
                           <option value="single">
                             Single
@@ -275,13 +292,12 @@ const AddRoomModal = ({
                             handleBedQuantityChange(
                               bedIndex,
                               Number(
-                                event
-                                  .target
+                                event.target
                                   .value,
                               ),
                             )
                           }
-                          className="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-500"
+                          className="w-full min-w-0 rounded-xl border border-[#ddd9d0] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#5b7e72] focus:ring-2 focus:ring-[#5b7e72]/10"
                         />
                       </div>
                     </div>
@@ -294,9 +310,15 @@ const AddRoomModal = ({
                             bedIndex,
                           )
                         }
-                        className="cursor-pointer text-sm font-medium text-red-600 hover:text-red-700"
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-50"
                       >
-                        Remove bed
+                        <Trash2
+                          size={14}
+                          strokeWidth={1.9}
+                          aria-hidden="true"
+                        />
+
+                        Remove
                       </button>
                     </div>
                   </div>
@@ -305,26 +327,26 @@ const AddRoomModal = ({
 
               {availableBeds.length ===
                 0 && (
-                <p className="text-sm text-gray-500">
+                <div className="rounded-2xl border border-dashed border-[#d9d7d0] bg-white/60 p-4 text-sm text-gray-500">
                   No beds added yet.
-                </p>
+                </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col-reverse gap-3 border-t border-gray-200 p-4 sm:flex-row sm:justify-end sm:p-5">
+        <div className="flex flex-col-reverse gap-3 border-t border-[#e7e5df] p-4 sm:flex-row sm:justify-end sm:p-5">
           <button
             type="button"
             onClick={onClose}
-            className="w-full cursor-pointer rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl border border-[#ddd9d0] px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-[#f7f6f2] sm:w-auto"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl bg-[#3f6f60] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#345f52] sm:w-auto"
           >
             Add Room
           </button>

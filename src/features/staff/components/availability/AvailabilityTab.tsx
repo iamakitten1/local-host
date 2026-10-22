@@ -1,4 +1,8 @@
 import { useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 import type {
   Staff,
@@ -188,43 +192,49 @@ const AvailabilityTab = ({
     );
   };
 
-  const closeAvailabilityModal = () => {
-    setSelectedMember(null);
-    setSelectedDate(null);
-    setSelectedAvailability(
-      undefined,
-    );
-  };
+  const closeAvailabilityModal =
+    () => {
+      setSelectedMember(null);
+      setSelectedDate(null);
+      setSelectedAvailability(
+        undefined,
+      );
+    };
 
   return (
-    <div className="min-w-0">
-      {/* Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="min-w-0 space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <p className="text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
+            Planning
+          </p>
+
+          <h2 className="mt-1 text-xl font-semibold tracking-tight text-(--color-text)">
             Availability
           </h2>
 
-          <p className="mt-1 text-sm text-gray-500">
-            Plan staff availability in
-            advance.
+          <p className="mt-1 text-sm text-(--color-text-muted)">
+            Plan staff availability in advance.
           </p>
         </div>
 
-        {/* Week navigation */}
-        <div className="flex w-full items-center justify-between gap-2 sm:w-auto">
+        <div className="flex w-full items-center justify-between gap-2 rounded-xl border border-(--color-border) bg-(--color-surface) p-1 shadow-sm sm:w-auto">
           <button
             type="button"
             aria-label="Previous week"
             onClick={
               goToPreviousWeek
             }
-            className="shrink-0 cursor-pointer rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-(--color-text-muted) transition hover:bg-(--color-surface-soft) hover:text-(--color-text)"
           >
-            ←
+            <ChevronLeft
+              size={18}
+              strokeWidth={1.9}
+              aria-hidden="true"
+            />
           </button>
 
-          <div className="min-w-0 flex-1 text-center text-sm font-semibold text-gray-800 sm:min-w-36">
+          <div className="min-w-0 flex-1 px-2 text-center text-sm font-semibold text-(--color-text) sm:min-w-36">
             {formatShortDate(
               weekStart,
             )}
@@ -236,17 +246,20 @@ const AvailabilityTab = ({
             type="button"
             aria-label="Next week"
             onClick={goToNextWeek}
-            className="shrink-0 cursor-pointer rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-(--color-text-muted) transition hover:bg-(--color-surface-soft) hover:text-(--color-text)"
           >
-            →
+            <ChevronRight
+              size={18}
+              strokeWidth={1.9}
+              aria-hidden="true"
+            />
           </button>
         </div>
       </div>
 
       {/* Mobile / tablet */}
       <div className="min-w-0 lg:hidden">
-        {/* Day selector */}
-        <div className="grid grid-cols-7 gap-1 rounded-xl border border-gray-200 bg-white p-2 shadow-sm">
+        <div className="grid grid-cols-7 gap-1 rounded-2xl border border-(--color-border) bg-(--color-surface) p-2 shadow-sm">
           {weekDays.map(
             (date, index) => {
               const isSelected =
@@ -264,10 +277,10 @@ const AvailabilityTab = ({
                       index,
                     )
                   }
-                  className={`min-w-0 cursor-pointer rounded-lg px-1 py-2 text-center ${
+                  className={`min-w-0 cursor-pointer rounded-xl px-1 py-2 text-center transition ${
                     isSelected
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-600 hover:bg-gray-100"
+                      ? "bg-(--color-primary-soft) text-(--color-primary)"
+                      : "text-(--color-text-muted) hover:bg-(--color-surface-soft)"
                   }`}
                 >
                   <span className="block text-[11px] font-medium">
@@ -287,9 +300,8 @@ const AvailabilityTab = ({
           )}
         </div>
 
-        {/* Selected day */}
         <section className="mt-4 min-w-0">
-          <h3 className="mb-3 text-sm font-semibold text-gray-900">
+          <h3 className="mb-3 text-sm font-semibold text-(--color-text)">
             {formatLongDate(
               selectedMobileDate,
             )}
@@ -320,15 +332,15 @@ const AvailabilityTab = ({
                 return (
                   <div
                     key={member.id}
-                    className="min-w-0 rounded-xl border border-gray-200 bg-white p-3 shadow-sm"
+                    className="min-w-0 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-sm"
                   >
                     <div className="mb-3 flex min-w-0 items-center gap-3">
                       <span
-                        className={`h-3 w-3 shrink-0 rounded-full ${color.dot}`}
+                        className={`size-3 shrink-0 rounded-full ${color.dot}`}
                       />
 
                       <div className="min-w-0">
-                        <p className="wrap-break-word text-sm font-semibold text-gray-900">
+                        <p className="text-sm font-semibold text-(--color-text)">
                           {
                             member.firstName
                           }{" "}
@@ -337,7 +349,7 @@ const AvailabilityTab = ({
                           }
                         </p>
 
-                        <p className="text-xs capitalize text-gray-500">
+                        <p className="text-xs capitalize text-(--color-text-muted)">
                           {member.role}
                         </p>
                       </div>
@@ -363,12 +375,11 @@ const AvailabilityTab = ({
         </section>
       </div>
 
-      {/* Desktop weekly calendar */}
-      <div className="hidden overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm lg:block">
+      {/* Desktop */}
+      <div className="hidden overflow-x-auto rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-sm lg:block">
         <div className="min-w-[900px]">
-          {/* Week header */}
-          <div className="grid grid-cols-[210px_repeat(7,minmax(100px,1fr))] border-b border-gray-200 bg-gray-50">
-            <div className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+          <div className="grid grid-cols-[210px_repeat(7,minmax(100px,1fr))] border-b border-(--color-border) bg-(--color-surface-soft)">
+            <div className="px-4 py-3 text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
               Staff
             </div>
 
@@ -378,9 +389,9 @@ const AvailabilityTab = ({
                   key={formatDateKey(
                     date,
                   )}
-                  className="border-l border-gray-200 px-3 py-3 text-center"
+                  className="border-l border-(--color-border) px-3 py-3 text-center"
                 >
-                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-(--color-text-muted)">
                     {
                       DAY_NAMES[
                         index
@@ -388,7 +399,7 @@ const AvailabilityTab = ({
                     }
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-gray-900">
+                  <p className="mt-1 text-sm font-semibold text-(--color-text)">
                     {formatShortDate(
                       date,
                     )}
@@ -398,7 +409,6 @@ const AvailabilityTab = ({
             )}
           </div>
 
-          {/* Staff rows */}
           {activeStaff.map(
             (member) => {
               const color =
@@ -409,15 +419,15 @@ const AvailabilityTab = ({
               return (
                 <div
                   key={member.id}
-                  className="grid grid-cols-[210px_repeat(7,minmax(100px,1fr))] border-b border-gray-100 last:border-b-0"
+                  className="grid grid-cols-[210px_repeat(7,minmax(100px,1fr))] border-b border-(--color-border) last:border-b-0"
                 >
                   <div className="flex min-w-0 items-center gap-3 px-4 py-3">
                     <span
-                      className={`h-3 w-3 shrink-0 rounded-full ${color.dot}`}
+                      className={`size-3 shrink-0 rounded-full ${color.dot}`}
                     />
 
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-gray-900">
+                      <p className="truncate text-sm font-semibold text-(--color-text)">
                         {
                           member.firstName
                         }{" "}
@@ -426,7 +436,7 @@ const AvailabilityTab = ({
                         }
                       </p>
 
-                      <p className="text-xs capitalize text-gray-500">
+                      <p className="text-xs capitalize text-(--color-text-muted)">
                         {member.role}
                       </p>
                     </div>
@@ -451,7 +461,7 @@ const AvailabilityTab = ({
                       return (
                         <div
                           key={dateKey}
-                          className="border-l border-gray-100 p-2"
+                          className="border-l border-(--color-border) p-2"
                         >
                           <AvailabilityCell
                             availability={
@@ -479,7 +489,9 @@ const AvailabilityTab = ({
       {selectedMember &&
         selectedDate && (
           <AvailabilityFormModal
-            member={selectedMember}
+            member={
+              selectedMember
+            }
             date={selectedDate}
             availability={
               selectedAvailability

@@ -17,18 +17,24 @@ const AssignmentReasonModal = ({
   onClose,
   onSubmit,
 }: AssignmentReasonModalProps) => {
-  const [reason, setReason] = useState("");
-  const [error, setError] = useState("");
+  const [reason, setReason] =
+    useState("");
+
+  const [error, setError] =
+    useState("");
 
   const handleSubmit = (
     event: React.SubmitEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
 
-    const trimmedReason = reason.trim();
+    const trimmedReason =
+      reason.trim();
 
     if (!trimmedReason) {
-      setError("Please provide a reason.");
+      setError(
+        "Please provide a reason.",
+      );
       return;
     }
 
@@ -45,54 +51,60 @@ const AssignmentReasonModal = ({
     >
       <form
         onSubmit={handleSubmit}
-        className="min-w-0 p-4 sm:p-5"
+        className="min-w-0"
       >
-        <p className="wrap-break-word text-sm text-gray-600">
-          {description}
-        </p>
+        <div className="space-y-4 p-4 sm:p-5">
+          <p className="text-sm text-(--color-text-muted)">
+            {description}
+          </p>
 
-        <div className="mt-4 min-w-0">
-          <label
-            htmlFor="assignment-reason"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Reason
-          </label>
+          <div>
+            <label
+              htmlFor="assignment-reason"
+              className="mb-1.5 block text-sm font-medium text-(--color-text)"
+            >
+              Reason
+            </label>
 
-          <textarea
-            id="assignment-reason"
-            rows={4}
-            value={reason}
-            onChange={(event) => {
-              setReason(event.target.value);
+            <textarea
+              id="assignment-reason"
+              rows={4}
+              value={reason}
+              onChange={(event) => {
+                setReason(
+                  event.target.value,
+                );
 
-              if (error) {
-                setError("");
-              }
-            }}
-            placeholder="Write a short reason..."
-            className="w-full min-w-0 resize-y rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
-          />
+                if (error) {
+                  setError("");
+                }
+              }}
+              placeholder="Write a short reason..."
+              className="w-full min-w-0 resize-y rounded-xl border border-(--color-border-strong) bg-(--color-surface) px-3 py-2.5 text-sm text-(--color-text) outline-none transition focus:border-(--color-primary-muted) focus:ring-2 focus:ring-(--color-primary-soft)"
+            />
+          </div>
+
+          {error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5">
+              <p className="text-sm font-medium text-red-700">
+                {error}
+              </p>
+            </div>
+          )}
         </div>
 
-        {error && (
-          <p className="mt-2 text-sm font-medium text-red-600">
-            {error}
-          </p>
-        )}
-
-        <div className="mt-6 flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+        <div className="flex flex-col-reverse gap-3 border-t border-(--color-border) p-4 sm:flex-row sm:justify-end sm:p-5">
           <button
             type="button"
             onClick={onClose}
-            className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl border border-(--color-border-strong) px-4 py-2.5 text-sm font-medium text-(--color-text) transition hover:bg-(--color-surface-soft) sm:w-auto"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+            className="w-full cursor-pointer rounded-xl bg-(--color-primary) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-(--color-primary-hover) sm:w-auto"
           >
             {submitLabel}
           </button>

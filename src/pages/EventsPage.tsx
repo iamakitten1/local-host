@@ -1,4 +1,8 @@
 import { useState } from "react";
+import {
+  CalendarDays,
+  Plus,
+} from "lucide-react";
 
 import EventCard from "../features/events/components/EventCard";
 import EventFormModal from "../features/events/components/EventFormModal";
@@ -11,9 +15,8 @@ import type { Event as LocalHostEvent } from "../types/event";
 const EventsPage = () => {
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
 
-  const [selectedEvent, setSelectedEvent] = useState<LocalHostEvent | null>(
-    null,
-  );
+  const [selectedEvent, setSelectedEvent] =
+    useState<LocalHostEvent | null>(null);
 
   const {
     eventList,
@@ -23,39 +26,74 @@ const EventsPage = () => {
     getEventStaffIds,
   } = useEventsManagement();
 
-  const { staffList, availabilityList } = useStaffContext();
+  const {
+    staffList,
+    availabilityList,
+  } = useStaffContext();
 
   const selectedEventStaffIds = selectedEvent
     ? getEventStaffIds(selectedEvent.id)
     : [];
 
   return (
-    <div className="min-w-0">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div className="min-w-0 space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-            Events
-          </h1>
-
-          <p className="mt-1 text-sm text-gray-500">
-            Plan events and manage staffing
+          <p className="text-xs font-semibold uppercase tracking-widest text-(--color-primary-muted)">
+            Schedule
           </p>
+
+          <div className="mt-2 flex items-center gap-3">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-(--color-primary-soft) text-(--color-primary)">
+              <CalendarDays
+                size={19}
+                strokeWidth={1.9}
+                aria-hidden="true"
+              />
+            </div>
+
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight text-(--color-text) sm:text-3xl">
+                Events
+              </h1>
+
+              <p className="mt-1 text-sm text-(--color-text-muted)">
+                Plan events and manage staffing.
+              </p>
+            </div>
+          </div>
         </div>
 
         <button
           type="button"
           onClick={() => setIsAddEventOpen(true)}
-          className="w-full shrink-0 cursor-pointer rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 sm:w-auto"
+          className="inline-flex w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-(--color-primary) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-(--color-primary-hover) sm:w-auto"
         >
-          + Add Event
+          <Plus
+            size={17}
+            strokeWidth={2}
+            aria-hidden="true"
+          />
+
+          Add Event
         </button>
       </div>
 
       {eventList.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-          <p className="text-sm font-medium text-gray-700">No events yet</p>
+        <div className="rounded-3xl border border-dashed border-(--color-border) bg-(--color-surface) p-10 text-center">
+          <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-(--color-primary-soft) text-(--color-primary)">
+            <CalendarDays
+              size={20}
+              strokeWidth={1.9}
+              aria-hidden="true"
+            />
+          </div>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-4 text-sm font-semibold text-(--color-text)">
+            No events yet
+          </p>
+
+          <p className="mt-1 text-sm text-(--color-text-muted)">
             Create an event to start planning staff and event details.
           </p>
         </div>
