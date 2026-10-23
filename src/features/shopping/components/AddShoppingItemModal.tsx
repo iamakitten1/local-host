@@ -2,14 +2,11 @@ import { useState } from "react";
 
 import Modal from "../../../components/ui/Modal";
 
-import type {
-  ShoppingItem,
-  ShoppingItemPriority,
-} from "../../../types/shoppingItem";
+import type { SupplyItem } from "../../../types/shoppingItem";
 
 type AddShoppingItemModalProps = {
   onClose: () => void;
-  onAdd: (item: ShoppingItem) => void;
+  onAdd: (item: SupplyItem) => void;
 };
 
 const AddShoppingItemModal = ({
@@ -17,8 +14,6 @@ const AddShoppingItemModal = ({
   onAdd,
 }: AddShoppingItemModalProps) => {
   const [name, setName] = useState("");
-  const [priority, setPriority] =
-    useState<ShoppingItemPriority>("normal");
   const [note, setNote] = useState("");
   const [photoUrl, setPhotoUrl] =
     useState<string>();
@@ -47,16 +42,14 @@ const AddShoppingItemModal = ({
       return;
     }
 
-    const newItem: ShoppingItem = {
+    const newItem: SupplyItem = {
       id: crypto.randomUUID(),
       propertyId: "property-1",
       name: trimmedName,
-      priority,
       note: note.trim() || undefined,
       photoUrl,
       addedByStaffId: "staff-1",
       createdAt: new Date().toISOString(),
-      isBought: false,
     };
 
     onAdd(newItem);
@@ -65,7 +58,7 @@ const AddShoppingItemModal = ({
 
   return (
     <Modal
-      title="Add shopping item"
+      title="Add supply"
       onClose={onClose}
     >
       <form
@@ -78,7 +71,7 @@ const AddShoppingItemModal = ({
               htmlFor="shopping-item-name"
               className="mb-1.5 block text-sm font-medium text-(--color-text)"
             >
-              Item name
+              Supply name
             </label>
 
             <input
@@ -91,39 +84,6 @@ const AddShoppingItemModal = ({
               placeholder="e.g. Coffee capsules"
               className="w-full rounded-xl border border-(--color-border-strong) bg-(--color-surface) px-3 py-2.5 text-sm text-(--color-text) outline-none transition focus:border-(--color-primary-muted) focus:ring-2 focus:ring-(--color-primary-soft)"
             />
-          </div>
-
-          <div>
-            <label
-              htmlFor="shopping-item-priority"
-              className="mb-1.5 block text-sm font-medium text-(--color-text)"
-            >
-              Priority
-            </label>
-
-            <select
-              id="shopping-item-priority"
-              value={priority}
-              onChange={(event) =>
-                setPriority(
-                  event.target
-                    .value as ShoppingItemPriority,
-                )
-              }
-              className="w-full cursor-pointer rounded-xl border border-(--color-border-strong) bg-(--color-surface) px-3 py-2.5 text-sm text-(--color-text) outline-none transition focus:border-(--color-primary-muted) focus:ring-2 focus:ring-(--color-primary-soft)"
-            >
-              <option value="normal">
-                Normal
-              </option>
-
-              <option value="buy-soon">
-                Buy soon
-              </option>
-
-              <option value="urgent">
-                Urgent
-              </option>
-            </select>
           </div>
 
           <div>
@@ -165,7 +125,7 @@ const AddShoppingItemModal = ({
             {photoUrl && (
               <img
                 src={photoUrl}
-                alt="Shopping item preview"
+                alt="Supply preview"
                 className="mt-3 h-32 w-full rounded-xl object-cover"
               />
             )}
@@ -185,7 +145,7 @@ const AddShoppingItemModal = ({
             type="submit"
             className="w-full cursor-pointer rounded-xl bg-(--color-primary) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-(--color-primary-hover) sm:w-auto"
           >
-            Add item
+            Add supply
           </button>
         </div>
       </form>

@@ -1,20 +1,26 @@
-export type ShoppingItemPriority =
+export type ShoppingPriority =
   | "normal"
   | "buy-soon"
   | "urgent";
 
-export type ShoppingItem = {
+export type SupplyItem = {
   id: string;
   propertyId: string;
 
   name: string;
-  priority: ShoppingItemPriority;
-
   note?: string;
   photoUrl?: string;
 
   addedByStaffId: string;
   createdAt: string;
+};
 
-  isBought: boolean;
+export type CartItem = {
+  id: string;
+  supplyId: string;
+
+  quantity: number;
+  priority: ShoppingPriority;
+
+  addedAt: string;
 };
