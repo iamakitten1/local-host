@@ -11,10 +11,10 @@ import DashboardPage from "./pages/DashboardPage";
 import RoomsPage from "./pages/RoomsPage";
 import BookingsPage from "./pages/BookingsPage";
 import CleaningPage from "./pages/CleaningPage";
-
-import StaffPage from "./pages/StaffPage";
-import NotFoundPage from "./pages/NotFoundPage";
 import EventsPage from "./pages/EventsPage";
+import StaffPage from "./pages/StaffPage";
+import ShoppingListPage from "./pages/ShoppingListPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -59,6 +59,11 @@ function App() {
           <Route
             path="/staff"
             element={<StaffPage />}
+          />
+
+          <Route
+            path="/shopping-list"
+            element={<ShoppingListPage />}
           />
         </Route>
 

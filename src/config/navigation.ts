@@ -3,6 +3,7 @@ import {
   CalendarCheck2,
   CalendarDays,
   LayoutDashboard,
+  ShoppingBasket,
   Sparkles,
   Users,
 } from "lucide-react";
@@ -37,5 +38,10 @@ export const navItems = [
     label: "Staff",
     path: "/staff",
     icon: Users,
+  },
+  {
+    label: "Shopping List",
+    path: "/shopping-list",
+    icon: ShoppingBasket,
   },
 ];
