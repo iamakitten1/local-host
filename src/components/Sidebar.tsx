@@ -8,7 +8,7 @@ const Sidebar = () => {
     <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-(--color-border) bg-(--color-surface-soft) xl:flex xl:flex-col">
       <div className="border-b border-(--color-border) px-6 py-5">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--color-primary) text-white shadow-sm">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-(--color-primary) text-white shadow-sm">
             <Building2 size={20} strokeWidth={2} />
           </div>
 

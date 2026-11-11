@@ -28,7 +28,7 @@ const DashboardLayout = () => {
         <Sidebar />
 
         <div className="min-w-0 flex-1">
-          <header className="sticky top-0 z-30 hidden border-b border-(--color-border)] bg-[var(--color-background)/95 px-8 py-4 backdrop-blur xl:block">
+          <header className="sticky top-0 z-30 hidden border-b border-(--color-border) bg-(--color-background)/95 px-8 py-4 backdrop-blur xl:block">
             <div className="mx-auto flex w-full max-w-[1600px] items-center justify-end">
               <div className="flex shrink-0 items-center gap-4">
                 <div className="flex items-center gap-2 text-sm text-(--color-text-muted)">

@@ -79,8 +79,8 @@ const getAssignmentClasses = (
 };
 
 const fieldClasses =
-  "h-10 w-full min-w-0 rounded-xl border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-text)] outline-none transition focus:border-[var(--color-primary-muted)] focus:ring-2 focus:ring-[var(--color-primary-muted)]/10";
-
+  "h-10 w-full min-w-0 rounded-xl border border-(--color-border-strong) bg-(--color-surface) px-3 text-sm text-(--color-text) outline-none transition focus:border-(--color-primary-muted) focus:ring-2 focus:ring-(--color-primary-muted)/10";
+  
 const CleaningTaskCard = ({
   task,
   assignment,
