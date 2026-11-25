@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
+import { requireRole } from "../middleware/role.middleware.js";
+
 
 const router = Router();
 
-router.get("/", async (_req, res) => {
+router.get("/", requireAuth, requireRole(["OWNER", "MANAGER"]), async (_req, res) => {
     try {
         const properties = await prisma.property.findMany();
 
@@ -17,12 +20,12 @@ router.get("/", async (_req, res) => {
     }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", requireAuth, requireRole(["OWNER", "MANAGER"]), async (req, res) => {
     try {
         const { id } = req.params;
 
         const property = await prisma.property.findUnique({
-            where: { id },
+            where: { id: id as string },
         });
 
         if (!property) {
@@ -41,7 +44,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, requireRole(["OWNER"]), async (req, res) => {
     try {
         const { name, address } = req.body ?? {};
 
